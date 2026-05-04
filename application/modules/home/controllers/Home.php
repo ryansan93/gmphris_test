@@ -43,85 +43,9 @@ class Home extends Public_Controller
 	{
 		$notif = null;
 
-		/*
-		// RPAH
-		$url = 'transaksi/RpahMobile';
-		$akses = hakAkses('/'.$url);
-		if ( $akses['a_submit'] == 1 ) {
-			$status = getStatus('reject');
-
-			$m_rpah = new \Model\Storage\Rpah_model();
-			$data = $m_rpah->notifData($this->userid, $status);
-
-			if ( $data ) {
-				$notif[$url] = $this->mappingNotif($data, $url, 'Rencana Penjualan Harian');
-				$notif[$url]['link'] = $url.'/index';
-				$notif[$url]['jenis'] = 'window.open';
-			}
-		}
 		
-		// APPROVAL RPAH
-		$url = 'transaksi/ApprovalRpah';
-		$akses = hakAkses('/'.$url);
-		if ( $akses['a_approve'] == 1 ) {
-			$status = getStatus('submit');
-
-			$m_rpah = new \Model\Storage\Rpah_model();
-			$data = $m_rpah->notifData($this->userid, $status);
-
-			if ( $data ) {
-				$notif[$url] = $this->mappingNotif($data, $url, 'Approval Rencana Penjualan Harian');
-				$notif[$url]['link'] = $url;
-				$notif[$url]['jenis'] = 'window.open';
-			}
-		}
-		// END - APPROVAL RPAH
-		// END - RPAH
-		*/
-
-		// LHK
-		// $url = 'report/LHK/formAck';
-		// $akses = hakAkses('/transaksi/LHK');
-		// if ( !empty($akses['a_ack']) && $akses['a_ack'] == 1 ) {
-		// 	$status = getStatus('submit');
-
-		// 	$m_kry = new \Model\Storage\Karyawan_model();
-		// 	$nik = $m_kry->getNik( $this->userdata['detail_user']['nama_detuser'] );
-
-		// 	$m_lhk = new \Model\Storage\Lhk_model();
-		// 	$data = $m_lhk->notifData($nik, $status);
-
-		// 	if ( $data ) {
-		// 		$notif[$url] = $this->mappingNotif($data, $url, 'ACK Laporan Harian Kandang');
-		// 		$notif[$url]['link'] = $url;
-		// 		$notif[$url]['jenis'] = 'window.open';
-		// 	}
-		// }
-		// END - LHK
-
-
-		// HRD
-		// $url = 'hris/FormAckUsulanKaryawan';
-		// $akses = hakAkses('/'.$url);
-		// if ( !empty($akses['a_ack']) && $akses['a_ack'] == 1 ) {
-		// 	$status = getStatus('submit');
-
-		// 	$m_db = new \Model\Storage\HrisUsulanKaryawan_model();
-		// 	$data = $m_db->notifData();
-
-		// 	// echo '<pre>';print_r($data);die;
-
-		// 	if ( $data ) {
-		// 		$notif[$url] = $this->mappingNotif($data, $url, 'HRIS - ACK Usulan Karyawan Baru');
-		// 		$notif[$url]['link'] = $url;
-		// 		$notif[$url]['jenis'] = 'window.open';
-		// 	}
-		// }
-
-		
-
-		$url = 'hris/HrisKandidatBaru';
-		$akses = hakAkses('/'.$url);
+		$url 	= 'hris/HrisKandidatBaru';
+		$akses 	= hakAkses('/'.$url);
 
 		if ( !empty($akses['a_ack']) && $akses['a_ack'] == 1 ) {
 			$status = getStatus('submit');

@@ -10,7 +10,7 @@
   <meta name="author" content="Dashboard">
   <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
 
-  <title>GMP ERP</title>
+  <title>GMP - HRIS</title>
 
   <?php // CSS files ?>
   <?php if (isset($css_files) && is_array($css_files)) : ?>
@@ -32,7 +32,7 @@
       <div class="sidebar-heading">
         <!-- <img src="https://d3ki9tyy5l5ruj.cloudfront.net/obj/3ac85a538c3fc5bb08d0206ede04ae8aa13c20b2/inapp__logo_color_ondark_horizontal.svg" width="80%" height="80%"> -->
         <!-- <img src="assets/images/logo-mgb.jpg" width="20%" height="20%"> -->
-        GMP ERP
+        <b>GMP HRIS</b>
       </div>
       <div class="divider-heading" style="padding: 0rem 1rem;">
         <div class="dropdown-divider" style="margin-top: 0rem;"></div>

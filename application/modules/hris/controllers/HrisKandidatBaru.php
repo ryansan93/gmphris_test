@@ -77,7 +77,7 @@ class HrisKandidatBaru extends Public_Controller {
     {
 
         $params = $_POST;
-        cetak_r($params, 1);
+        // cetak_r($params, 1);
         
         try {
 
@@ -179,10 +179,14 @@ class HrisKandidatBaru extends Public_Controller {
     public function get_data_form(){
         
         $m_conf     = new \Model\Storage\Conf();
-        $sql        = " select hdk.id as id_data_karyawan, hdk.nama, hdk.status_karyawan, hdk.tgl_masuk, hdk.keterangan_reject, hsk.nama_status , hsk.kategori, hdk.is_active, hdk.document, k.nama as nama_pengusul, k.jabatan as jabatan_pengusul
+        $sql        = " select hdk.id as id_data_karyawan, hdk.nama, hdk.status_karyawan, hdk.tgl_masuk,
+                        hdk.keterangan_reject, hsk.nama_status , hsk.kategori, hdk.is_active, hdk.document, 
+                        k.nama as nama_pengusul, k.jabatan as jabatan_pengusul, hukb.posisi, hukb.jumlah, hukb.unit,
+                        w.induk as induk_wilayah
                         from hris_data_karyawan hdk
                         left join hris_status_karyawan hsk on hdk.status_karyawan = hsk.id 
                         inner join hris_usulan_karyawan_baru hukb on hdk.usulan_id = hukb.id
+                        left join wilayah w on hukb.unit = w.kode 
                         INNER JOIN (
                             SELECT *
                             FROM karyawan
@@ -291,6 +295,8 @@ class HrisKandidatBaru extends Public_Controller {
 
         // cetak_r($params, 1);
 
+
+
         try {
 
             $m_db = new \Model\Storage\HrisDataKaryawan_model();
@@ -300,13 +306,77 @@ class HrisKandidatBaru extends Public_Controller {
                 throw new \Exception("Data form tidak ditemukan.");
             }
 
+            $unit = [];
+            $data_unit = $this->get_list_unit()->toArray();
+            foreach($data_unit as $du){
+                $unit[$du['id']] = $du;
+            }
+
+            // HRIS DATA KANDIDAT
             $m_db->where('id', $params['id_data'])->update([
                 'status_karyawan'   => $params['keputusan'] == 1 ? 2 : 3,
                 'tgl_masuk'         => $params['keputusan'] == 1 ? $params['tgl_masuk'] : null,
                 'keterangan_reject' => $params['keputusan'] == 2 ? $params['keterangan_reject'] : null,
             ]);
+            // END HRIS DATA KANDIDAT
+
+            $m_karyawan = new \Model\Storage\Karyawan_model();
+			$id_karyawan = $m_karyawan->getNextIdentity();
+
+			$m_karyawan->id         = $id_karyawan;
+			$m_karyawan->level      = $params['level'];
+			$m_karyawan->nik        = $m_karyawan->getNextNomor('K');
+			$m_karyawan->atasan     = $params['atasan'];
+			$m_karyawan->nama       = $params['nama'];
+			$m_karyawan->kordinator = $params['koordinator'];
+			$m_karyawan->marketing  = $params['marketing'];
+			$m_karyawan->jabatan    = $params['jabatan'];
+			$m_karyawan->status     = 1;
+			$m_karyawan->save();
+
+            foreach ($params['unit'] as $k_val => $val) {
+	            $m_unit_karyawan                = new \Model\Storage\UnitKaryawan_model();
+
+	            $id_unit_karyawan               = $m_unit_karyawan->getNextIdentity();
+				$m_unit_karyawan->id            = $id_unit_karyawan;
+				$m_unit_karyawan->id_karyawan   = $id_karyawan;
+				$m_unit_karyawan->unit          = $val;
+				$m_unit_karyawan->save();
+            }
+
+            foreach ($params['wilayah'] as $k_val => $val) {
+	            $m_wilayah_karyawan             = new \Model\Storage\WilayahKaryawan_model();
+
+	            $id_wilayah_karyawan            = $m_wilayah_karyawan->getNextIdentity();
+				$m_wilayah_karyawan->id         = $id_wilayah_karyawan;
+				$m_wilayah_karyawan->id_karyawan = $id_karyawan;
+				$m_wilayah_karyawan->wilayah    = $val;
+				$m_wilayah_karyawan->save();
+            }
+
+            // KARYAWAN HISTORY 
+                $m_karyawan_history                 = new \Model\Storage\KaryawanHistory_model();
+                $m_karyawan_history->nik            = $m_karyawan->nik;
+                $m_karyawan_history->jabatan        = $params['jabatan'];
+                $m_karyawan_history->tgl_mulai      = $params['tgl_masuk'];
+                $m_karyawan_history->tgl_selesai    = null;
+                $m_karyawan_history->save();
+                $id_karyawan_history                = $m_form->id;
+            // END KARYAWAN HISTORY 
 
             
+            // KARYAWAN HISTORY 
+             foreach ($params['unit'] as $k_val => $val) {
+                $m_karyawan_history_unit                 = new \Model\Storage\KaryawanHistoryUnit_model();
+                $m_karyawan_history_unit->id             = $id_karyawan_history;
+                $m_karyawan_history_unit->kode_unit      = $unit[$val]['kode'];
+                $m_karyawan_history_unit->save();
+             }
+            // END KARYAWAN HISTORY 
+
+			$d_karyawan = $m_karyawan->where('id', $id_karyawan)->with(['unit', 'dWilayah'])->first();
+			$deskripsi_log_karyawan = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
+            Modules::run( 'base/event/save', $d_karyawan, $deskripsi_log_karyawan );
 
             $this->result['status'] = 1;
             $this->result['message'] = 'Data berhasil di update.';
@@ -322,13 +392,73 @@ class HrisKandidatBaru extends Public_Controller {
 
     
     public function generate_form_karyawan_baru(){
+        $id_data = $_POST['id_data'];
+        $list         = $this->get_data_form();
 
-        $content['list']    =  $this->get_data_form();
-       
-        // cetak_r($content, 1);
+        $dt = [];
+        foreach ( $list as $l ){
+            $dt[$l['id_data_karyawan']] = $l;
+        } 
+        
+        $content['list']         = $dt[$id_data];
+        $content['jabatan_nama'] = $this->get_data_jabatan($dt[$id_data]['posisi']);
+        $content['list_unit']    = $this->get_list_unit();
+        $content['list_wilayah'] = $this->get_list_wilayah();
+        $content['atasan']       = $this->get_atasan($dt[$id_data]['posisi']);
+
+        // cetak_r($content['list_unit'], 1);
 
         echo $this->load->view($this->pathView . 'v_generate_form_karyawan_baru', $content, TRUE);
     }
+
+    public function get_data_jabatan($kode)
+    {
+        $m_conf     = new \Model\Storage\Conf();
+        $sql        = " select * from jabatan where kode = '".$kode."' ";
+        $result     = $m_conf->hydrateRaw( $sql )->toArray();
+
+        return $result[0];
+    }
+
+    public function get_atasan($jabatan)
+	{
+		// $jabatan = $this->input->post('jabatan');
+		$level = getLevelJabatan($jabatan);
+		$atasan = getAtasan($jabatan);
+
+		$d_karyawan = null;
+		if ( $level != 0 ) {
+			$m_karyawan = new \Model\Storage\Karyawan_model();
+			$d_karyawan = $m_karyawan->where('level', '<', $level)
+									 ->whereIn('jabatan', $atasan)
+									 ->where('status', 1)
+									 ->orderBy('level', 'asc')
+									 ->get();
+		}
+
+		// $this->result['status'] = 1;
+		// $this->result['content'] = $d_karyawan;
+        $result     = $d_karyawan->toArray();
+        return $result;
+	}
+
+    public function get_list_unit()
+	{
+		$m_unit = new \Model\Storage\Wilayah_model();
+		$d_unit = $m_unit->where('jenis', 'UN')->orderBy('nama')->get();
+
+		return $d_unit;
+	}
+
+	public function get_list_wilayah()
+	{
+		$m_wilayah = new \Model\Storage\Wilayah_model();
+		$d_wilayah = $m_wilayah->where('jenis', 'PW')->orderBy('nama')->get();
+
+		return $d_wilayah;
+	}
+
+    
 
    
 
