@@ -2,9 +2,9 @@
 namespace Model\Storage;
 use \Model\Storage\Conf as Conf;
 
-class HrisStatusKaryawan_model extends Conf{
+class HrisStatusKandidat_model extends Conf{
 	
-	public $table = 'hris_status_karyawan';
+	public $table = 'hris_status_kandidat';
 	protected $primaryKey = 'id';
 	public $timestamps = false;
 

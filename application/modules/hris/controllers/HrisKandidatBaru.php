@@ -82,9 +82,9 @@ class HrisKandidatBaru extends Public_Controller {
         try {
 
             foreach ($params['detail'] as $v_det) {
-                $m_db = new \Model\Storage\HrisDataKaryawan_model();
+                $m_db = new \Model\Storage\HrisDataKandidat_model();
                 $m_db->nama             = $v_det['nama_karyawan'];
-                $m_db->status_karyawan  = $v_det['status_karyawan'];
+                $m_db->status_kandidat  = $v_det['status_karyawan'];
                 $m_db->is_active        = 'ACTIVE';
                 $m_db->usulan_id        = $v_det['usulan'];
                 $m_db->save();
@@ -179,14 +179,22 @@ class HrisKandidatBaru extends Public_Controller {
     public function get_data_form(){
         
         $m_conf     = new \Model\Storage\Conf();
-        $sql        = " select hdk.id as id_data_karyawan, hdk.nama, hdk.status_karyawan, hdk.tgl_masuk,
+        $sql        = " select hdk.id as id_data_karyawan, hdk.nama, hdk.status_kandidat, hdk.tgl_masuk,
                         hdk.keterangan_reject, hsk.nama_status , hsk.kategori, hdk.is_active, hdk.document, 
                         k.nama as nama_pengusul, k.jabatan as jabatan_pengusul, hukb.posisi, hukb.jumlah, hukb.unit,
                         w.induk as induk_wilayah
-                        from hris_data_karyawan hdk
-                        left join hris_status_karyawan hsk on hdk.status_karyawan = hsk.id 
+                        from hris_data_kandidat hdk
+                        left join hris_status_kandidat hsk on hdk.status_kandidat = hsk.id 
                         inner join hris_usulan_karyawan_baru hukb on hdk.usulan_id = hukb.id
-                        left join wilayah w on hukb.unit = w.kode 
+                        LEFT JOIN (
+						    SELECT *
+						    FROM wilayah w1
+						    WHERE w1.id IN (
+						        SELECT MAX(id)
+						        FROM wilayah
+						        GROUP BY kode
+						    )
+						) w ON hukb.unit = w.kode
                         INNER JOIN (
                             SELECT *
                             FROM karyawan
@@ -205,7 +213,7 @@ class HrisKandidatBaru extends Public_Controller {
     public function get_status_karyawan(){
         
         $m_conf     = new \Model\Storage\Conf();
-        $sql        = " select * from hris_status_karyawan  ";
+        $sql        = " select * from hris_status_kandidat ";
         $result     = $m_conf->hydrateRaw( $sql )->toArray();
 
         return $result;
@@ -254,7 +262,7 @@ class HrisKandidatBaru extends Public_Controller {
     public function get_bio_data($id_kandidat)
     {
         $m_conf     = new \Model\Storage\Conf();
-        $sql        = " select * from hris_data_karyawan_detail where id_data_karyawan in  ($id_kandidat)";
+        $sql        = " select * from hris_data_kandidat_detail where id_data_karyawan in  ($id_kandidat)";
 
         $d_conf     = $m_conf->hydrateRaw( $sql );
         $data       = null;
@@ -299,7 +307,7 @@ class HrisKandidatBaru extends Public_Controller {
 
         try {
 
-            $m_db = new \Model\Storage\HrisDataKaryawan_model();
+            $m_db = new \Model\Storage\HrisDataKandidat_model();
 
             $d_db = $m_db->where('id', $params['id_data'])->first();
             if (!$d_db) {
@@ -314,69 +322,77 @@ class HrisKandidatBaru extends Public_Controller {
 
             // HRIS DATA KANDIDAT
             $m_db->where('id', $params['id_data'])->update([
-                'status_karyawan'   => $params['keputusan'] == 1 ? 2 : 3,
+                'status_kandidat'   => $params['keputusan'] == 1 ? 2 : 3,
                 'tgl_masuk'         => $params['keputusan'] == 1 ? $params['tgl_masuk'] : null,
                 'keterangan_reject' => $params['keputusan'] == 2 ? $params['keterangan_reject'] : null,
             ]);
             // END HRIS DATA KANDIDAT
 
-            $m_karyawan = new \Model\Storage\Karyawan_model();
-			$id_karyawan = $m_karyawan->getNextIdentity();
+            if ( $params['keputusan'] == 1 ){
 
-			$m_karyawan->id         = $id_karyawan;
-			$m_karyawan->level      = $params['level'];
-			$m_karyawan->nik        = $m_karyawan->getNextNomor('K');
-			$m_karyawan->atasan     = $params['atasan'];
-			$m_karyawan->nama       = $params['nama'];
-			$m_karyawan->kordinator = $params['koordinator'];
-			$m_karyawan->marketing  = $params['marketing'];
-			$m_karyawan->jabatan    = $params['jabatan'];
-			$m_karyawan->status     = 1;
-			$m_karyawan->save();
+                $m_karyawan = new \Model\Storage\Karyawan_model();
+                $id_karyawan = $m_karyawan->getNextIdentity();
+    
+                $m_karyawan->id         = $id_karyawan;
+                $m_karyawan->level      = $params['level'];
+                $m_karyawan->nik        = $m_karyawan->getNextNomor('K');
+                $m_karyawan->atasan     = $params['atasan'];
+                $m_karyawan->nama       = $params['nama'];
+                $m_karyawan->kordinator = $params['koordinator'];
+                $m_karyawan->marketing  = $params['marketing'];
+                $m_karyawan->jabatan    = $params['jabatan'];
+                $m_karyawan->status     = 1;
+                $m_karyawan->save();
+    
+                foreach ($params['unit'] as $k_val => $val) {
+                    $m_unit_karyawan                = new \Model\Storage\UnitKaryawan_model();
+    
+                    $id_unit_karyawan               = $m_unit_karyawan->getNextIdentity();
+                    $m_unit_karyawan->id            = $id_unit_karyawan;
+                    $m_unit_karyawan->id_karyawan   = $id_karyawan;
+                    $m_unit_karyawan->unit          = $val;
+                    $m_unit_karyawan->save();
+                }
+    
+                foreach ($params['wilayah'] as $k_val => $val) {
+                    $m_wilayah_karyawan             = new \Model\Storage\WilayahKaryawan_model();
+    
+                    $id_wilayah_karyawan            = $m_wilayah_karyawan->getNextIdentity();
+                    $m_wilayah_karyawan->id         = $id_wilayah_karyawan;
+                    $m_wilayah_karyawan->id_karyawan = $id_karyawan;
+                    $m_wilayah_karyawan->wilayah    = $val;
+                    $m_wilayah_karyawan->save();
+                }
+    
+                // KARYAWAN HISTORY 
+                    $m_karyawan_history                 = new \Model\Storage\KaryawanHistory_model();
+                    $m_karyawan_history->nik            = $m_karyawan->nik;
+                    $m_karyawan_history->jabatan        = $params['jabatan'];
+                    $m_karyawan_history->tgl_mulai      = $params['tgl_masuk'];
+                    $m_karyawan_history->tgl_selesai    = null;
+                    $m_karyawan_history->save();
+                    $id_karyawan_history                = $m_karyawan_history->id;
+                // END KARYAWAN HISTORY 
+    
+                
+                // KARYAWAN HISTORY UNIT
+                 foreach ($params['unit'] as $k_val => $val) {
+                    $m_karyawan_history_unit                 = new \Model\Storage\KaryawanHistoryUnit_model();
+                    $m_karyawan_history_unit->id             = $id_karyawan_history;
+                    $m_karyawan_history_unit->kode_unit      = $unit[$val]['kode'];
+                    $m_karyawan_history_unit->save();
+                 }
+                // END KARYAWAN HISTORY UNIT
 
-            foreach ($params['unit'] as $k_val => $val) {
-	            $m_unit_karyawan                = new \Model\Storage\UnitKaryawan_model();
-
-	            $id_unit_karyawan               = $m_unit_karyawan->getNextIdentity();
-				$m_unit_karyawan->id            = $id_unit_karyawan;
-				$m_unit_karyawan->id_karyawan   = $id_karyawan;
-				$m_unit_karyawan->unit          = $val;
-				$m_unit_karyawan->save();
+                $d_karyawan = $m_karyawan->where('id', $id_karyawan)->with(['unit', 'dWilayah'])->first();
+                $deskripsi_log_karyawan = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
+                Modules::run( 'base/event/save', $d_karyawan, $deskripsi_log_karyawan );
+            } else {
+               
+                $deskripsi_log_karyawan = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
+                Modules::run( 'base/event/update', $m_db,  $params['id_data'], $deskripsi_log_karyawan );
             }
 
-            foreach ($params['wilayah'] as $k_val => $val) {
-	            $m_wilayah_karyawan             = new \Model\Storage\WilayahKaryawan_model();
-
-	            $id_wilayah_karyawan            = $m_wilayah_karyawan->getNextIdentity();
-				$m_wilayah_karyawan->id         = $id_wilayah_karyawan;
-				$m_wilayah_karyawan->id_karyawan = $id_karyawan;
-				$m_wilayah_karyawan->wilayah    = $val;
-				$m_wilayah_karyawan->save();
-            }
-
-            // KARYAWAN HISTORY 
-                $m_karyawan_history                 = new \Model\Storage\KaryawanHistory_model();
-                $m_karyawan_history->nik            = $m_karyawan->nik;
-                $m_karyawan_history->jabatan        = $params['jabatan'];
-                $m_karyawan_history->tgl_mulai      = $params['tgl_masuk'];
-                $m_karyawan_history->tgl_selesai    = null;
-                $m_karyawan_history->save();
-                $id_karyawan_history                = $m_form->id;
-            // END KARYAWAN HISTORY 
-
-            
-            // KARYAWAN HISTORY 
-             foreach ($params['unit'] as $k_val => $val) {
-                $m_karyawan_history_unit                 = new \Model\Storage\KaryawanHistoryUnit_model();
-                $m_karyawan_history_unit->id             = $id_karyawan_history;
-                $m_karyawan_history_unit->kode_unit      = $unit[$val]['kode'];
-                $m_karyawan_history_unit->save();
-             }
-            // END KARYAWAN HISTORY 
-
-			$d_karyawan = $m_karyawan->where('id', $id_karyawan)->with(['unit', 'dWilayah'])->first();
-			$deskripsi_log_karyawan = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
-            Modules::run( 'base/event/save', $d_karyawan, $deskripsi_log_karyawan );
 
             $this->result['status'] = 1;
             $this->result['message'] = 'Data berhasil di update.';

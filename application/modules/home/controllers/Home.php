@@ -44,31 +44,33 @@ class Home extends Public_Controller
 		$notif = null;
 
 		
-		$url 	= 'hris/HrisKandidatBaru';
+		$url 	= 'hris/FormAckUsulanKaryawan';
 		$akses 	= hakAkses('/'.$url);
 
 		if ( !empty($akses['a_ack']) && $akses['a_ack'] == 1 ) {
-			$status = getStatus('submit');
+			// $status = getStatus('submit');
 
-			$m_dk = new \Model\Storage\HrisDataKaryawan_model();
-			$data = $m_dk->notifData();
+			$m_dk = new \Model\Storage\HrisDataKandidat_model();
+			$data = $m_dk->notifDataUsulanKaryawanBaru();
 
-			// echo '<pre>';print_r($data);die;
+			
 
 			if ( $data ) {
-				$notif[$url] = $this->mappingNotif($data, $url, 'HRIS - ACK Kandidat Baru');
+				$notif[$url] = $this->mappingNotif($data, $url, 'HRIS - ACK Usulan Karyawan');
 				$notif[$url]['link'] = $url;
 				$notif[$url]['jenis'] = 'window.open';
 			}
+
+			// echo '<pre>';print_r($notif);die;
 		}
 
 		$url = 'hris/HrisKandidatBaru';
 		$akses = hakAkses('/'.$url);
 
 		if ( !empty($akses['a_ack']) && $akses['a_ack'] == 1 ) {
-			$status = getStatus('submit');
+			// $status = getStatus('submit');
 
-			$m_dk = new \Model\Storage\HrisDataKaryawan_model();
+			$m_dk = new \Model\Storage\HrisDataKandidat_model();
 			$data = $m_dk->notifData();
 
 			// echo '<pre>';print_r($data);die;

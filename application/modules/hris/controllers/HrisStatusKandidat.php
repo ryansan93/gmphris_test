@@ -1,8 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-class HrisStatusKaryawan extends Public_Controller {
+class HrisStatusKandidat extends Public_Controller {
 
-    private $pathView = 'hris/hris_status_karyawan/';
+    private $pathView = 'hris/hris_status_kandidat/';
     private $url;
     private $hakAkses;
 
@@ -21,25 +21,25 @@ class HrisStatusKaryawan extends Public_Controller {
             $this->add_external_js(array(
                 "assets/jquery/easy-autocomplete/jquery.easy-autocomplete.min.js",
                 "assets/select2/js/select2.min.js",
-                "assets/hris/hris_status_karyawan/js/hris_status_karyawan.js",
+                "assets/hris/hris_status_kandidat/js/hris_status_kandidat.js",
             ));
             $this->add_external_css(array(
                 "assets/jquery/easy-autocomplete/easy-autocomplete.min.css",
                 "assets/jquery/easy-autocomplete/easy-autocomplete.themes.min.css",
                 "assets/select2/css/select2.min.css",
-                "assets/hris/hris_status_karyawan/css/hris_status_karyawan.css",
+                "assets/hris/hris_status_kandidat/css/hris_status_kandidat.css",
             ));
 
             $data                       = $this->includes;
             $content['akses']           = $this->hakAkses;
-            $content['title_panel']     = 'HRIS - Status Karyawan';
+            $content['title_panel']     = 'HRIS - Status Kandidat';
             $content['kategori']        = $this->getKategori();
 
             // cetak_r($content, 1);
           
 
             // Load Indexx
-            $data['title_menu']     = 'HRIS - Status Karyawan';
+            $data['title_menu']     = 'HRIS - Status Kandidat';
 
             $data['view'] = $this->load->view($this->pathView . 'v_index', $content, TRUE);
             $this->load->view($this->template, $data);
@@ -54,7 +54,7 @@ class HrisStatusKaryawan extends Public_Controller {
     
         $m_conf = new \Model\Storage\Conf();
         
-        $sql    = " select hsk.id as id_data, * from hris_status_karyawan hsk
+        $sql    = " select hsk.id as id_data, * from hris_status_kandidat hsk
         inner join hris_kategori hk on hsk.kategori = hk.kode_kategori ";
 
         if(!empty($kode))
@@ -85,7 +85,7 @@ class HrisStatusKaryawan extends Public_Controller {
         try {
 
             foreach ($params['data'] as $v_det) {
-                $m_status_karyawam = new \Model\Storage\HrisStatusKaryawan_model();
+                $m_status_karyawam = new \Model\Storage\HrisStatusKandidat_model();
                 $m_status_karyawam->nama_status = $v_det['nama_status'];
                 $m_status_karyawam->kategori    = $v_det['kategori'];
                 $m_status_karyawam->save();
@@ -130,7 +130,7 @@ class HrisStatusKaryawan extends Public_Controller {
         try {
             $id_data = $params['id_data'];
 
-            $m_status = new \Model\Storage\HrisStatusKaryawan_model();
+            $m_status = new \Model\Storage\HrisStatusKandidat_model();
 
             $d_status = $m_status->where('id', $id_data)->first();
             if (!$d_status) {
@@ -163,7 +163,7 @@ class HrisStatusKaryawan extends Public_Controller {
         // cetak_r($params, 1);
         $id_data = $params['id_data'];
 
-        $m_status = new \Model\Storage\HrisStatusKaryawan_model();
+        $m_status = new \Model\Storage\HrisStatusKandidat_model();
 
         try {
 
@@ -194,7 +194,7 @@ class HrisStatusKaryawan extends Public_Controller {
     }
 
     public function generate_kode(){
-        $m_kategori = new \Model\Storage\HrisStatusKaryawan_model();
+        $m_kategori = new \Model\Storage\HrisStatusKandidat_model();
         $last = $m_kategori->where('kode_kategori', 'like', 'HRIS/K/%')->orderBy('kode_kategori', 'desc')->first();
 
         $no = 1;

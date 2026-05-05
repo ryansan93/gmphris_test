@@ -271,115 +271,6 @@ let hf = {
         });
     },
 
-
-    set_disable_by_jabatan : function (elm, tipe = null) {
-        
-		var div = $('div.body');
-		var jabatan = $(elm).val();
-
-		if ( empty(tipe) ) {
-			$(div).find('select.wilayah option').prop('selected', false);
-		} else {
-			var Values = new Array();
-
-			var select_wilayah = $(div).find('select.wilayah');
-			$.map( $(select_wilayah).find('option'), function(opt) {
-				var select = $(opt).data('selected');
-
-				if ( select == true ) {
-					Values.push( $(opt).val() );
-				};
-			});
-
-			$(div).find('select.wilayah').val(Values);
-			$(div).find('select.wilayah').select2().trigger('change');
-
-			var select_unit = $(div).find('select.unit');
-			$.map( $(select_unit).find('option'), function(opt) {
-				var select = $(opt).data('selected');
-
-				if ( select == true ) {
-					Values.push( $(opt).val() );
-				};
-			});
-
-			$(div).find('select.unit').val(Values);
-			$(div).find('select.unit').select2().trigger('change');
-		}
-
-		if ( !empty(jabatan) ) {
-			if ( jabatan.includes('direktur') ) {
-				$(div).find('select.atasan, input:not(.nama_pegawai)').attr('disabled', 'disabled');
-				$(div).find('select.atasan, input:not(.nama_pegawai)').removeAttr('data-required');
-
-                // $(div).find('select.atasan, input:not(.nik_pegawai)').attr('disabled', 'disabled');
-				// $(div).find('select.atasan, input:not(.nik_pegawai)').removeAttr('data-required');
-
-				if ( empty(tipe) ) {
-					$(div).find('select.koordinator option[value=all]').prop('selected', true);
-					$(div).find('select.marketing option[value=all]').prop('selected', true);
-					
-					$(div).find('select.wilayah').val('all');
-				    $(div).find('select.wilayah').select2().trigger('change');
-
-				    $(div).find('select.unit').val('all');
-				    $(div).find('select.unit').select2().trigger('change');
-				}
-			    $(div).find('select.wilayah').next('span.select2').css('width', '100%');
-			    $(div).find('select.unit').next('span.select2').css('width', '100%');
-
-			} else {
-				$(div).find('select.atasan').removeAttr('disabled');
-				$(div).find('select.atasan').attr('data-required', 1);
-
-				$(div).find('input:not(.nama_pegawai)').attr('disabled', 'disabled');
-				$(div).find('input:not(.nama_pegawai)').removeAttr('data-required');
-
-                // $(div).find('input:not(.nik_pegawai)').attr('disabled', 'disabled');
-				// $(div).find('input:not(.nik_pegawai)').removeAttr('data-required');
-
-				if ( empty(tipe) ) {
-					$(div).find('select.koordinator option[value=all]').prop('selected', true);
-					$(div).find('select.marketing option[value=all]').prop('selected', true);
-					
-					$(div).find('select.wilayah').val('all');
-				    $(div).find('select.wilayah').select2().trigger('change');
-
-				    $(div).find('select.unit').val('all');
-				    $(div).find('select.unit').select2().trigger('change');
-				}
-				$(div).find('select.wilayah').next('span.select2').css('width', '100%');
-				$(div).find('select.unit').next('span.select2').css('width', '100%');
-			}
-		
-		} else {
-			$(div).find('input:not(.nama_pegawai)').attr('disabled', 'disabled');
-			$(div).find('input:not(.nama_pegawai)').removeAttr('data-required');
-
-            // $(div).find('input:not(.nik_pegawai)').attr('disabled', 'disabled');
-			// $(div).find('input:not(.nik_pegawai)').removeAttr('data-required');
-	 
-			$(div).find('select.wilayah').val(null).trigger('change');
-		    $(div).find('select.wilayah').next('span.select2').css('width', '100%');
-
-		    $(div).find('select.unit').val(null).trigger('change');
-		    $(div).find('select.unit').next('span.select2').css('width', '100%');
-
-		};
-
-		if ( !empty(jabatan) && jabatan != "" ) {
-			hf.set_atasan(jabatan, tipe);
-		} else {
-			var select = $(div).find('select.atasan');
-			var option = "<option value=''>-- Pilih Atasan --</option>";
-
-			$(select).html(option);
-		};
-
-        // $(div).find('input:not(.nik_pegawai)').attr('disabled', 'disabled');
-		$(".nik_pegawai").removeAttr("disabled");
-	}, // end - set_disable_by_jabatan
-
     set_atasan : function (jabatan, tipe=null) {
 		var div = $('div.body');
 
@@ -418,6 +309,10 @@ let hf = {
             }
         });
 	}, // end - set_atasan
+
+    show_detail : () => {
+        
+    },
 }
 
 $(document).ready(function() {

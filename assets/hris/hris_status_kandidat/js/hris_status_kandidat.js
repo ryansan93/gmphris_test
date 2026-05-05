@@ -78,7 +78,7 @@ let hf ={
         }
 
         $.ajax({
-            url : 'hris/HrisStatusKaryawan/save',
+            url : 'hris/HrisStatusKandidat/save',
             data : params,
             type : 'POST',
             dataType : 'json',
@@ -89,7 +89,7 @@ let hf ={
                 hideLoading();
 
                 bootbox.alert(data.message, function () {
-                    window.location.href = 'hris/HrisStatusKaryawan';
+                    window.location.href = 'hris/HrisStatusKandidat';
                 });
             },
         });
@@ -97,7 +97,7 @@ let hf ={
 
     load_form : () => {
         $.ajax({
-            url : 'hris/HrisStatusKaryawan/load_form',
+            url : 'hris/HrisStatusKandidat/load_form',
             // data : params,
             type : 'POST',
             dataType : 'html',
@@ -119,7 +119,7 @@ let hf ={
         }
 
         $.ajax({
-            url : 'hris/HrisStatusKaryawan/filter_data',
+            url : 'hris/HrisStatusKandidat/filter_data',
             data : params,
             type : 'POST',
             dataType : 'html',
@@ -143,7 +143,7 @@ let hf ={
         }
         
         $.ajax({
-            url : 'hris/HrisStatusKaryawan/edit_data',
+            url : 'hris/HrisStatusKandidat/edit_data',
             data : params,
             type : 'POST',
             dataType : 'html',
@@ -194,7 +194,7 @@ let hf ={
     update: (data_params)  => {
 
         $.ajax({
-            url : 'hris/HrisStatusKaryawan/update',
+            url : 'hris/HrisStatusKandidat/update',
             data : data_params,
             type : 'POST',
             dataType : 'json',
@@ -205,7 +205,7 @@ let hf ={
                 hideLoading();
 
                 bootbox.alert(data.message, function () {
-                    // window.location.href = 'hris/HrisStatusKaryawan';
+                    // window.location.href = 'hris/HrisStatusKandidat';
 
                     hf.load_form();
                 });
@@ -224,7 +224,7 @@ let hf ={
         bootbox.confirm('Yakin mau hapus?', function(result) {
             if (result) {
                 $.ajax({
-                    url : 'hris/HrisStatusKaryawan/delete',
+                    url : 'hris/HrisStatusKandidat/delete',
                     data : params,
                     type : 'POST',
                     dataType : 'json',
@@ -235,7 +235,7 @@ let hf ={
                         hideLoading();
 
                         bootbox.alert(data.message, function () {
-                            window.location.href = 'hris/HrisStatusKaryawan';
+                            window.location.href = 'hris/HrisStatusKandidat';
                         });
                     },
                 });

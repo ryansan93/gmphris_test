@@ -1,7 +1,7 @@
 <div class="panel-heading no-padding">
     <ul class="nav nav-tabs nav-justified">
         <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#riwayat" data-tab="riwayat">DATA KARYAWAN</a>
+            <a class="nav-link active" data-toggle="tab" href="#riwayat" data-tab="riwayat">DATA KANDIDAT</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#action" data-tab="action">ADD DATA</a>

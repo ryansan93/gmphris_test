@@ -349,7 +349,7 @@ class HrisUsulanKaryawan extends Public_Controller {
         $m_conf     = new \Model\Storage\Conf();
 
         $sql = "select * from hris_usulan_karyawan_baru_detail hukbd
-        inner join hris_data_karyawan hdk on hdk.id =  hukbd.id_kandidat
+        inner join hris_data_kandidat hdk on hdk.id =  hukbd.id_kandidat
         where hukbd.id_header = " . $id;
 
         // cetak_r($sql, 1);
@@ -448,7 +448,7 @@ class HrisUsulanKaryawan extends Public_Controller {
 
         $m_conf     = new \Model\Storage\Conf();
 
-        $sql = " select * from hris_data_karyawan where tgl_selesai_isi is not null ";
+        $sql = " select * from hris_data_kandidat where tgl_selesai_isi is not null ";
 
         $d_conf     = $m_conf->hydrateRaw( $sql );
         $data       = null;
