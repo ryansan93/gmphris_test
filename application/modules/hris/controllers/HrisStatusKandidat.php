@@ -200,16 +200,14 @@ class HrisStatusKandidat extends Public_Controller {
         $no = 1;
 
         if ($last) {
-            // ambil angka terakhir (001, 002, dst)
             $last_kode = $last->kode_kategori;
             $explode = explode('/', $last_kode);
             $no = (int)$explode[2] + 1;
         }
 
-        // format jadi 3 digit
         $no_format = str_pad($no, 3, '0', STR_PAD_LEFT);
 
-        // hasil akhir
+
         $kode_kategori = 'HRIS/K/' . $no_format;
 
         return $kode_kategori;

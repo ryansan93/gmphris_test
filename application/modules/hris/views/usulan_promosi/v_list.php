@@ -1,0 +1,39 @@
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">Tanggal</th>
+            <th class="text-center">Pengusul</th>
+            <th class="text-center">Karyawan</th>
+            <th class="text-center">Jabatan Asal</th>
+            <th class="text-center">Jabatan Tujuan</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (!empty($list)) { ?>
+           
+            <?php foreach($list as $l){?>
+                <tr class="data-row">
+                    <td>-</td>
+                    <td class="text-center"><?php echo tglIndonesia($l['tanggal'], "-" , " ") ?></td>
+                    <td class="text-center"><?php echo ucwords(strtolower($l['nama_pengusul'])) ?></td>
+                    <td class="text-center"><?php echo ucwords(strtolower($l['nama_karyawan'])) ?></td>
+                    <td class="text-center"><?php echo $l['nama_jabatan_asal'] ?></td>
+                    <td class="text-center"><?php echo $l['nama_jabatan_tujuan'] ?></td>
+                    <td class="text-center">
+                        <button class="btn btn-secondary" id_data="<?php echo $l['kode'] ?>" onclick="up.show_detail(this, event)" > <i class="fa fa-file"></i> Show Detail</button>
+                    </td>
+                </tr>
+            <?php } ?>
+
+      
+        <?php } else { ?>
+
+            <tr>
+                <td colspan="7" style="text-align:center;">Tidak ada data</td>
+            </tr>
+        <?php } ?>
+
+    </tbody>
+</table>

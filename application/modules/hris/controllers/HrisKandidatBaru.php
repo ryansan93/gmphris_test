@@ -408,6 +408,7 @@ class HrisKandidatBaru extends Public_Controller {
 
     
     public function generate_form_karyawan_baru(){
+        
         $id_data = $_POST['id_data'];
         $list         = $this->get_data_form();
 
