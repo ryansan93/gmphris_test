@@ -214,7 +214,7 @@ let up ={
 
     update: () => {
 
-        let picker = $('input[name="tgl_usulan"]').data('DateTimePicker');
+        let picker = $('#tgl_usulan').data('DateTimePicker');
 
         let tgl_usulan = ''; 
         if (picker && picker.date()) {

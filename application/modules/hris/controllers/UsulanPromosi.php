@@ -257,12 +257,16 @@ class UsulanPromosi extends Public_Controller {
         $this->add_external_js(array(
             "assets/jquery/easy-autocomplete/jquery.easy-autocomplete.min.js",
             "assets/select2/js/select2.min.js",
+            "assets/toastr/js/toastr.js",
+            "assets/toastr/js/toastr.min.js",
             "assets/hris/usulan_promosi/js/usulan_promosi.js",
         ));
         $this->add_external_css(array(
             "assets/jquery/easy-autocomplete/easy-autocomplete.min.css",
             "assets/jquery/easy-autocomplete/easy-autocomplete.themes.min.css",
             "assets/select2/css/select2.min.css",
+            "assets/toastr/css/toastr.css",
+            "assets/toastr/css/toastr.min.css",
             "assets/hris/usulan_promosi/css/usulan_promosi.css",
         ));
 
@@ -274,6 +278,7 @@ class UsulanPromosi extends Public_Controller {
             'jenis' => 'EDIT',
             'data'  => $_GET['kode'],
         ];
+        
         $content['data_edit']       = $this->get_list_data($need)[0];
         $content['karyawan']        = $this->get_list_karyawan();
         $content['jabatan']         =  $m_conf->hydrateRaw("select * from jabatan")->toArray();
@@ -405,6 +410,27 @@ class UsulanPromosi extends Public_Controller {
                         'jabatan'        => $data_mutasi['jabatan_tujuan'],
                     ]);
                 // END KARYAWAN
+
+                
+                // UPDATE LAST KARYAWAN HISTORY 
+                
+                    $m_kh = new \Model\Storage\KaryawanHistory_model();
+
+                    $last_history = $m_kh
+                        ->where('nik', $data_mutasi['karyawan'])
+                        ->orderBy('id', 'desc')
+                        ->first();
+
+                    if ($last_history) {
+                        $last_data = $last_history->toArray();
+
+                        $m_kh->where('id', $last_data['id'])->update([
+                            'tgl_selesai' => date('Y-m-d'),
+                        ]);
+                    }
+
+        
+                // END UPDATE LAST KARYAWAN HISTORY 
 
                 // KARYAWAN HISTORY 
                     $m_karyawan_history                 = new \Model\Storage\KaryawanHistory_model();
