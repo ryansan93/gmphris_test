@@ -81,6 +81,23 @@ class Home extends Public_Controller
 				$notif[$url]['jenis'] = 'window.open';
 			}
 		}
+
+		$url = 'hris/UsulanPromosi';
+		$akses = hakAkses('/'.$url);
+
+		if ( !empty($akses['a_ack']) && $akses['a_ack'] == 1 ) {
+			// $status = getStatus('submit');
+
+			$m_um    = new \Model\Storage\HrisUsulanMutasi_model();
+			$data = $m_um->notifData();
+			// echo '<pre>';print_r($data);die;
+
+			if ( $data ) {
+				$notif[$url] = $this->mappingNotif($data, $url, 'HRIS - Usulan Promosi');
+				$notif[$url]['link'] = $url;
+				$notif[$url]['jenis'] = 'window.open';
+			}
+		}
 		// END - HRD
 
         return $notif;

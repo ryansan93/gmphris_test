@@ -21,12 +21,16 @@ class UsulanPromosi extends Public_Controller {
             $this->add_external_js(array(
                 "assets/jquery/easy-autocomplete/jquery.easy-autocomplete.min.js",
                 "assets/select2/js/select2.min.js",
+                "assets/toastr/js/toastr.js",
+                "assets/toastr/js/toastr.min.js",
                 "assets/hris/usulan_promosi/js/usulan_promosi.js",
             ));
             $this->add_external_css(array(
                 "assets/jquery/easy-autocomplete/easy-autocomplete.min.css",
                 "assets/jquery/easy-autocomplete/easy-autocomplete.themes.min.css",
                 "assets/select2/css/select2.min.css",
+                "assets/toastr/css/toastr.css",
+                "assets/toastr/css/toastr.min.css",
                 "assets/hris/usulan_promosi/css/usulan_promosi.css",
             ));
 
@@ -97,6 +101,7 @@ class UsulanPromosi extends Public_Controller {
             $m_db->karyawan         = $params['karyawan'];
             $m_db->jabatan_asal     = $params['jabatan_asal'];
             $m_db->jabatan_tujuan   = $params['jabatan_tujuan'];
+            $m_db->jenis            = 'PROMOSI';
             $m_db->alasan           = $params['alasan'];
 
             // $m_db->tgl_berlaku      = $params['kategori'];
@@ -132,8 +137,13 @@ class UsulanPromosi extends Public_Controller {
 
     public function filter_data(){
 
-        $content['list'] =  $this->get_list_data($_POST['kategori']);
         // cetak_r($_POST, 1);
+         $need = [
+            'jenis' => 'FILTER',
+            'data'  => $_POST,
+        ];
+
+        $content['list'] =  $this->get_list_data($need);
 
         echo $this->load->view($this->pathView . 'v_list', $content, TRUE);
     }
@@ -165,36 +175,67 @@ class UsulanPromosi extends Public_Controller {
 
     }
 
-    public function get_list_data()
+    public function get_list_data($need = null)
     {
+        $m_conf = new \Model\Storage\Conf();
 
-        $m_conf     = new \Model\Storage\Conf();
-        $sql        = " select karyawan.nama as nama_karyawan, pengusul.nama as nama_pengusul, asal.nama as nama_jabatan_asal, tujuan.nama as nama_jabatan_tujuan, hum.*  
-                        from hris_usulan_mutasi hum
-                        INNER JOIN (
-                            SELECT * FROM karyawan WHERE status = 1
-                        ) karyawan ON hum.karyawan  = karyawan.nik
-                        INNER JOIN (
-                            SELECT * FROM karyawan WHERE status = 1
-                        ) pengusul ON hum.pengusul  = pengusul.nik
-                        inner join jabatan asal on hum.jabatan_asal  = asal.kode 
-                        inner join jabatan tujuan on hum.jabatan_tujuan  = tujuan.kode 
-                        order by hum.tanggal desc ";
+        $sql = " SELECT 
+                    karyawan.nama as nama_karyawan, 
+                    pengusul.nama as nama_pengusul, 
+                    asal.nama as nama_jabatan_asal, 
+                    tujuan.nama as nama_jabatan_tujuan, 
+                    hum.*  
+                FROM hris_usulan_mutasi hum
+                INNER JOIN karyawan ON hum.karyawan = karyawan.nik AND karyawan.status = 1
+                INNER JOIN karyawan pengusul ON hum.pengusul = pengusul.nik AND pengusul.status = 1
+                INNER JOIN jabatan asal ON hum.jabatan_asal = asal.kode 
+                INNER JOIN jabatan tujuan ON hum.jabatan_tujuan = tujuan.kode ";
 
-        $d_conf     = $m_conf->hydrateRaw( $sql );
+        $jenis     = $need['jenis'] ?? null;
+        $dataNeed  = $need['data'] ?? null;
 
-        $data       = null;
-        if ( $d_conf->count() > 0 ) {
-            $data = $d_conf->toArray();
+        $where = [];
+
+        if (($jenis == 'DETAIL' || $jenis == 'EDIT') && !empty($dataNeed)) {
+            $where[] = "hum.kode = '".addslashes($dataNeed)."'";
         }
 
-        return $data;
+        if ($jenis == 'FILTER' && is_array($dataNeed)) {
+            $tgl_awal  = $dataNeed['tgl_awal'] ?? null;
+            $tgl_akhir = $dataNeed['tgl_akhir'] ?? null;
+            $jabatan   = $dataNeed['jabatan_usulan'] ?? null;
 
+            if ($tgl_awal && $tgl_akhir) {
+                $where[] = "hum.tanggal BETWEEN '".addslashes($tgl_awal)."' AND '".addslashes($tgl_akhir)."'";
+            }
+
+            if ($jabatan) {
+                $where[] = "hum.jabatan_tujuan = '".addslashes($jabatan)."'";
+            }
+        }
+
+        if (!empty($where)) {
+            $sql .= " WHERE " . implode(' AND ', $where);
+        }
+
+        $sql .= " ORDER BY hum.kode DESC";
+
+        // cetak_r($sql, 1);
+
+        $d_conf = $m_conf->hydrateRaw($sql);
+
+        return $d_conf->count() > 0 ? $d_conf->toArray() : [];
     }
 
     public function show_detail()
     {
-        $data_detail = $this->get_list_data();
+        $need = [
+            'jenis' => 'DETAIL',
+            'data'  => $_POST['kode'],
+        ];
+        // cetak_r($need, 1);
+
+        $data_detail = $this->get_list_data($need);
         $kode = $_POST['kode'] ?? null;
 
         $filtered = array_filter($data_detail, function ($row) use ($kode) {
@@ -205,9 +246,191 @@ class UsulanPromosi extends Public_Controller {
 
         $content['data_detail'] = $result[0];
 
-        // cetak_r($result, 1);
+        
         echo $this->load->view($this->pathView . 'v_detail', $content, TRUE);
 
+    }
+
+    public function edit_data()
+    {
+
+        $this->add_external_js(array(
+            "assets/jquery/easy-autocomplete/jquery.easy-autocomplete.min.js",
+            "assets/select2/js/select2.min.js",
+            "assets/hris/usulan_promosi/js/usulan_promosi.js",
+        ));
+        $this->add_external_css(array(
+            "assets/jquery/easy-autocomplete/easy-autocomplete.min.css",
+            "assets/jquery/easy-autocomplete/easy-autocomplete.themes.min.css",
+            "assets/select2/css/select2.min.css",
+            "assets/hris/usulan_promosi/css/usulan_promosi.css",
+        ));
+
+        $m_conf                     = new \Model\Storage\Conf();
+
+        $data                       = $this->includes;
+
+        $need = [
+            'jenis' => 'EDIT',
+            'data'  => $_GET['kode'],
+        ];
+        $content['data_edit']       = $this->get_list_data($need)[0];
+        $content['karyawan']        = $this->get_list_karyawan();
+        $content['jabatan']         =  $m_conf->hydrateRaw("select * from jabatan")->toArray();
+
+        // cetak_r($content['data_edit'], 1);
+
+
+          // Load Indexx
+        $data['title_menu']     = 'HRIS - Usulan Promosi';
+        $data['view'] = $this->load->view($this->pathView . 'v_edit_data', $content, TRUE);
+        $this->load->view($this->template, $data);
+        
+
+    }
+
+    public function update()
+    {
+        // cetak_r($_POST, 1);
+
+        $params = $_POST;
+
+        try {
+            $kode_usulan =  $params['kode'];
+
+            $m_db     = new \Model\Storage\HrisUsulanMutasi_model();
+
+            $d_db = $m_db->where('kode', $kode_usulan)->first();
+            if (!$d_db) {
+                throw new \Exception("Data form tidak ditemukan.");
+            }
+
+            $m_db->where('kode', $kode_usulan)->update([
+                'tanggal'           => $params['tgl_usulan'],
+                'pengusul'          => $params['pengusul'],
+                'karyawan'          => $params['karyawan'],
+                'jabatan_asal'      => $params['jabatan_asal'],
+                'jabatan_tujuan'    => $params['jabatan_tujuan'],
+                'alasan'            => $params['alasan'],
+            ]);
+
+            $deskripsi_log = 'di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];
+            Modules::run('base/event/update', $m_db, $deskripsi_log, null, $kode_usulan, $m_db);
+
+            $this->result['status'] = 1;
+            $this->result['message'] = 'Data berhasil di update.';
+
+        } catch (Exception $e) {
+
+            $this->result['status'] = 0;
+            $this->result['message'] = $e->getMessage();
+
+        }
+
+        display_json( $this->result );
+
+    }
+
+
+    public function delete()
+    {
+        $params = $_POST;
+        // cetak_r($params, 1);
+        $kode   = $params['kode'];
+
+        $m_db     = new \Model\Storage\HrisUsulanMutasi_model();
+
+        try {
+
+            $m_db->where('kode', $kode)->delete();
+
+            $deskripsi_log = 'di-hapus oleh ' . $this->userdata['detail_user']['nama_detuser'];
+            Modules::run('base/event/delete', $m_db, $deskripsi_log, null, $kode, $m_db);
+
+
+            $this->result['status'] = 1;
+            $this->result['message'] = 'Data berhasil di hapus.';
+
+        } catch (\Exception $e) {
+            $this->result['status'] = 0;
+            $this->result['message'] = $e->getMessage();
+        }
+
+        display_json($this->result);
+    }
+
+    public function keputusan()
+    {
+        $params = $_POST;
+
+        // cetak_r($params, 1);
+
+        try {
+            $kode_usulan = $params['kode'] ?? null;
+
+            if (!$kode_usulan) {
+                throw new \Exception("Kode usulan tidak ditemukan.");
+            }
+
+            $m_db = new \Model\Storage\HrisUsulanMutasi_model();
+
+            $d_db = $m_db->where('kode', $kode_usulan)->first();
+            $data_mutasi = $d_db->toArray();
+
+            // cetak_r($data_mutasi, 1);
+
+            if (!$d_db) {
+                throw new \Exception("Data form tidak ditemukan.");
+            }
+
+            $keterangan = null;
+
+            if (in_array($params['keputusan'] ?? null, [4, 5])) {
+                $keterangan = $params['keterangan'] ?? null;
+            }
+
+            $m_db->where('kode', $kode_usulan)->update([
+                'status'        => $params['keputusan'],
+                'alasan_reject' => $keterangan,
+                'tgl_berlaku'   => !empty($params['tgl_berlaku']) ? $params['tgl_berlaku'] : null ,
+            ]);
+
+            
+            
+            if($params['keputusan'] == 3)
+            {
+                // KARYAWAN
+                    $m_karyawan = new \Model\Storage\Karyawan_model();
+                    $m_karyawan->where('nik', $data_mutasi['karyawan'])->update([
+                        'jabatan'        => $data_mutasi['jabatan_tujuan'],
+                    ]);
+                // END KARYAWAN
+
+                // KARYAWAN HISTORY 
+                    $m_karyawan_history                 = new \Model\Storage\KaryawanHistory_model();
+                    $m_karyawan_history->nik            = $data_mutasi['karyawan'];
+                    $m_karyawan_history->jabatan        = $data_mutasi['jabatan_tujuan'];
+                    $m_karyawan_history->tgl_mulai      = $params['tgl_berlaku'] ?? null;
+                    $m_karyawan_history->tgl_selesai    = null;
+                    $m_karyawan_history->save();
+                // END KARYAWAN HISTORY 
+
+            }
+            
+            $deskripsi_log = 'di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];
+            Modules::run('base/event/update', $d_db, $deskripsi_log, null, $kode_usulan, $d_db);
+
+            $this->result['status']  = 1;
+            $this->result['message'] = 'Data berhasil di update.';
+
+        } catch (Exception $e) {
+
+            $this->result['status']  = 0;
+            $this->result['message'] = $e->getMessage();
+
+        }
+
+        display_json($this->result);
     }
 
 

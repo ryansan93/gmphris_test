@@ -49,16 +49,21 @@
             <!-- Jabatan -->
             <div class="filter-full">
                 <label>Jabatan Yang Diusulkan</label>
-                <select class="select2 form-control"></select>
+                <select class="select2 form-control jabatan_usulan">
+                    <option selected value="">-- Pilih Jabatan --</option>
+                    <?php foreach($jabatan as $j){ ?>
+                        <option value="<?php echo $j['kode'] ?>"><?php echo $j['nama'] ?></option>
+                    <?php } ?>
+                </select>
             </div>
 
             <!-- Button -->
             <div class="filter-actions">
-                <button class="btn btn-primary" onclick="hf.filter_data(this, event)">
+                <button class="btn btn-primary" onclick="up.filter_data(this, event)">
                     <i class="fa fa-search" style="margin-right: 10px;"></i> Filter
                 </button>
 
-                <button class="btn btn-primary" onclick="hf.changeTabActive()">
+                <button class="btn btn-primary" onclick="up.changeTabActive()">
                     <i class="fa fa-plus" style="margin-right: 10px;"></i> Add Data
                 </button>
             </div>
