@@ -34,7 +34,17 @@
 
                     <td class="text-center"><?php echo $status_map[$l['status']] ?? '-' ?></td>
                     <td class="text-center">
-                        <button class="btn btn-secondary" status="<?php echo $l['status']?>" id_data="<?php echo $l['kode'] ?>" onclick="up.show_detail(this, event)" > <i class="fa fa-file"></i></button>
+                        <?php 
+                            $key = "secretkey";
+                            $plaintext = $l['kode'];
+                            $encrypted = urlencode( openssl_encrypt($plaintext, 'AES-128-ECB', $key) );
+                        ?>
+
+                        <button class="btn btn-secondary" status="<?= $l['status'] ?>" id_data="<?= $l['kode'] ?>" onclick="up.show_detail(this, event)"> <i class="fa fa-file"></i></button>
+
+                        <?php if ($l['status'] == 2 || $l['status'] == 3 ){?>
+                            <button class="btn btn-info" onclick="window.open('hris/UsulanPromosi/print_preview?kode=<?= $encrypted ?>','_blank')"><i class="fa fa-print"></i></button>
+                        <?php } ?>
                     </td>
                 </tr>
             <?php } ?>

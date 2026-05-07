@@ -43,6 +43,9 @@ class UsulanPromosi extends Public_Controller {
             $content['jabatan']         =  $m_conf->hydrateRaw("select * from jabatan")->toArray();
 
             // cetak_r($content['jabatan'],1);
+
+            $url                     = 'hris/UsulanPromosi';
+		    $content['akses']        = $akses = hakAkses('/'.$url);
            
 
             // Load Indexx
@@ -233,7 +236,7 @@ class UsulanPromosi extends Public_Controller {
             'jenis' => 'DETAIL',
             'data'  => $_POST['kode'],
         ];
-        // cetak_r($need, 1);
+        
 
         $data_detail = $this->get_list_data($need);
         $kode = $_POST['kode'] ?? null;
@@ -245,6 +248,10 @@ class UsulanPromosi extends Public_Controller {
         $result = array_values($filtered); 
 
         $content['data_detail'] = $result[0];
+        $url                    = 'hris/UsulanPromosi';
+		$content['akses']        = $akses = hakAkses('/'.$url);
+
+        // cetak_r($content['akses'] , 1);
 
         
         echo $this->load->view($this->pathView . 'v_detail', $content, TRUE);
@@ -459,7 +466,82 @@ class UsulanPromosi extends Public_Controller {
         display_json($this->result);
     }
 
+     public function print_preview() {        
+  
+        $key = "secretkey";
 
+        if (!isset($_GET['kode']) || empty($_GET['kode'])) {
+            show_error('ID tidak ditemukan', 400);
+        }
+
+        $kode = $_GET['kode'];
+        $kode = str_replace(' ', '+', $kode);
+
+        $decrypted = openssl_decrypt($kode, "AES-128-ECB", $key);
+        // cetak_r($decrypted, 1);SSSSS
+
+        $need = [
+            'jenis' => 'DETAIL',
+            'data'  => $decrypted,
+        ];
+
+        $content['data'] =  $this->get_list_data($need)[0];
+
+        // cetak_r($akses,1);
+
+        // $content['unit'] =  $this->get_unit();
+
+
+        $res_view_html = $this->load->view($this->pathView.'v_export_pdf', $content, true);
+
+        echo $res_view_html;
+    }
+
+    public function exportPdf()
+    {
+        $params = $this->input->post('params');
+
+        try {
+            $_no_km = $params['kode'];
+            
+            $kode = exDecrypt( $_no_km );
+
+            $m_km = new \Model\Storage\Km_model();
+            $d_km = $m_km->getKmCetak( $kode );
+
+            $struktur = "";
+            $text = "";
+            foreach ($d_km as $k_km => $v_km) {
+                $idx = 1;
+                foreach ($v_km as $key => $value) {
+                    $struktur .= '"'.$key.'"';
+                    $text .= '"'.$value.'"';
+                    if ( $idx < count($v_km) ) {
+                        $struktur .= ',';
+                        $text .= ',';
+                    }
+
+                    $idx++;
+                }
+
+                $text .= "\n";
+            }
+
+            $content = $struktur."\n".$text;
+            $fp = fopen("cetak/ckmcet.TXT","wb");
+            fwrite($fp,$content);
+            fclose($fp);
+
+            system("cmd /c C:/xampp_php7/htdocs/sistem_udlancar/copy_file.bat");
+
+            $this->result['status'] = 1;
+            // $this->result['content'] = array('url' => $path);
+        } catch (Exception $e) {
+            $this->result['message'] = $e->getMessage();
+        }
+
+        display_json( $this->result );
+    }
    
 
 }

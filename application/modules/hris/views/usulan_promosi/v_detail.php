@@ -57,10 +57,6 @@
 
             </div>                                     
         </div>
-
-
-       
-
         
 
         <div style="display:flex; flex-direction:column; gap:10px;">
@@ -84,21 +80,20 @@
         ?>
 
         <?php if ($status == 1) { ?>
-            <button kode="<?php echo $kode; ?>" onclick="up.keputusan(this, 2)" class="btn btn-primary w-100">
-                Acknowledge
-            </button>
-            <button kode="<?php echo $kode; ?>" onclick="up.keputusan(this, 4)" class="btn btn-danger w-100">
-                Reject
-            </button>
+            <?php if ($akses['a_ack'] == 1) { ?>
+                <button kode="<?php echo $kode; ?>" onclick="up.keputusan(this, 2)" class="btn btn-primary w-100"> Acknowledge </button>
+                <button kode="<?php echo $kode; ?>" onclick="up.keputusan(this, 4)" class="btn btn-danger w-100"> Reject </button>
+            <?php } ?>
         <?php } else if($status == 2) { ?>
-            <button kode="<?php echo $kode; ?>" onclick="up.keputusan(this, 3)" class="btn btn-success w-100">
-                Approve
-            </button>
-            <button kode="<?php echo $kode; ?>" onclick="up.keputusan(this, 5)" class="btn btn-danger w-100">
-                Reject
-            </button>
+            <?php if ($akses['a_approve'] == 1) { ?>
+                <button kode="<?php echo $kode; ?>" onclick="up.keputusan(this, 3)" class="btn btn-success w-100"> Approve </button>
+                <button kode="<?php echo $kode; ?>" onclick="up.keputusan(this, 5)" class="btn btn-danger w-100"> Reject </button>
+            <?php } ?>
         <?php } ?>
     </div>
+
+    <div class="is_delete" config="<?php echo $akses['a_delete'] ?>"></div>
+    <div class="is_edit" config="<?php echo $akses['a_edit'] ?>"></div>
 
 
     

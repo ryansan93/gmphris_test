@@ -177,37 +177,53 @@ let up ={
                     tutup: {
                         label: '<i class="fa fa-close"></i> Tutup',
                         className: 'btn-secondary',
-                        callback: function () {
-                            console.log('Batal diklik');
-                        }
                     }
                 };
 
-                if (params.status == 1) {
-                    btns.edit = {
-                        label: '<i class="fa fa-edit"></i> Edit',
-                        className: 'btn-warning',
-                        callback: function () {
-                            window.location.href = "hris/UsulanPromosi/edit_data?kode=" + params.kode;
-                        }
-                    };
-
-                    btns.delete = {
-                        label: '<i class="fa fa-trash"></i> Delete',
-                        className: 'btn-danger',
-                        callback: function () {
-                            up.delete_data(params.kode);
-                        }
-                    };
-                }
-               
-                bootbox.dialog({
+                let dialog = bootbox.dialog({
                     title: "Data Detail",
                     message: html,
                     size: 'large',
                     buttons: btns,
                 });
-               
+
+                dialog.on('shown.bs.modal', function () {
+
+                    let is_delete = dialog.find('.is_delete').attr('config');
+                    let is_edit   = dialog.find('.is_edit').attr('config');
+
+                    // console.log(is_delete)
+                    
+                    let footer = dialog.find('.modal-footer');
+
+                    if (params.status == 1 && is_edit == 1) {
+
+                        footer.prepend(`
+                            <button type="button" class="btn btn-warning btn-edit">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                        `);
+
+                        dialog.find('.btn-edit').on('click', function () {
+                            window.location.href =
+                                "hris/UsulanPromosi/edit_attr?kode=" + params.kode;
+                        });
+                    }
+
+                    if (params.status == 1 && is_delete == 1) {
+
+                        footer.prepend(`
+                            <button type="button" class="btn btn-danger btn-delete">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        `);
+
+                        dialog.find('.btn-delete').on('click', function () {
+                            up.delete_data(params.kode);
+                        });
+                    }
+
+                });
             },
         });
     },
