@@ -38,10 +38,8 @@ class HrisKandidatBaru extends Public_Controller {
             $content['akses']           = $this->hakAkses;
             $content['title_panel']     = 'HRIS - Kadidat Baru';
             $content['status']          = $this->get_status_karyawan();
-            $content['usulan']          = $this->get_data_usulan();
 
-            // cetak_r($content['usulan'], 1);
-          
+            $content['usulan']          = $this->get_data_usulan();
 
             // Load Indexx
             $data['title_menu']     = 'HRIS - Kadidat Baru';
@@ -67,7 +65,30 @@ class HrisKandidatBaru extends Public_Controller {
                                 )
                             ) k ON hukb.nama_pengusul = k.nik
 						where hukb.status = 6 ";
-        $result     = $m_conf->hydrateRaw( $sql )->toArray();
+        $result_usulan     = $m_conf->hydrateRaw( $sql )->toArray();
+
+        $sql_usulan_terpenuhi = " SELECT 
+                                hukb.id,
+                                hukb.jumlah,
+                                COUNT(hdk.id) AS total_diterima
+                            FROM hris_usulan_karyawan_baru hukb
+                            JOIN hris_data_kandidat hdk 
+                                ON hdk.usulan_id = hukb.id
+                                AND hdk.status_kandidat = 2
+                            GROUP BY hukb.id, hukb.jumlah
+                            HAVING COUNT(hdk.id) >= hukb.jumlah ";
+
+        $result_terpenuhi     = $m_conf->hydrateRaw( $sql_usulan_terpenuhi )->toArray();
+
+        $id_terpenuhi = array_column($result_terpenuhi, 'id');
+
+        $result = array_filter($result_usulan, function ($item) use ($id_terpenuhi) {
+            return !in_array($item['id'], $id_terpenuhi);
+        });
+
+        $result = array_values($result);
+        
+        // cetak_r($result, 1);
 
         return $result;
     }
