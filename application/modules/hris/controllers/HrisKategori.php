@@ -33,6 +33,8 @@ class HrisKategori extends Public_Controller {
             $data                       = $this->includes;
             $content['akses']           = $this->hakAkses;
             $content['title_panel']     = 'HRIS - Master Kategori';
+
+            // cetak_r($content['akses'], 1);
           
 
             // Load Indexx

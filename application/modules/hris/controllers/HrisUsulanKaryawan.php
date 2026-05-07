@@ -481,6 +481,7 @@ class HrisUsulanKaryawan extends Public_Controller {
                 $d_ukaryawan = $d_ukaryawan->toArray();
 
                 foreach ($d_ukaryawan as $k_ukaryawan => $v_ukaryawan) {
+                    
                     if ( stristr($v_ukaryawan['unit'], 'all') === false ) {
                         $m_wil = new \Model\Storage\Wilayah_model();
                         $d_wil = $m_wil->where('id', $v_ukaryawan['unit'])->first();

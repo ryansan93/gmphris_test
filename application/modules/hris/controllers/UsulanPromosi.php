@@ -42,10 +42,7 @@ class UsulanPromosi extends Public_Controller {
             $content['karyawan']        = $this->get_list_karyawan();
             $content['jabatan']         =  $m_conf->hydrateRaw("select * from jabatan")->toArray();
 
-            // cetak_r($content['jabatan'],1);
-
-            $url                     = 'hris/UsulanPromosi';
-		    $content['akses']        = $akses = hakAkses('/'.$url);
+    
            
 
             // Load Indexx
@@ -488,9 +485,6 @@ class UsulanPromosi extends Public_Controller {
         $content['data'] =  $this->get_list_data($need)[0];
 
         // cetak_r($akses,1);
-
-        // $content['unit'] =  $this->get_unit();
-
 
         $res_view_html = $this->load->view($this->pathView.'v_export_pdf', $content, true);
 

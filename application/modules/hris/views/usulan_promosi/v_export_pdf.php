@@ -348,12 +348,20 @@
 									</th>
 								</tr>
 
-
 								<tr>
 									<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Alasan </span></th>
 									<th class="text-left" style="width: 10px;">:</th>
 									<th class="text-left" style="width: 5%;"><?php echo $data['alasan']?></th>
 								</tr>
+
+								<?php if ( $data['alasan_reject'] != null ) { ?>
+									<tr>
+										<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Alasan Reject</span></th>
+										<th class="text-left" style="width: 10px;">:</th>
+										<th class="text-left" style="width: 5%;"><?php echo $data['alasan_reject']?></th>
+									</tr>
+								<?php } ?>
+
 								<tr>
 									<td colspan="3">&nbsp;</td>
 								</tr>

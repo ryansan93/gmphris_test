@@ -53,80 +53,83 @@
 
 <div id="action" class="tab-pane fade tab-detail" role="tabpanel" style="padding-top: 10px;">
 
-    <div class="panel panel-default">
-        <div class="panel-heading"><span style="font-size:17px;">Tambah Data</span></div>
-        <div class="panel-body">
+    <?php if ($akses['a_submit'] == 1) { ?>
+        <div class="panel panel-default">
+            <div class="panel-heading"><span style="font-size:17px;">Tambah Data</span></div>
+            <div class="panel-body">
 
-            <div style="display:flex; flex-direction:row; gap:50px;">
-                <div style="display:flex; flex-direction:column; gap:10px; width:100%">
+                <div style="display:flex; flex-direction:row; gap:50px;">
+                    <div style="display:flex; flex-direction:column; gap:10px; width:100%">
 
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <div style="display:flex; flex-direction:column; gap:5px; flex:1; min-width:200px;">
-                            <span>Yang Mengusulkan</span>
-                            <select class="select2 form form-control mengusulkan" onchange="hf.get_jabatan(this, event)">
-                                <?php foreach($karyawan as $k){ ?>
-                                    <option jabatan="<?php echo $k['jabatan']?>" value="<?php echo $k['nik']?>"> <?php echo ucwords(strtolower($k['nama'])) . ' - ' .  ucwords(strtolower($k['jabatan']))  ?> </option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                        
-                        <div style="display:flex; flex-direction:column; gap:5px; flex:1; min-width:200px;">
-                            <span>Tanggal Mengusulkan</span>
-                           <div class="input-group date datetimepicker" id="tgl_pengusulan">
-                                <input type="text" name="tgl_pengusulan" class="form-control text-center" placeholder="Tanggal Mengusulan" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <div style="display:flex; flex-direction:column; gap:5px; flex:1; min-width:200px;">
+                                <span>Yang Mengusulkan</span>
+                                <select class="select2 form form-control mengusulkan" onchange="hf.get_jabatan(this, event)">
+                                    <?php foreach($karyawan as $k){ ?>
+                                        <option jabatan="<?php echo $k['jabatan']?>" value="<?php echo $k['nik']?>"> <?php echo ucwords(strtolower($k['nama'])) . ' - ' .  ucwords(strtolower($k['jabatan']))  ?> </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            
+                            <div style="display:flex; flex-direction:column; gap:5px; flex:1; min-width:200px;">
+                                <span>Tanggal Mengusulkan</span>
+                            <div class="input-group date datetimepicker" id="tgl_pengusulan">
+                                    <input type="text" name="tgl_pengusulan" class="form-control text-center" placeholder="Tanggal Mengusulan" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        
-                        <div style="display:flex; flex-direction:column; gap:5px; flex:1; min-width:200px;">
-                            <span>Posisi</span>
-                            <select class="select2 form form-control posisi">
-                                <?php foreach($posisi as $p){ ?>
-                                    <option value="<?php echo $p['kode_posisi']?>"><?php echo $p['kode_posisi'] . ' - ' . $p['nama_posisi']?></option>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            
+                            <div style="display:flex; flex-direction:column; gap:5px; flex:1; min-width:200px;">
+                                <span>Posisi</span>
+                                <select class="select2 form form-control posisi">
+                                    <?php foreach($posisi as $p){ ?>
+                                        <option value="<?php echo $p['kode_posisi']?>"><?php echo $p['kode_posisi'] . ' - ' . $p['nama_posisi']?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                            <div style="display:flex; flex-direction:column; gap:5px; flex:1; min-width:200px;">
+                                <span>Jumlah</span>
+                                <input type="number" class="form form-control jumlah">
+                            </div>
+
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:5px;">
+                            <span>Unit</span>
+                            <select class="select2 form form-control unit">
+                                <?php foreach($unit as $u){ ?>
+                                    <option value="<?php echo $u['kode']?>"><?php echo ucwords($u['nama'])?></option>  
                                 <?php } ?>
                             </select>
                         </div>
 
-                        <div style="display:flex; flex-direction:column; gap:5px; flex:1; min-width:200px;">
-                            <span>Jumlah</span>
-                            <input type="number" class="form form-control jumlah">
+                        <div style="display:flex; flex-direction:column; gap:5px;">
+                            <span>Alasan</span>
+                            <textarea rows="3" class="form form-control alasan"></textarea>
                         </div>
 
                     </div>
-
-                    <div style="display:flex; flex-direction:column; gap:5px;">
-                        <span>Unit</span>
-                        <select class="select2 form form-control unit">
-                            <?php foreach($unit as $u){ ?>
-                                <option value="<?php echo $u['kode']?>"><?php echo ucwords($u['nama'])?></option>  
-                            <?php } ?>
-                        </select>
-                    </div>
-
-                    <div style="display:flex; flex-direction:column; gap:5px;">
-                        <span>Alasan</span>
-                        <textarea rows="3" class="form form-control alasan"></textarea>
-                    </div>
-
                 </div>
-            </div>
-            <br>
+                <br>
 
-            <br>
-            <div class="pull-right">
-                <button class="btn btn-secondary " onclick="window.location.href='master/HrisForm' "> <i class="fa fa-angle-left" style="margin-right:10px;" aria-hidden="true"></i>  Back</button>
-                <button class="btn btn-primary " onclick="hf.save(this, event)"> <i class="fa fa-floppy-o" style="margin-right:10px;" aria-hidden="true"></i>  Save Data</button>
+                <br>
+                <div class="pull-right">
+                    <button class="btn btn-secondary " onclick="window.location.href='master/HrisForm' "> <i class="fa fa-angle-left" style="margin-right:10px;" aria-hidden="true"></i>  Back</button>
+                    <button class="btn btn-primary " onclick="hf.save(this, event)"> <i class="fa fa-floppy-o" style="margin-right:10px;" aria-hidden="true"></i>  Save Data</button>
+                </div>
+
+            </div>
+
             </div>
 
         </div>
+    <?php } ?>
 
-        </div>
-
-</div>
 </div>
 

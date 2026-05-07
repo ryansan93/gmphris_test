@@ -28,6 +28,7 @@
 
 <div id="action" class="tab-pane fade tab-detail" role="tabpanel" style="padding-top: 10px;">
 
+    <?php if ($akses['a_submit'] == 1) { ?>
     <div class="panel panel-default">
         <div class="panel-heading"><span style="font-size:17px;">Tambah Data</span></div>
         <div class="panel-body">
@@ -69,6 +70,7 @@
 
         </div>
 
-</div>
+    </div>
+    <?php } ?>
 </div>
 

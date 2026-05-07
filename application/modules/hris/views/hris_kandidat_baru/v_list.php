@@ -23,7 +23,7 @@
             <th class="text-center">Document</th>
             <th class="text-center">Link Form</th>
             <th class="text-center">Keputusan</th>
-            <th class="text-center">Action</th>
+            <!-- <th class="text-center">Action</th> -->
         </tr>
     </thead>
     <tbody>
@@ -77,9 +77,9 @@
                             -
                         <?php } ?>
                     </td>
-                    <td class="text-center">
+                    <!-- <td class="text-center">
                         <button class="btn btn-sm btn-secondary" id_data="<?= $l['id_data_karyawan']; ?>" onclick="hf.show_detail(this, event)" >Show Detail</button>
-                    </td>
+                    </td> -->
                 </tr>
             <?php } ?>
         <?php } else { ?>

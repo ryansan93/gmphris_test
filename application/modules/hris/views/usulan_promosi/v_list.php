@@ -42,9 +42,9 @@
 
                         <button class="btn btn-secondary" status="<?= $l['status'] ?>" id_data="<?= $l['kode'] ?>" onclick="up.show_detail(this, event)"> <i class="fa fa-file"></i></button>
 
-                        <?php if ($l['status'] == 2 || $l['status'] == 3 ){?>
+                        <!-- < ?php if ($l['status'] == 2 || $l['status'] == 3 ){?> -->
                             <button class="btn btn-info" onclick="window.open('hris/UsulanPromosi/print_preview?kode=<?= $encrypted ?>','_blank')"><i class="fa fa-print"></i></button>
-                        <?php } ?>
+                        <!-- < ?php } ?> -->
                     </td>
                 </tr>
             <?php } ?>

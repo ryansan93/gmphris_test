@@ -201,7 +201,7 @@ let hf ={
             success : function(html){
                 hideLoading();
 
-                bootbox.dialog({
+                let dialog = bootbox.dialog({
                     title: 'Detail Data', 
                     message: html,
                     size: 'large',
@@ -212,14 +212,14 @@ let hf ={
                         },
                         edit: {
                             label: 'Edit',
-                            className: 'btn-primary',
+                            className: 'btn-edit btn-primary',
                             callback: function () {
                                 hf.edit(params);
                             }
                         },
                         delete: {
                             label: 'Hapus',
-                            className: 'btn-danger',
+                            className: 'btn-delete btn-danger',
                             callback: function () {
   
                                 bootbox.confirm('Yakin mau hapus?', function(result) {
@@ -231,6 +231,22 @@ let hf ={
                         }
                     }
                 });
+
+                dialog.on('shown.bs.modal', function () {
+
+                    let is_delete = dialog.find('.is_delete').attr('config');
+                    let is_edit   = dialog.find('.is_edit').attr('config');
+
+                    // console.log(is_edit)
+                    if ( is_edit != 1) {
+                        dialog.find('.btn-edit').hide();
+                    }
+
+                    if ( is_delete != 1 ) {
+                        dialog.find('.btn-delete').hide();
+                    }
+
+                })
                
             },
         });

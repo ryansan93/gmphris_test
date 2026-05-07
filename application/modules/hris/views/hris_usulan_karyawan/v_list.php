@@ -51,8 +51,14 @@
                         <!-- <button class="btn btn-secondary" onclick="hf.show_detail(this, event);"><i class="fa fa-file"></i>  Show Detail</button> -->
 
                         <?php if( $l['status'] == 1 ){ ?>
-                            <button id="<?php echo $l['id'] ?>" class="btn btn-warning" onclick="hf.edit(this, event)"><i style="margin-right:5px;" class="fa fa-edit" aria-hidden="true"></i> Edit</button>
-                            <button id_data="<?php echo $l['id'] ?>" class="btn btn-danger" onclick="hf.delete(this, event)"><i style="margin-right:5px;" class="fa fa-trash" aria-hidden="true"></i> Hapus</button>
+                            <?php if ($akses['a_edit'] == 1) { ?>
+                                <button id="<?php echo $l['id'] ?>" class="btn btn-warning" onclick="hf.edit(this, event)"><i style="margin-right:5px;" class="fa fa-edit" aria-hidden="true"></i> Edit</button>
+                            <?php } ?>
+
+                            <?php if ($akses['a_delete'] == 1) { ?>
+                                <button id_data="<?php echo $l['id'] ?>" class="btn btn-danger" onclick="hf.delete(this, event)"><i style="margin-right:5px;" class="fa fa-trash" aria-hidden="true"></i> Hapus</button>
+                            <?php } ?>
+
                         <?php } else {?>
                             <span>-</span>
                         <?php } ?>

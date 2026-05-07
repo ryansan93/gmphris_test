@@ -35,7 +35,7 @@ class HrisForm extends Public_Controller {
             $content['title_panel']     = 'HRIS - Hris Form';
             $content['add_kategori']    = $this->getKategori();
 
-            // cetak_r($content['kategori'], 1);
+            // cetak_r($content['akses'], 1);
             $content['kategori']        = $this->getKategori();
 
             // Load Indexx
@@ -202,6 +202,7 @@ class HrisForm extends Public_Controller {
 
     public function show_detail()
     {
+        $content['akses']   = $this->hakAkses;
         $content['header']  = $this->get_list($_POST['id'])[0];
         $content['detail']  = $this->get_list_data_ketegori($_POST['id']);
         // cetak_r($content, 1);
