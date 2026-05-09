@@ -1,6 +1,7 @@
 <table class="table table-bordered">
     <thead>
         <tr>
+            <th class="text-center"  style="white-space:nowrap">Document</th>
             <th class="text-center"  style="white-space:nowrap">Nama Pengusul</th>
             <th class="text-center"  style="white-space:nowrap">Tgl. Pengusulan</th>
             <th class="text-center"  style="white-space:nowrap">Posisi</th>
@@ -12,13 +13,13 @@
     </thead>
     <tbody>
         <?php if (!empty($list)) { ?>
-            <?php 
+            <!-- < ?php 
                 usort($list, function($a, $b) {
                     $order = [1, 2, 3, 4];
 
                     return array_search($a['status'], $order) - array_search($b['status'], $order);
                 });
-            ?>
+            ?> -->
             <?php foreach($list as $l){?>
 
                 <?php 
@@ -50,7 +51,8 @@
                 ?>
 
                 <tr keterangan_ceo="<?php echo $l['keterangan_ceo'] ?>" keterangan_hrd="<?php echo $l['keterangan_hrd'] ?>" encrypted="<?php echo $encrypted = openssl_encrypt($plaintext, "AES-128-ECB", $key); ?>" document="<?php echo $l['document'] ?>" id_data="<?php echo $l['id'] ?>" status_key="<?php echo $l['status'] ?>" status="<?php echo $status ?>" unit="<?php echo $unit[$l['unit']]['nama'] ?>" jumlah="<?php echo $l['jumlah'] ?>" alasan="<?php echo $l['alasan'] ?>" posisi="<?php echo $l['posisi'] ?>" nama_pengusul="<?php echo $l['nama'] ?>" tgl_pengusul="<?php echo tglIndonesia($l['tgl_pengusulan'], '-', ' ') ?>">
-                    <td class="text-center" style="white-space:nowrap"><?php echo $l['nama'] ?></td>
+                    <td class="text-left" style="white-space:nowrap"><?php echo $l['document'] ?></td>
+                    <td class="text-left" style="white-space:nowrap"><?php echo $l['nama'] ?></td>
                     <td class="text-center" style="white-space:nowrap"><?php echo tglIndonesia($l['tgl_pengusulan'], '-', ' ') ?></td>
                     <td class="text-center" style="white-space:nowrap"><?php echo $l['nama_posisi'] ?></td>
                     <td class="text-center" style="white-space:nowrap"><?php echo $l['jumlah'] ?></td>

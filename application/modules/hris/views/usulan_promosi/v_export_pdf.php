@@ -304,6 +304,11 @@
 									<th class="text-left" style="width: 78%;"><?php echo ucwords(strtolower($data['nama_pengusul']))?></th>
 								</tr>
 								<tr>
+									<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Jabatan Pengusul </span></th>
+									<th class="text-left" style="width: 10px;">:</th>
+									<th class="text-left" style="width: 5%;"><?php echo $data['nama_jabatan_pengusul']?></th>
+								</tr>
+								<tr>
 									<th class="text-left" style="width: 20%;"><span style="margin-left:15px;" >Nama Karyawan </span></th>
 									<th class="text-left" style="width: 2%;">:</th>
 									<th class="text-left" style="width: 78%;"><?php echo ucwords(strtolower($data['nama_karyawan']))?> </th>
@@ -313,6 +318,60 @@
 									<th class="text-left" style="width: 10px;">:</th>
 									<th class="text-left" style="width: 5%;"><?php echo $data['jenis']?></th>
 								</tr>
+
+								<!-- <tr>
+									<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Unit </span></th>
+									<th class="text-left" style="width: 10px;">:</th>
+									<th class="text-left" style="width: 5%;">
+										< ?php
+											$list_unit = implode(', ', array_column($wilayah_asal['unit'], 'nama'));
+										?>
+
+										<div style="display:flex; flex-direction:row;"> 
+											<div style="width:210px">
+												< ?php echo $list_unit;?>
+											</div>
+	
+											< ?php 	if ($nama_unit != $list_unit) { ?>
+												<div style="width:100px">
+													>>
+												</div>
+											
+												<div style="width:200px">
+													< ?php echo $nama_unit;?>
+												</div>
+											< ?php } ?>
+										</div>
+
+										
+									</th>
+								</tr> -->
+
+								<!-- <tr>
+									<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Perwakilan </span></th>
+									<th class="text-left" style="width: 10px;">:</th>
+									<th class="text-left" style="width: 5%;">
+										< ?php
+											$list_wilayah = implode(', ', array_column($wilayah_asal['wilayah'], 'nama'));
+										?>
+
+										<div style="display:flex; flex-direction:row;"> 
+											<div style="width:210px">
+												< ?php echo $list_wilayah;?>
+											</div>
+	
+											< ?php 	if ($nama_wilayah != $list_wilayah) { ?>
+												<div style="width:100px">
+													>>
+												</div>
+											
+												<div style="width:200px">
+													< ?php echo $nama_wilayah;?>
+												</div>
+											< ?php } ?>
+										</div>
+									</th>
+								</tr> -->
 
 								<tr>
 									<th class="text-center" colspan="3">
@@ -329,18 +388,75 @@
 												</div>
 											</div>
 
-											<div style="display:flex; position:relative; justify-content:center; ">
-												<div style="border:1px solid black; padding:5px; flex:1; text-align:center;">
+											<div style="border:1px solid black; display:flex; position:relative; justify-content:center; height:50px; align-items:center;">
+												<div style=" padding:5px; flex:1; text-align:center;">
 													<?php echo $data['nama_jabatan_asal']?>
 												</div>
-
-												<div style="position:absolute; background-color:white; border:1px solid black; padding:5px; width:40px; text-align:center;">
+												<div style="position:absolute; background-color:white; border:1px solid black; padding:5px; height:40px; width:40px; display:flex; justify-content:center; align-items:center;">
 													>>
 												</div>
-
-												<div style="border:1px solid black; padding:5px; flex:1; text-align:center;">
+												<div style=" padding:5px; flex:1; text-align:center;">
 													<?php echo $data['nama_jabatan_tujuan']?>
 												</div>
+											</div>
+											<div style="display:flex; justify-content:center; align-items:stretch; height:auto;">
+
+												<?php
+													$list_unit     = implode(', ', array_column($wilayah_asal['unit'], 'nama'));
+													$list_wilayah  = implode(', ', array_column($wilayah_asal['wilayah'], 'nama'));
+												?>
+
+												<div style="border:1px solid black; padding:5px; flex:1; text-align:left; display:flex; flex-direction:column; justify-content:center;">
+
+													<div style="display:flex; flex-direction:row;">
+														<span style="width:100px;">Perwakilan</span>
+														<span style="width:20px;">:</span>
+														<span><?php echo $list_wilayah;?></span>
+													</div>
+
+													<div style="display:flex; flex-direction:row;">
+														<span style="width:100px;">Unit</span>
+														<span style="width:20px;">:</span>
+														<span><?php echo $list_unit;?></span>
+													</div>
+													
+												</div>
+
+												<div style="border:1px solid black; padding:5px; flex:1; text-align:left; display:flex; flex-direction:column; justify-content:center;">
+
+													<?php if($data['perwakilan_tujuan'] != 'all') {?>
+														<div style="display:flex; flex-direction:row;">
+															<span style="width:100px;">Perwakilan</span>
+															<span style="width:20px;">:</span>
+															<span><?php echo $nama_wilayah;?></span>
+														</div>
+													<?php } else { ?>
+														<div style="display:flex; flex-direction:row;">
+															<span style="width:100px;">Perwakilan</span>
+															<span style="width:20px;">:</span>
+															<span>all</span>
+														</div>
+
+													<?php } ?>
+
+													<?php if($data['unit_tujuan'] != 'all') {?>
+														<!-- < ?php if ($nama_unit != $list_unit) { ?> -->
+															<div style="display:flex; flex-direction:row;">
+																<span style="width:100px;">Unit</span>
+																<span style="width:20px;">:</span>
+																<span><?php echo $nama_unit;?></span>
+															</div>
+														<!-- < ? php } ?> -->
+													<?php } else { ?>
+															<div style="display:flex; flex-direction:row;">
+																<span style="width:100px;">Unit</span>
+																<span style="width:20px;">:</span>
+																<span>all</span>
+															</div>
+													<?php } ?>
+													
+												</div>
+
 											</div>
 
 										</div>
@@ -361,52 +477,36 @@
 										<th class="text-left" style="width: 5%;"><?php echo $data['alasan_reject']?></th>
 									</tr>
 								<?php } ?>
-
-								<tr>
-									<td colspan="3">&nbsp;</td>
-								</tr>
-								<tr>
-									<th colspan="3" class="text-center">
-										<label for="">Disetujui</label>
-									</th>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										&nbsp;
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										&nbsp;
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										&nbsp;
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center" style="color:green; font-weight:bold;">
-										<?php echo $data['status'] == 3 ? '[ APPROVED ]' : '&nbsp;' ?>
-										<?php echo $data['status'] == 6 ? '[ APPROVED ]' : '&nbsp;' ?>
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										&nbsp;
-									</td>
-								</tr>
-								<tr>
-									<th colspan="3" class="text-center">
-										(............................................)
-									</th>
-								</tr>
 							</tbody>
+						</table>
+						<table class="border-field" style="width: 100%;">
+							<tr style="border:1px solid black; height:100px;">
+								<td style="width: 70%;">
+									<div style="margin-left:15px;">
+										Informasi Usulan
+									</div>
+									<br>
+									<div style="margin-left:15px; display:flex; flex-direction:row">
+										<div style="width:170px;">Tanggal Acknowledge HRD </div>
+										<div style="width:10px;">:</div> 
+										<b> <?php echo !empty($data['tgl_ack'])  ? tglIndonesia($data['tgl_ack'], '-', ' ') . ' Pukul : ' . date("H:i:s", strtotime($data['tgl_ack'])) : '-'; ?></b>
+									</div>
+									<div style="margin-left:15px; display:flex; flex-direction:row">
+										<div style="width:170px;">Tanggal Approve </div>
+										<div style="width:10px;">:</div> 
+										<b> <?php echo !empty($data['tgl_approve'])  ? tglIndonesia($data['tgl_approve'], '-', ' ') . ' Pukul : ' . date("H:i:s", strtotime($data['tgl_approve'])) : '-'; ?></b>
+									</div>
+								</td>
+								<td style="width: 30%; color:green;" class="text-center">
+									<b><?php echo $data['status'] == 3 ? '[ APPROVED ]' : '' ?></b>
+								</td>
+							</tr>
+							<tr style="border:1px solid black;">
+								<td style="width: 70%;"></td>
+								<td style="width: 30%;" class="text-center">
+									<div>(.......................................)</div>
+								</td>
+							</tr>
 						</table>
 					</div>
 				</div>

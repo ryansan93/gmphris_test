@@ -214,6 +214,11 @@ let hf = {
 
                     $(".select2").select2();
 
+                    $(this).find('.select2').select2({
+                        dropdownParent: $(this),
+                        width: '100%'
+                    });
+
                     $('.wilayah').select2();
                     $('.wilayah').next('span.select2').css('width', '100%');
 

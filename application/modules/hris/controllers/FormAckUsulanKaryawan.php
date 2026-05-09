@@ -87,6 +87,8 @@ class FormAckUsulanKaryawan extends Public_Controller {
                 $sql .= " where hukb.status = " . $id;
             }
         }
+
+        $sql .= "  order by hukb.id desc ";
         
         // cetak_r($sql, 1);
 

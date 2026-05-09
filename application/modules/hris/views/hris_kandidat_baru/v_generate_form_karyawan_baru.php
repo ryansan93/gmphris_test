@@ -10,7 +10,7 @@
                 <span>NIK</span>
             </div>
             <div class="col-lg-6">
-                <input type="text" placeholder="NIK Pegawai" class="form-control nik_pegawai" data-required="1">
+                <input type="text" placeholder="NIK Pegawai" class="form-control nik_pegawai" data-required="1" disabled>
             </div>
         </div>
         <div class="form-group d-flex align-items-center">
@@ -34,7 +34,7 @@
                 <span>Atasan</span>
             </div>
             <div class="col-lg-4">
-                <select class="select2 form-control atasan">
+                <select class="select2 atasan">
                     <option value="">-- Pilih Atasan --</option>
                     <?php foreach($atasan as $a){?>
                         <option value="<?php echo $a['id'] ?>"><?php echo $a['nama'] ?></option>
@@ -110,7 +110,7 @@
                 <span>Level</span>
             </div>
             <div class="col-lg-3">
-                <select class="form-control level" data-required="1">
+                <select class="form-control level" data-required="1" disabled>
                     <option value="">-- Pilih Level --</option>
                     <!-- <option value="0">0</option> -->
                     <option <?php echo $jabatan_nama['level'] == 1 ? 'selected' : '' ?> value="1">1</option>

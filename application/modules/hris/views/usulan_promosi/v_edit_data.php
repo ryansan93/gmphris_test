@@ -1,5 +1,5 @@
 
-    <div class="panel panel-default">
+    <div class="panel panel-default edit_page">
         <div class="panel-heading"><span style="font-size:17px;">Edit Data</span></div>
         <div class="panel-body">
 
@@ -27,7 +27,7 @@
                     <select name="" id="" class="select2 pengusul" onchange="up.set_jabatan(this, event, 'pengusul')">
                         <option disabled selected> -- Pilih Karyawan -- </option>
                         <?php foreach ( $karyawan as $k ) {?>
-                            <option jabatan_val="<?php echo $k['jabatan']; ?>" jabatan_text="<?php echo $k['detail_jabatan']['nama']; ?>" <?php echo $data_edit['pengusul'] == $k['nik'] ? 'selected' : '' ?> value="<?php echo $k['nik']; ?>" ><?php echo ucwords(strtolower($k['nama'])) ?></option>
+                            <option id_atasan="<?php echo $k['id']; ?>" jabatan_val="<?php echo $k['jabatan']; ?>" jabatan_text="<?php echo $k['detail_jabatan']['nama']; ?>" <?php echo $data_edit['pengusul'] == $k['nik'] ? 'selected' : '' ?> value="<?php echo $k['nik']; ?>" ><?php echo ucwords(strtolower($k['nama'])) ?></option>
                         <?php }?>
                     </select>
                 </div>
@@ -44,7 +44,7 @@
                     <select name="" id="" class="select2 karyawan" onchange="up.set_jabatan(this, event, 'karyawan')">
                         <option disabled selected> -- Pilih Karyawan -- </option>
                         <?php foreach ( $karyawan as $k ) {?>
-                            <option jabatan_val="<?php echo $k['jabatan']; ?>" jabatan_text="<?php echo $k['detail_jabatan']['nama']; ?>" <?php echo $data_edit['karyawan'] == $k['nik'] ? 'selected' : '' ?> value="<?php echo $k['nik']; ?>" ><?php echo ucwords(strtolower($k['nama'])) ?></option>
+                            <option atasan="<?php echo $k['atasan']; ?>" id_karyawan="<?php echo $k['id']; ?>" jabatan_val="<?php echo $k['jabatan']; ?>" jabatan_text="<?php echo $k['detail_jabatan']['nama']; ?>" level="<?php echo $k['detail_jabatan']['level']; ?>" <?php echo $data_edit['karyawan'] == $k['nik'] ? 'selected' : '' ?> value="<?php echo $k['nik']; ?>" ><?php echo ucwords(strtolower($k['nama'])) ?></option>
                         <?php }?>
                     </select>
                 </div>
@@ -55,15 +55,94 @@
                     <input type="text" class="form form-control jabatan_asal">
                 </div>
 
+                 <div style="display:flex; flex-direction:row;">
+                    <span style="width:200px;">&nbsp;</span>
+                
+                    <div style="display:flex; flex-direction:row; gap:10px; margin-left:6px;">
+                        <div style="display:flex; flex-direction:column;">
+                            <span>Perwakilan</span>
+                                <select disabled class="select2 perwakilan_asal select_multiple" name="perwakilan_asal[]" multiple="multiple" >
+                
+                            </select>
+                        </div>
+                        <div style="display:flex; flex-direction:column;">
+                            <span>Unit</span>
+                                <select disabled class="select2 unit_asal select_multiple" name="unit_asal[]" multiple="multiple" >
+                                
+                            </select>
+                        </div>
+                    </div>
+                    
+                </div>
+
+
                 <div style="display:flex; flex-direction:row;">
-                    <span style="width:200px;">Jabatan Tujuan</span>
+                    <span style="width:200px;">Jabatan Tujuan </span>
                     <span style="width:50px;">:</span>
                     <select name="" id="" class="select2 jabatan_tujuan">
-                        <option disabled selected> -- Pilih Jabatan -- </option>
+                        <option value=""> -- Pilih Jabatan -- </option>
                         <?php foreach ( $jabatan as $j ) {?>
-                            <option <?php echo $data_edit['jabatan_tujuan'] == $j['kode'] ? 'selected' : '' ?> value="<?php echo $j['kode']; ?>" ><?php echo $j['nama'] ?></option>
+                            <option level="<?php echo $j['level'] ?>" <?php echo $data_edit['jabatan_tujuan'] == $j['kode'] ? 'selected' : '' ?> value="<?php echo $j['kode']; ?>" ><?php echo $j['nama'] ?></option>
                         <?php }?>
                     </select>
+                </div>
+
+                <div style="display:flex; flex-direction:row;">
+                    <span style="width:200px;">&nbsp;</span>
+                
+                    <div style="display:flex; flex-direction:row; gap:10px; margin-left:6px;">
+                       <?php
+                            $selected_perwakilan_tujuan = explode(',', $data_edit['perwakilan_tujuan']);
+                            $selected_unit_tujuan = explode(',', $data_edit['unit_tujuan']);
+                        ?>
+
+                        <div style="display:flex; flex-direction:column;">
+                            <span>Perwakilan</span>
+
+                            <?php
+                                $isAllSelected = in_array('all', $selected_perwakilan_tujuan);
+                            ?>
+
+                            <select class="select2 perwakilan_tujuan select_multiple" name="perwakilan_tujuan[]" multiple="multiple" onchange="up.set_unit_by_wilayah(this, event)" >
+                                <option value="all" <?php echo $isAllSelected ? 'selected' : '' ?>>  All </option>
+                                <?php foreach($wilayah as $w){ ?>
+
+                                    <option induk_wil="<?php echo $w['induk']?>" value="<?php echo $w['id']?>"
+                                        <?php 
+                                            if (in_array($w['id'], $selected_perwakilan_tujuan)) {
+                                                echo 'selected';
+                                            }
+                                        ?> >
+
+                                        <?php echo $w['nama']?>
+                                    </option>
+                                <?php } ?>
+
+                            </select>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column;">
+                            <span>Unit</span>
+
+                            <select class="select2 unit_tujuan" name="unit_tujuan[]" multiple="multiple">
+                                <option value="all"> All </option>
+                                <?php foreach($unit as $u){ ?>
+
+                                    <option induk="<?php echo $u['induk']?>" value="<?php echo $u['id']?>"
+                                        <?php if (in_array($u['id'], $selected_unit_tujuan)) { 
+                                            echo 'selected';
+                                            } ?> >
+                                        <?php echo $u['nama']?>
+
+                                    </option>
+
+                                <?php } ?>
+
+                            </select>
+                        </div>
+
+                    </div>
+                    
                 </div>
 
                 <div style="display:flex; flex-direction:row;">

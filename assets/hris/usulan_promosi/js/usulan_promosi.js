@@ -19,13 +19,13 @@ let up ={
                 format: 'DD MMM YYYY'
         });
 
-        
 
-        $('input[name="tgl_awal"]').on('dp.change', function(e) {
-            $('input[name="tgl_akhir"]').data('DateTimePicker').minDate(e.date);
+        $('#tgl_awal').on('dp.change', function(e) {
+            $('#tgl_akhir').data('DateTimePicker').minDate(e.date);
         });
 
         $('.select2').select2();
+        
     },
 
     load_form : () => {
@@ -96,19 +96,154 @@ let up ={
 
         let data = {
             jabatan_text : $(elm).find("option:selected").attr("jabatan_text"),
-            jabatan_val : $(elm).find("option:selected").attr("jabatan_val"),
+            jabatan_val  : $(elm).find("option:selected").attr("jabatan_val"),
+            id_karyawan  : $(elm).find("option:selected").attr("id_karyawan") ?? null,
+            id_atasan    : $(elm).find("option:selected").attr("id_atasan") ?? null,
         }
+      
+
+        if (data.id_karyawan){
+            // console.log(data.id_karyawan)
+            $.ajax({
+                url : 'hris/UsulanPromosi/get_unit_wilayah_json',
+                data : data,
+                type : 'POST',
+                dataType : 'json',
+                beforeSend : function(){ 
+                    showLoading(); 
+                },
+                success : function(result){
+                    hideLoading();
+
+                    console.log(result);
+
+                    let unit = result.unit;
+                    let wilayah = result.wilayah;
+
+                    let $perwakilan = $('.perwakilan_asal');
+                    $perwakilan.empty();
+
+                    $.each(wilayah, function (i, v) {
+                        let option = new Option(v.nama, v.id, true, true);
+                        $perwakilan.append(option);
+                    });
+                    $perwakilan.trigger('change');
+
+
+                    let $unit = $('.unit_asal');
+                    $unit.empty();
+
+                    $.each(unit, function (i, v) {
+                        let option = new Option(v.nama, v.id, true, true);
+                        $unit.append(option);
+                    });
+                    $unit.trigger('change');
+                                    
+                },
+            });     
+
+        }   
 
         if(kolom == 'pengusul'){
+
             $(".jabatan_pengusul").val(data.jabatan_text);
-            $(".jabatan_pengusul").attr("jabatan_val" , data.jabatan_val);
+            $(".jabatan_pengusul").attr("jabatan_val", data.jabatan_val);
+
+            up.set_karyawan_bawahan(data.id_atasan);
+
         } else {
+
             $(".jabatan_asal").val(data.jabatan_text);
-            $(".jabatan_asal").attr("jabatan_val" , data.jabatan_val);
+            $(".jabatan_asal").attr("jabatan_val", data.jabatan_val);
+
+            let level = parseInt($(elm).find("option:selected").attr("level"));
+            
+            if( $(".edit_page").length < 1 ){
+
+               let level = parseInt($(elm).find("option:selected").attr("level"));
+
+                if (!window.allJabatanOption) {
+                    window.allJabatanOption = $('.jabatan_tujuan').html();
+                }
+
+                $('.jabatan_tujuan').html(window.allJabatanOption);
+                $('.jabatan_tujuan option').each(function () {
+
+                    let optionLevel = parseInt($(this).attr('level'));
+
+                    if (isNaN(optionLevel)) return;
+
+      
+                    if (optionLevel >= level) {
+                        $(this).remove();
+                    }
+
+                });
+
+            
+                $('.jabatan_tujuan').val(null).trigger('change');
+                $('.jabatan_tujuan').trigger('change.select2');
+                $(".jabatan_tujuan").val("").trigger("change");
+
+                console.log('add_page')
+            } else {
+                console.log('edit_page');
+
+                let level = parseInt($(elm).find("option:selected").attr("level"));
+
+                $(".jabatan_tujuan option").each(function () {
+
+                    let optionLevel = parseInt($(this).attr("level"));
+                    if (optionLevel >= level) {
+
+                        $(this).remove();
+
+                    }
+
+                });
+
+            }
         }
-        // console.log(data);
-        
+
+    
+
     },
+
+    set_karyawan_bawahan: (id_karyawan) => {
+
+        let select = $(".karyawan");
+
+        if (!select.data("original_option")) {
+            select.data(
+                "original_option",
+                select.html()
+            );
+        }
+
+        select.html(
+            select.data("original_option")
+        );
+
+        select.prepend(
+            '<option value="">-- Pilih Karyawan --</option>'
+        );
+
+        select.find("option").each(function () {
+
+            let atasan = $(this).attr("atasan");
+
+            if (!$(this).val()) {
+                return;
+            }
+
+            if (String(id_karyawan) !== String(atasan)) {
+                $(this).remove();
+            }
+
+        });
+
+    },
+
 
     save: () => {
 
@@ -118,8 +253,8 @@ let up ={
         if (picker && picker.date()) {
             tgl_usulan = picker.date().format('YYYY-MM-DD');
         } else {
-            toastr.info("Tgl belum dipilih")
-            return false
+            toastr.info("Tanggal usulan belum dipilih");
+            return false;
         }
 
         let params = {
@@ -130,6 +265,52 @@ let up ={
             jabatan_asal        : $(".jabatan_asal").attr("jabatan_val"),
             jabatan_tujuan      : $(".jabatan_tujuan").val(),
             alasan              : $(".alasan").val(),
+            perwakilan_tujuan   : $('.perwakilan_tujuan').val(),
+            unit_tujuan         : $('.unit_tujuan').val(),
+            perwakilan_asal     : $('.perwakilan_asal').val(),
+            unit_asal           : $('.unit_asal').val(),
+        };
+
+        if (!params.pengusul) {
+            toastr.warning("Pengusul wajib dipilih");
+            $(".pengusul").focus();
+            return false;
+        }
+
+        if (!params.jabatan_pengusul) {
+            toastr.warning("Jabatan pengusul wajib dipilih");
+            $(".jabatan_pengusul").focus();
+            return false;
+        }
+
+        if (!params.perwakilan_tujuan) {
+            toastr.warning("Perwakilan / Wilayah pengusul wajib dipilih");
+            $(".perwakilan_tujuan").focus();
+            return false;
+        }
+
+        if (!params.karyawan) {
+            toastr.warning("Karyawan wajib dipilih");
+            $(".karyawan").focus();
+            return false;
+        }
+
+        if (!params.jabatan_asal) {
+            toastr.warning("Jabatan asal wajib dipilih");
+            $(".jabatan_asal").focus();
+            return false;
+        }
+
+        if (!params.jabatan_tujuan) {
+            toastr.warning("Jabatan tujuan wajib dipilih");
+            $(".jabatan_tujuan").focus();
+            return false;
+        }
+
+        if (!params.alasan || params.alasan.trim() === '') {
+            toastr.warning("Alasan wajib diisi");
+            $(".alasan").focus();
+            return false;
         }
 
         $.ajax({
@@ -145,13 +326,17 @@ let up ={
 
                 bootbox.alert(data.message, function () {
                     
-                    up.load_form();
+                    // up.load_form();
+                    // $('a[href="#riwayat"]').tab('show');
 
-                    $('a[href="#riwayat"]').tab('show');
+                    window.location.reload(true);
                 });
             },
+            error : function(xhr){
+                hideLoading();
+                toastr.error("Terjadi kesalahan saat menyimpan data");
+            }
         });
-        // console.log(params);
 
     },
 
@@ -206,7 +391,7 @@ let up ={
 
                         dialog.find('.btn-edit').on('click', function () {
                             window.location.href =
-                                "hris/UsulanPromosi/edit_attr?kode=" + params.kode;
+                                "hris/UsulanPromosi/edit_data?kode=" + params.kode;
                         });
                     }
 
@@ -249,6 +434,11 @@ let up ={
             jabatan_asal        : $(".jabatan_asal").attr("jabatan_val"),
             jabatan_tujuan      : $(".jabatan_tujuan").val(),
             alasan              : $(".alasan").val(),
+            perwakilan_tujuan   : $('.perwakilan_tujuan').val(),
+            unit_tujuan         : $('.unit_tujuan').val(),
+            perwakilan_asal     : $('.perwakilan_asal').val(),
+            unit_asal           : $('.unit_asal').val(),
+            
         }
 
         $.ajax({
@@ -419,11 +609,67 @@ let up ={
 
                 bootbox.alert(data.message, function () {
                     bootbox.hideAll();
-                    up.load_form();
+                    // up.load_form();
+
+                    window.location.reload(true);
                 });
             },
         });
     },
+
+    set_unit_by_wilayah: (elm, e) => {
+
+        let selected_wilayah = [];
+
+        $(elm).find("option:selected").each(function () {
+            selected_wilayah.push($(this).val());
+        });
+
+        let select_unit = $(".unit_tujuan");
+
+        if (!select_unit.data("original_option")) {
+            select_unit.data("original_option", select_unit.html());
+        }
+
+        select_unit.html(select_unit.data("original_option"));
+
+   
+        if (selected_wilayah.includes('all')) {
+
+            select_unit.html('<option value="all" selected>All</option>');
+
+            select_unit.trigger("change");
+            return;
+        }
+
+        select_unit.find("option").each(function () {
+
+            let induk = $(this).attr("induk");
+
+            if (!selected_wilayah.includes(induk)) {
+                $(this).remove();
+            }
+
+        });
+
+        select_unit.trigger("change");
+    },
+
+    reset_form: function () {
+
+        $('[name="tgl_usulan"]').val('');
+        $('.pengusul').val(null).trigger('change');
+        $('.karyawan').val(null).trigger('change');
+        $('.jabatan_tujuan').val(null).trigger('change');
+        $('.perwakilan_asal').val(null).trigger('change');
+        $('.unit_asal').val(null).trigger('change');
+        $('.perwakilan_tujuan').val(null).trigger('change');
+        $('.unit_tujuan').val(null).trigger('change');
+        $('.jabatan_pengusul').val('');
+        $('.jabatan_asal').val('');
+        $('.alasan').val('');
+
+    }
 };
 
 
@@ -435,11 +681,19 @@ $(document).ready(function() {
     
     let $pengusul = $('.pengusul');
     let $karyawan = $('.karyawan');
+    let $perwakilan_tujuan = $('.perwakilan_tujuan');
 
     if ($pengusul.val()) {
         $pengusul.trigger('change');
         $karyawan.trigger('change');
     }
+
+    if ($perwakilan_tujuan.val()){
+        $perwakilan_tujuan.trigger('change');
+    }
+
+    
+    
     
     
 });

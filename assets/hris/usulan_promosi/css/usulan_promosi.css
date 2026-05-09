@@ -1,3 +1,4 @@
+/* SELECT2 SINGLE */
 .select2-container .select2-selection--single {
     height: 34px !important;
     border: 1px solid #ccc;
@@ -14,6 +15,42 @@
 .select2-container .select2-selection--single .select2-selection__arrow {
     height: 34px;
 }
+/* END SELECT2 SINGLE */
+
+
+/* SELECT2 MULTIPLE */
+.select2-container--default {
+    min-width: 200px !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+    min-width: 200px !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    
+}
+
+.select2-container--default .select2-selection--single {
+    height: 34px !important;
+    min-width: 200px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    min-width: 200px !important;
+    line-height: 34px !important;
+}
+
+
+
+.select2-container--default.select2-container--focus .select2-selection--multiple,
+.select2-container--default.select2-container--open .select2-selection--multiple,
+.select2-container--default .select2-selection--single:focus {
+    border: 1px solid #ccc !important;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075) !important;
+    outline: none !important;
+}
+
+/* END SELECT2 MULTIPLE */
 
 .filter-row {
     display: flex;

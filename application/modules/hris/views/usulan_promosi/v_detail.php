@@ -3,28 +3,38 @@
 
     <div style="display:flex; flex-direction:column; gap:10px;">
 
-        <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; flex-direction:column; gap:5px;">
             <span style="width:100px;">Kode Usulan</span>
             <span style="border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:100%;"><?php echo $data_detail['kode']; ?></span>
         </div>
 
-        <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; flex-direction:column; gap:5px;">
             <span style="width:100px;">Tanggal Usulan</span>
-            <span style="border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:100%;"><?php echo tglIndonesia($data_detail['tanggal']); ?></span>
+            <span style="border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:100%;"><?php echo tglIndonesia($data_detail['tanggal'], '-', ' '); ?></span>
         </div>
 
-        <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; flex-direction:column; gap:5px;">
             <span style="width:100px;">Pengusul</span>
             <span style="border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:100%;"><?php echo ucwords(strtolower($data_detail['nama_pengusul'])); ?></span>
         </div>
 
-        <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <span style="width:150px;">Jabatan Pengusul</span>
+            <div style="display:flex; flex-direction:row; gap:5px;">
+                <span style="border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:30%;"><?php echo $data_detail['nama_jabatan_pengusul']?></span>
+                <span style="border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:70%;"><?php echo 'Unit : ' . $wil_pengusul?></span>
+            </div>
+        </div>
+
+        
+
+        <div style="display:flex; flex-direction:column; gap:5px;">
             <span style="width:100px;">Karyawan</span>
             <span style="border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:100%;"><?php echo ucwords(strtolower($data_detail['nama_karyawan'])); ?></span>
         </div>
 
 
-        <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; flex-direction:column; gap:5px;">
             <span style="width:100px;">Jenis</span>
             <div style="padding:10px;border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:100%;">
                 
@@ -39,7 +49,7 @@
                         <td class="text-center" style="width:45%; font-weight:bold;">
                             Jabatan Asal
                         </td>
-                        <td class="text-center" style="width:10%; vertical-align:middle;" rowspan="2"><i class="fa fa-angle-double-right" aria-hidden="true"></i></td>
+                        <td class="text-center" style="width:10%; vertical-align:middle;" rowspan="3"><i class="fa fa-angle-double-right" aria-hidden="true"></i></td>
                         <td class="text-center" style="width:45%; font-weight:bold;">
                             Jabatan Tujuan
                         </td>
@@ -53,19 +63,86 @@
                             <?php echo $data_detail['nama_jabatan_tujuan']; ?>
                         </td>
                     </tr>
+                    <tr>
+                       <td class="text-center">
+
+                            <div style="display:flex; justify-content:center;">
+                                <div style="text-align:left;">
+
+                                    <div style="display:flex; flex-direction:row;">
+                                        <span style="width:100px;">Perwakilan</span>
+                                        <span style="width:10px;">:</span>
+                                        <div style="display:flex; flex-direction:column;">
+                                            <?php foreach ($nama_wilayah_asal as $u) { ?>
+                                                <span><?php echo $u ?></span>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+
+                                    <div style="display:flex; flex-direction:row;">
+                                        <span style="width:100px;">Unit</span>
+                                        <span style="width:10px;">:</span>
+                                        <div style="display:flex; flex-direction:column;">
+                                            <?php foreach ($nama_unit_asal as $u) { ?>
+                                                <span><?php echo $u ?></span>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </td>
+                        
+                        <td class="text-center">
+                            <div style="display:flex; justify-content:center;">
+                                <div style="text-align:left;">
+
+                                    <div style="display:flex; flex-direction:row;">
+                                        <span style="width:100px;">Perwakilan</span>
+                                        <span style="width:10px;">:</span>
+                                        <div style="display:flex; flex-direction:column;">
+                                            <?php if($data_detail['perwakilan_tujuan'] != 'all') {?>
+                                                <?php foreach ($nama_wilayah_tujuan as $u) { ?>
+                                                    <span><?php echo $u ?></span>
+                                                <?php } ?>
+                                            <?php } else { ?>
+                                                all
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+
+                                    <div style="display:flex; flex-direction:row;">
+                                        <span style="width:100px;">Unit</span>
+                                        <span style="width:10px;">:</span>
+                                        <div style="display:flex; flex-direction:column;">
+                                            <?php if($data_detail['unit_tujuan'] != 'all') {?>
+                                                <?php foreach ($nama_unit_tujuan as $u) { ?>
+                                                    <span><?php echo $u ?></span>
+                                                <?php } ?>
+                                            <?php } else { ?>
+                                                all
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
                 </table>
 
             </div>                                     
         </div>
         
 
-        <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; flex-direction:column; gap:5px;">
             <span style="width:100px;"> Alasan</span>
             <span style="border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:100%; height:100px;"><?php echo $data_detail['alasan']; ?></span>
         </div>
 
          <?php if ($data_detail['status'] == 4 || $data_detail['status'] == 5) { ?>
-            <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:5px;">
                 <span style="width:100px;">Alasan Reject</span>
                 <span style="border: 1px solid #C9C9C9; border-radius:5px; padding:7px; width:100%; height:100px;"><?php echo $data_detail['alasan_reject']; ?></span>
             </div>

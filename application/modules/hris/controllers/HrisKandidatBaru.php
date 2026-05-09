@@ -64,7 +64,7 @@ class HrisKandidatBaru extends Public_Controller {
                                     GROUP BY nik
                                 )
                             ) k ON hukb.nama_pengusul = k.nik
-						where hukb.status = 6 ";
+						where hukb.status = 3 ";
         $result_usulan     = $m_conf->hydrateRaw( $sql )->toArray();
 
         $sql_usulan_terpenuhi = " SELECT 
@@ -363,6 +363,7 @@ class HrisKandidatBaru extends Public_Controller {
                 $m_karyawan->marketing  = $params['marketing'];
                 $m_karyawan->jabatan    = $params['jabatan'];
                 $m_karyawan->status     = 1;
+                $m_karyawan->tgl_berlaku = $params['tgl_masuk'];
                 $m_karyawan->save();
     
                 foreach ($params['unit'] as $k_val => $val) {
@@ -400,10 +401,19 @@ class HrisKandidatBaru extends Public_Controller {
                  foreach ($params['unit'] as $k_val => $val) {
                     $m_karyawan_history_unit                 = new \Model\Storage\KaryawanHistoryUnit_model();
                     $m_karyawan_history_unit->id             = $id_karyawan_history;
-                    $m_karyawan_history_unit->kode_unit      = $unit[$val]['kode'];
+                    $m_karyawan_history_unit->kode_unit      = $val;
                     $m_karyawan_history_unit->save();
                  }
                 // END KARYAWAN HISTORY UNIT
+
+                // KARYAWAN HISTORY WILAYAH
+                 foreach ($params['wilayah'] as $k_val => $val) {
+                    $m_karyawan_history_unit                 = new \Model\Storage\KaryawanHistoryWilayah_model();
+                    $m_karyawan_history_unit->id             = $id_karyawan_history;
+                    $m_karyawan_history_unit->kode_wilayah   = $val;
+                    $m_karyawan_history_unit->save();
+                 }
+                // END KARYAWAN HISTORY WILAYAH
 
                 $d_karyawan = $m_karyawan->where('id', $id_karyawan)->with(['unit', 'dWilayah'])->first();
                 $deskripsi_log_karyawan = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];

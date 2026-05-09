@@ -17,10 +17,10 @@
     <thead>
         <tr>
             <th class="text-center" style="width:5px;">#</th>
+            <th class="text-center">Document</th>
             <th class="text-center">Nama Kandidat</th>
             <th class="text-center">Status Kandidat</th>
             <th class="text-center">Pengusul</th>
-            <th class="text-center">Document</th>
             <th class="text-center">Link Form</th>
             <th class="text-center">Keputusan</th>
             <!-- <th class="text-center">Action</th> -->
@@ -31,17 +31,17 @@
             <?php foreach($list as $l){?>
                 <tr>
                     <td style="background-color:<?php echo $l['is_active'] == 'NONACTIVE' ? '#C9FF9C' : '#FCFF9C' ?>"></td>
+                    <td class="text-center" style="white-space:nowrap;">
+                        <a href="<?php echo base_url('hris/HrisKandidatBaru/show_document_kandidat?id='. $l['id_data_karyawan']) ?>" target="_blank">
+                           <?php echo $l['document'] ? $l['document'] : '-' ?>
+                        </a>
+                    </td>
                     <td class="text-left" style="white-space:nowrap;"><?php echo $l['nama'] ?></td>
                     <td class="text-center">
                         <?php echo $l['status_kandidat'] == 3 ? 'Ditolak' : $l['nama_status'] ?>
                     
                     </td>
                     <td class="text-center" style="white-space:nowrap;"><?php echo ucwords(strtolower($l['nama_pengusul'])) . ' - ' . $l['jabatan_pengusul'] ?></td>
-                    <td class="text-center" style="white-space:nowrap;">
-                        <a href="<?php echo base_url('hris/HrisKandidatBaru/show_document_kandidat?id='. $l['id_data_karyawan']) ?>" target="_blank">
-                           <?php echo $l['document'] ? $l['document'] : '-' ?>
-                        </a>
-                    </td>
                     <td class="text-center" style="position:relative; white-space:nowrap;">
 
                         <?php 
@@ -78,7 +78,7 @@
                         <?php } ?>
                     </td>
                     <!-- <td class="text-center">
-                        <button class="btn btn-sm btn-secondary" id_data="<?= $l['id_data_karyawan']; ?>" onclick="hf.show_detail(this, event)" >Show Detail</button>
+                        <button class="btn btn-sm btn-secondary" id_data="< ?= $l['id_data_karyawan']; ?>" onclick="hf.show_detail(this, event)" >Show Detail</button>
                     </td> -->
                 </tr>
             <?php } ?>
