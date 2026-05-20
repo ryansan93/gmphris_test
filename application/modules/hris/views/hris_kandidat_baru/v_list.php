@@ -29,7 +29,7 @@
     <tbody>
         <?php if (!empty($list)) { ?>
             <?php foreach($list as $l){?>
-                <tr>
+                <tr style="<?php echo !empty($l['selected']) ? 'background-color: #FFF9D6;' : '' ?>">
                     <td style="background-color:<?php echo $l['is_active'] == 'NONACTIVE' ? '#C9FF9C' : '#FCFF9C' ?>"></td>
                     <td class="text-center" style="white-space:nowrap;">
                         <a href="<?php echo base_url('hris/HrisKandidatBaru/show_document_kandidat?id='. $l['id_data_karyawan']) ?>" target="_blank">

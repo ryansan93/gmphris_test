@@ -17,7 +17,7 @@ class UsulanPromosi extends Public_Controller {
 
     public function index($segment=0)
     {
-
+        // cetak_r($_SESSION['id_user'], 1);
         if ( $this->hakAkses['a_view'] == 1 ) {
 
             $this->add_external_js(array(
@@ -44,7 +44,8 @@ class UsulanPromosi extends Public_Controller {
             $content['karyawan']        = $this->get_list_karyawan();
             $content['unit']            = $this->get_list_unit();
             $content['wilayah']         = $this->get_list_wilayah();
-            // cetak_r($newId, 1);
+            $content['outstanding']     = $this->get_data_outstanding();
+            // cetak_r($content['outstanding'], 1);
 
             $content['jabatan']         =  $m_conf->hydrateRaw("select * from jabatan")->toArray();
 
@@ -235,6 +236,7 @@ class UsulanPromosi extends Public_Controller {
             $m_db->unit_tujuan          = implode(',', $_POST['unit_tujuan']);
             $m_db->perwakilan_asal      = implode(',', $_POST['perwakilan_asal']);
             $m_db->unit_asal            = implode(',', $_POST['unit_asal']);
+            $m_db->created_date         = date("Y-m-d H:i:s");
             $m_db->save();
 
             $deskripsi_log = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
@@ -258,6 +260,19 @@ class UsulanPromosi extends Public_Controller {
         $data_list  = $this->get_list_data();
         $unit       = $this->get_list_unit();
         $wilayah    = $this->get_list_wilayah();
+
+        if (!empty($_POST['kode'])) {
+            $kode_get = urldecode($_POST['kode']);
+            foreach ($data_list as $key => $val) {
+                if (trim($val['kode']) == trim($kode_get)) {
+                    $val['selected']    = 'selected';
+                    $selected           = $val;
+                    unset($data_list[$key]);
+                    array_unshift($data_list, $selected);
+                    break;
+                }
+            }
+        }
 
         $unitMap    = array_column($unit, 'nama', 'id');
         $wilayahMap = array_column($wilayah, 'nama', 'id');
@@ -306,7 +321,44 @@ class UsulanPromosi extends Public_Controller {
             'data'  => $_POST,
         ];
 
-        $content['list'] =  $this->get_list_data($need);
+        $data_list =  $this->get_list_data($need);
+
+
+        $unit       = $this->get_list_unit();
+        $wilayah    = $this->get_list_wilayah();
+
+        $unitMap    = array_column($unit, 'nama', 'id');
+        $wilayahMap = array_column($wilayah, 'nama', 'id');
+
+        foreach ($data_list as &$row) {
+
+            $row['nama_perwakilan_tujuan']  = $wilayahMap[$row['perwakilan_tujuan']] ?? null;  
+            $row['nama_perwakilan_asal']    = $wilayahMap[$row['perwakilan_asal']] ?? null;    
+            $unitIdTujuan                   = explode(',', $row['unit_tujuan']);
+            $unitIdAsal                     = explode(',', $row['unit_asal']);
+
+            $namaUnitTujuan = [];
+            foreach ($unitIdTujuan as $id) {
+                $id = trim($id); 
+                if (isset($unitMap[$id])) {
+                    $namaUnitTujuan[] = $unitMap[$id];
+                }
+            }
+
+            $namaUnitAsal = [];
+            foreach ($unitIdAsal as $id) {
+                $id = trim($id); 
+                if (isset($unitMap[$id])) {
+                    $namaUnitAsal[] = $unitMap[$id];
+                }
+            }
+
+            $row['nama_unit_tujuan'] = implode(', ', $namaUnitTujuan);
+            $row['nama_unit_asal'] = implode(', ', $namaUnitAsal);
+        }
+
+        $content['list']            =  $data_list;
+
 
         echo $this->load->view($this->pathView . 'v_list', $content, TRUE);
     }
@@ -321,7 +373,7 @@ class UsulanPromosi extends Public_Controller {
 
         $sql = "SELECT MAX(CAST(RIGHT(kode, 3) AS INT)) AS last_number
 		FROM hris_usulan_mutasi
-		WHERE kode  LIKE 'DOC/SPJ/{$tahun}{$bulan}%'";
+		WHERE kode  LIKE 'DOC/PRM/{$tahun}{$bulan}%'";
 
         $d_conf     = $m_conf->hydrateRaw( $sql );
         
@@ -333,7 +385,7 @@ class UsulanPromosi extends Public_Controller {
         $last = $data[0]['last_number'] ?? 0;
         $new  = str_pad($last + 1, 3, '0', STR_PAD_LEFT);
         
-        $kode = "DOC/SPJ/$tahun$bulan$new";
+        $kode = "DOC/PRM/$tahun$bulan$new";
         return $kode;
 
     }
@@ -363,6 +415,8 @@ class UsulanPromosi extends Public_Controller {
 
         $where = [];
 
+        $where[] = "hum.jenis = 'PROMOSI'";
+
         if (($jenis == 'DETAIL' || $jenis == 'EDIT') && !empty($dataNeed)) {
             $where[] = "hum.kode = '".addslashes($dataNeed)."'";
         }
@@ -387,7 +441,7 @@ class UsulanPromosi extends Public_Controller {
 
         $sql .= " ORDER BY hum.kode DESC";
 
-        // cetak_r($sql, 1);
+        // cetak_r('PROMOSI', 1);
 
         $d_conf = $m_conf->hydrateRaw($sql);
 
@@ -624,7 +678,7 @@ class UsulanPromosi extends Public_Controller {
             $d_db = $m_db->where('kode', $kode_usulan)->first();
             $data_mutasi = $d_db->toArray();
 
-            // cetak_r($params, 1);
+            // cetak_r($_SESSION, 1);
 
             if (!$d_db) {
                 throw new \Exception("Data form tidak ditemukan.");
@@ -642,13 +696,26 @@ class UsulanPromosi extends Public_Controller {
                 'tgl_berlaku'   => !empty($params['tgl_berlaku']) ? $params['tgl_berlaku'] : null,
             ];
 
+            if ( $params['keputusan'] == 2 || $params['keputusan'] == 4) {
+                $data_update['acknowledged_rejected_by']    = $_SESSION['detail_user']['nama_detuser'];
+            }
+
+            if ( $params['keputusan'] == 3 || $params['keputusan'] == 5) {
+                $data_update['approved_rejected_by']        = $_SESSION['detail_user']['nama_detuser'];
+            }
+
             if ($params['keputusan'] == 2) {
-                $data_update['tgl_ack']     = date("Y-m-d H:i:s");
+                $data_update['tgl_ack']                     = date("Y-m-d H:i:s");
             }
             
             if ($params['keputusan'] == 3) {
                 $data_update['tgl_approve'] = date("Y-m-d H:i:s");
             }
+
+            if ($params['keputusan'] == 4 || $params['keputusan'] == 5){
+                $data_update['tgl_reject'] = date("Y-m-d H:i:s");
+            }
+            
             $m_db->where('kode', $kode_usulan)->update($data_update);
             
             if ( $params['keputusan'] == 3 ){
@@ -779,6 +846,17 @@ class UsulanPromosi extends Public_Controller {
                     }
                 //  END INSERT UNIT KARYAWAN
 
+                  // INSERT WILAYAH KARYAWAN
+                foreach($wilayah_tujuan as $wt){
+                    $m_wilayah_karyawan        = new \Model\Storage\WIlayahKaryawan_model();
+                    $id_wilayah_karyawan       = $m_wilayah_karyawan->getNextIdentity();
+                    $m_wilayah_karyawan->id           = $id_wilayah_karyawan;
+                    $m_wilayah_karyawan->id_karyawan  = $id_karyawan;
+                    $m_wilayah_karyawan->wilayah      = $wt;
+                    $m_wilayah_karyawan->save();
+                }
+                // END INSERT WILAYAH KARYAWAN
+
 
             }
             
@@ -812,14 +890,16 @@ class UsulanPromosi extends Public_Controller {
         $kode = str_replace(' ', '+', $kode);
 
         $decrypted = openssl_decrypt($kode, "AES-128-ECB", $key);
-        // cetak_r($decrypted, 1);SSSSS
+       
 
         $need = [
             'jenis' => 'DETAIL',
             'data'  => $decrypted,
         ];
 
+         
         $content['data']     = $this->get_list_data($need)[0];
+        // cetak_r($_SESSION, 1);
         $data_unit           = $this->get_list_unit();
         $id_unit             = explode(',', $content['data']['unit_tujuan']);
 
@@ -838,8 +918,35 @@ class UsulanPromosi extends Public_Controller {
         $nama_wilayah = array_column($nama_wilayah, 'nama');
         $content['nama_wilayah'] = implode(', ', $nama_wilayah);
         
-        $content['wilayah_asal'] = $this->get_unit_wilayah($content['data']['id_karyawan']);
-        // cetak_r($content['data'],1);
+        // $content['wilayah_asal'] = $this->get_unit_wilayah($content['data']['id_karyawan']);
+
+        $id_unit_asal = explode(',', $content['data']['unit_asal']);
+
+        $nama_unit_asal = array_filter($data_unit, function ($v) use ($id_unit_asal) {
+            return in_array($v['id'], $id_unit_asal);
+        });
+
+        $nama_unit_asal = array_column($nama_unit_asal, 'nama');
+        $content['nama_unit_asal'] = implode(', ', $nama_unit_asal);
+
+        $id_wilayah_tujuan = explode(',', $content['data']['perwakilan_tujuan']);
+
+        $nama_wilayah_tujuan = array_filter($data_wilayah, function ($v) use ($id_wilayah_tujuan) {
+            return in_array($v['id'], $id_wilayah_tujuan);
+        });
+
+        $nama_wilayah_tujuan = array_column($nama_wilayah_tujuan, 'nama');
+        $content['nama_wilayah_tujuan'] = $nama_wilayah_tujuan;
+
+        $id_wilayah_asal = explode(',', $content['data']['perwakilan_asal']);
+
+        $nama_wilayah_asal = array_filter($data_wilayah, function ($v) use ($id_wilayah_asal) {
+            return in_array($v['id'], $id_wilayah_asal);
+        });
+
+        $nama_wilayah_asal = array_column($nama_wilayah_asal, 'nama');
+        $content['nama_wilayah_asal'] = implode(', ', $nama_wilayah_asal);
+        // cetak_r($content,1);
 
 
 
@@ -992,5 +1099,21 @@ class UsulanPromosi extends Public_Controller {
         return $data;
     }
    
+
+    public function get_data_outstanding()
+    {
+        $m_conf  = new \Model\Storage\Conf();
+
+        $sql = " select karyawan from hris_usulan_mutasi where status in (1, 2) ";
+        
+        $d_conf     = $m_conf->hydrateRaw( $sql );
+        $data       = null;
+
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+
+        return $data;
+    }
 
 }

@@ -90,9 +90,16 @@ let hf = {
     },
 
     load_form : () => {
+
+        let params = {};
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('kode')) {
+            params.kode = urlParams.get('kode');
+        }
+
         $.ajax({
             url : 'hris/HrisKandidatBaru/load_form',
-            // data : params,
+            data : params,
             type : 'POST',
             dataType : 'html',
             beforeSend : function(){ 
@@ -209,7 +216,8 @@ let hf = {
                 dialog.on('shown.bs.modal', function () {
                     $('#tgl_masuk').datetimepicker({
                         locale: 'id',
-                        format: 'DD MMM YYYY'
+                        format: 'DD MMM YYYY',
+                        minDate: moment()
                     });
 
                     $(".select2").select2();

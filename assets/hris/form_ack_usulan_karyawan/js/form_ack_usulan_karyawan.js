@@ -1,9 +1,15 @@
 let fr = {
 
     load_form : () => {
+        let params = {};
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('kode')) {
+            params.kode = urlParams.get('kode');
+        }
+
         $.ajax({
             url : 'hris/FormAckUsulanKaryawan/load_form',
-            // data : params,
+            data : params,
             type : 'POST',
             dataType : 'html',
             beforeSend : function(){ 

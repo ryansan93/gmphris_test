@@ -8,6 +8,7 @@ class HrisForm extends Public_Controller {
 
     function __construct()
     {
+        date_default_timezone_set('Asia/Jakarta');
         parent::__construct();
         $this->url = $this->current_base_uri;
         $this->hakAkses = hakAkses($this->url);

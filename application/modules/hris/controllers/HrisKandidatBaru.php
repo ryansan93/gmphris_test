@@ -8,6 +8,7 @@ class HrisKandidatBaru extends Public_Controller {
 
     function __construct()
     {
+        date_default_timezone_set('Asia/Jakarta');
         parent::__construct();
         $this->url = $this->current_base_uri;
         $this->hakAkses = hakAkses($this->url);
@@ -187,10 +188,24 @@ class HrisKandidatBaru extends Public_Controller {
     }
 
 
-    public function load_form(){
+    public function load_form()
+    {
 
         $content['list']    =  $this->get_data_form();
-       
+
+        if (!empty($_POST['kode'])) {
+            $kode_get = urldecode($_POST['kode']);
+
+            foreach ( $content['list'] as $key => $val) {
+                if (trim($val['document']) == trim($kode_get)) {
+                    $val['selected'] = 'selected';
+                    $selected = $val;
+                    unset($content['list'][$key]);
+                    array_unshift($content['list'], $selected);
+                    break;
+                }
+            }
+        }
         // cetak_r($content, 1);
 
         echo $this->load->view($this->pathView . 'v_list', $content, TRUE);
@@ -365,6 +380,13 @@ class HrisKandidatBaru extends Public_Controller {
                 $m_karyawan->status     = 1;
                 $m_karyawan->tgl_berlaku = $params['tgl_masuk'];
                 $m_karyawan->save();
+
+                // UPDATE NIK HRIS DATA KANDIDAT
+                $m_db->where('id', $params['id_data'])->update([
+                    'nik'   => $m_karyawan->nik,
+                    
+                ]);
+                // END UPDATE NIK HRIS DATA KANDIDAT
     
                 foreach ($params['unit'] as $k_val => $val) {
                     $m_unit_karyawan                = new \Model\Storage\UnitKaryawan_model();
@@ -414,6 +436,19 @@ class HrisKandidatBaru extends Public_Controller {
                     $m_karyawan_history_unit->save();
                  }
                 // END KARYAWAN HISTORY WILAYAH
+
+                // STATUS KARYAWAN  
+                    $m_skb              = new \Model\Storage\HrisStatusKaryawanBaru_model();
+                    $m_skb->pengusul    = $_SESSION['detail_user']['nama_detuser'];
+                    $m_skb->nik         = $m_karyawan->nik;
+                    $m_skb->kategori    = 'HRIS/K/004'; //harcode training pertama 3 bulan dahulu
+                    $m_skb->keterangan  = 'Training 3 Bulan';
+                    $m_skb->status      = 1;
+                    $m_skb->tgl_berlaku = $params['tgl_masuk'];
+                    $m_skb->tgl_selesai = date('Y-m-d', strtotime('+3 months', strtotime($params['tgl_masuk'])));
+                    // cetak_r($m_skb, 1);
+                    $m_skb->save();
+                // END STATUS KARYAWAN
 
                 $d_karyawan = $m_karyawan->where('id', $id_karyawan)->with(['unit', 'dWilayah'])->first();
                 $deskripsi_log_karyawan = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];

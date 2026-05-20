@@ -62,7 +62,7 @@
             <br>
 
             <div class="pull-right">
-                <button class="btn btn-secondary " onclick="window.location.href='hris/HrisKategori' "> <i class="fa fa-angle-left" style="margin-right:10px;" aria-hidden="true"></i>  Back</button>
+                <button class="btn btn-secondary " onclick="window.location.href='hris/HrisStatusKandidat' "> <i class="fa fa-angle-left" style="margin-right:10px;" aria-hidden="true"></i>  Back</button>
                 <button class="btn btn-primary " onclick="hf.save(this, event)"> <i class="fa fa-floppy-o" style="margin-right:10px;" aria-hidden="true"></i>  Save Data</button>
             </div>
 

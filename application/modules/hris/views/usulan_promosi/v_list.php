@@ -1,3 +1,26 @@
+<!-- < ?php
+
+if (isset($_GET['kode']) && !empty($_GET['kode'])) {
+
+    $kode_get = urldecode($_GET['kode']);
+
+    usort($list, function($a, $b) use ($kode_get) {
+
+        if ($a['kode'] == $kode_get) {
+            return -1;
+        }
+
+        if ($b['kode'] == $kode_get) {
+            return 1;
+        }
+
+        return 0;
+    });
+}
+cetak_r($_GET, 1);
+
+?> -->
+
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -16,7 +39,7 @@
         <?php if (!empty($list)) { ?>
            
             <?php foreach($list as $l){?>
-                <tr class="data-row">
+                <tr class="data-row" style="<?php echo !empty($l['selected']) ? 'background-color: #FFF9D6;' : '' ?>" > 
                     <td class="text-center"><?php echo $l['kode'] ?></td>
                     <td class="text-center"><?php echo tglIndonesia($l['tanggal'], "-" , " ") ?></td>
                     <td class="text-center"><?php echo ucwords(strtolower($l['nama_pengusul'])) ?></td>

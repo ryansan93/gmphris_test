@@ -29,9 +29,18 @@ let up ={
     },
 
     load_form : () => {
+        
+        let params = {};
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('kode')) {
+            params.kode = urlParams.get('kode');
+        }
+
+        // console.log(params);
+
         $.ajax({
             url : 'hris/UsulanPromosi/load_form',
-            // data : params,
+            data : params,
             type : 'POST',
             dataType : 'html',
             beforeSend : function(){ 
@@ -514,7 +523,20 @@ let up ={
             bootbox.prompt({
                 title: "Masukkan alasan reject",
                 inputType: 'textarea',
+
+                buttons: {
+                    confirm: {
+                        label: 'Reject',
+                        className: 'btn-danger'
+                    },
+                    cancel: {
+                        label: 'Tutup',
+                        className: 'btn-secondary'
+                    }
+                },
+
                 callback: function(result) {
+
                     if (result === null) return;
 
                     if (!result.trim()) {
@@ -617,13 +639,9 @@ let up ={
         });
     },
 
-    set_unit_by_wilayah: (elm, e) => {
+   set_unit_by_wilayah: () => {
 
-        let selected_wilayah = [];
-
-        $(elm).find("option:selected").each(function () {
-            selected_wilayah.push($(this).val());
-        });
+        let selected_wilayah = $(".perwakilan_tujuan").val() || [];
 
         let select_unit = $(".unit_tujuan");
 
@@ -631,20 +649,20 @@ let up ={
             select_unit.data("original_option", select_unit.html());
         }
 
+        let current_selected = select_unit.val() || [];
+
+        select_unit.select2('destroy');
+
         select_unit.html(select_unit.data("original_option"));
-
-   
-        if (selected_wilayah.includes('all')) {
-
-            select_unit.html('<option value="all" selected>All</option>');
-
-            select_unit.trigger("change");
-            return;
-        }
 
         select_unit.find("option").each(function () {
 
+            let value = $(this).val();
             let induk = $(this).attr("induk");
+
+            if (value == 'all') {
+                return;
+            }
 
             if (!selected_wilayah.includes(induk)) {
                 $(this).remove();
@@ -652,7 +670,20 @@ let up ={
 
         });
 
-        select_unit.trigger("change");
+        let valid_selected = [];
+
+        current_selected.forEach(function(val){
+
+            if (
+                select_unit.find(`option[value="${val}"]`).length
+            ) {
+                valid_selected.push(val);
+            }
+
+        });
+
+        select_unit.val(valid_selected);
+        select_unit.select2();
     },
 
     reset_form: function () {
@@ -691,6 +722,11 @@ $(document).ready(function() {
     if ($perwakilan_tujuan.val()){
         $perwakilan_tujuan.trigger('change');
     }
+
+    $('.perwakilan_tujuan').on('change', function (e) {
+        up.set_unit_by_wilayah(this, e);
+    });
+    up.set_unit_by_wilayah();
 
     
     

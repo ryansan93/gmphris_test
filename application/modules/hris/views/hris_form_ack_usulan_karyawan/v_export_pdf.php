@@ -104,6 +104,7 @@
 
 		table.border-field td, table.border-field th {
 			border-collapse: collapse;
+			border: 1px solid;
 			padding-left: 3px;
 			padding-right: 3px;
 			padding-top: 3px;
@@ -115,7 +116,7 @@
 		}
 
 		table.border-field tr:not(.keterangan) td {        
-			border-right: 1px solid;
+			border: 1px solid;
 		}
 
 		table.border-field tr.keterangan td {        
@@ -232,7 +233,7 @@
 			body {
 				display: flex;
 				align-items: center;
-				justify-content :center;
+				justify-content: center;
 			}
 		}
 	</style>
@@ -299,75 +300,72 @@
 							</thead>
 							<tbody>
 								<tr>
-									<th class="text-left" style="width: 20%;"><span style="margin-left:15px;">Nama Pengusul </span></th>
-									<th class="text-left" style="width: 2%;">:</th>
-									<th class="text-left" style="width: 78%;"><?php echo ucwords(strtolower($data['nama_karyawan_pengusul']))?></th>
+									<td class="text-left" style="width: 20%;"><span style="margin-left:15px;">Nama Pengusul </span></td>
+									<td class="text-left" style="width: 2%;">:</td>
+									<td class="text-left" style="width: 78%;"><?php echo ucwords(strtolower($data['nama_karyawan_pengusul']))?></td>
 								</tr>
 								<tr>
-									<th class="text-left" style="width: 20%;"><span style="margin-left:15px;" >Unit </span></th>
-									<th class="text-left" style="width: 2%;">:</th>
-									<th class="text-left" style="width: 78%;"><?php echo $unit[$data['unit']]['nama']?></th>
+									<td class="text-left" style="width: 20%;"><span style="margin-left:15px;" >Unit </span></td>
+									<td class="text-left" style="width: 2%;">:</td>
+									<td class="text-left" style="width: 78%;"><?php echo $unit[$data['unit']]['nama']?></td>
 								</tr>
 								<tr>
-									<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Posisi </span></th>
-									<th class="text-left" style="width: 10px;">:</th>
-									<th class="text-left" style="width: 5%;"><?php echo $data['nama_jabatan']?></th>
+									<td class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Posisi </span></td>
+									<td class="text-left" style="width: 10px;">:</td>
+									<td class="text-left" style="width: 5%;"><?php echo $data['nama_jabatan']?></td>
 								</tr>
 								<tr>
-									<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Jumlah </span></th>
-									<th class="text-left" style="width: 10px;">:</th>
-									<th class="text-left" style="width: 5%;"><?php echo $data['jumlah']?> Orang</th>
+									<td class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Jumlah </span></td>
+									<td class="text-left" style="width: 10px;">:</td>
+									<td class="text-left" style="width: 5%;"><?php echo $data['jumlah']?> Orang</td>
 								</tr>
 								<tr>
-									<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Alasan </span></th>
-									<th class="text-left" style="width: 10px;">:</th>
-									<th class="text-left" style="width: 5%;"><?php echo $data['alasan']?></th>
+									<td class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Alasan </span></td>
+									<td class="text-left" style="width: 10px;">:</td>
+									<td class="text-left" style="width: 5%;"><?php echo $data['alasan']?></td>
 								</tr>
 								<tr>
 									<td colspan="3">&nbsp;</td>
 								</tr>
-								<tr>
-									<th colspan="3" class="text-center">
-										<label for="">Disetujui</label>
-									</th>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										&nbsp;
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										&nbsp;
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										&nbsp;
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center" style="color:green; font-weight:bold;">
-										<?php echo $data['status_usulan'] == 3 ? '[ APPROVED ]' : '&nbsp;' ?>
-										<?php echo $data['status_usulan'] == 6 ? '[ APPROVED ]' : '&nbsp;' ?>
-									</td>
-								</tr>
-								<tr>
-									<td colspan="3" class="text-center">
-										&nbsp;
-									</td>
-								</tr>
-								<tr>
-									<th colspan="3" class="text-center">
-										(............................................)
-									</th>
-								</tr>
 							</tbody>
+						</table>
+						<table class="border-field" style="width: 100%;">
+							<tr style="border:1px solid black; height:100px;">
+								<td style="width: 70%;">
+									<div style="margin-left:15px;">
+										<b style="text-decoration: underline">Informasi Usulan</b>
+									</div>
+									<div style="margin-left:20px; display:flex; flex-direction:row">
+										<div style="width:170px;">Acknowledge by </div>
+										<div style="width:10px;">:</div> 
+										<b> <?php echo !empty($data['tgl_ack'])  ? $data['acknowledged_rejected_by'] : ' - ' ?></b>
+									</div>
+									<div style="margin-left:20px; display:flex; flex-direction:row">
+										<div style="width:170px;">Tanggal Acknowledge HRD </div>
+										<div style="width:10px;">:</div> 
+										<b> <?php echo !empty($data['tgl_ack'])  ? tglIndonesia($data['tgl_ack'], '-', ' ') . ', Pukul : ' . date("H:i:s", strtotime($data['tgl_ack'])) : '-'; ?></b>
+									</div>
+									<div style="margin-left:20px; display:flex; flex-direction:row">
+										<div style="width:170px;">Approved by </div>
+										<div style="width:10px;">:</div> 
+										<b> <?php echo !empty($data['tgl_approve'])  ? $data['approved_rejected_by'] : ' - ' ?></b>
+									</div>
+									<div style="margin-left:20px; display:flex; flex-direction:row">
+										<div style="width:170px;">Tanggal Approve </div>
+										<div style="width:10px;">:</div> 
+										<b> <?php echo !empty($data['tgl_approve'])  ? tglIndonesia($data['tgl_approve'], '-', ' ') . ', Pukul : ' . date("H:i:s", strtotime($data['tgl_approve'])) : '-'; ?></b>
+									</div>
+								</td>
+								<td style="width: 30%; color:green;" class="text-center">
+									<b><?php echo $data['status'] == 3 ? '[ APPROVED ]' : '' ?></b>
+								</td>
+							</tr>
+							<tr style="border:1px solid black;">
+								<td style="width: 70%;" class="text-center"></td>
+								<td style="width: 30%;" class="text-center">
+									<div>(.......................................)</div>
+								</td>
+							</tr>
 						</table>
 					</div>
 				</div>

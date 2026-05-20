@@ -36,7 +36,7 @@
             <div class="detail_area" style="display:flex; flex-direction:column; gap:10px; ">
 
                 <div style="display:flex; flex-direction:row; gap:20px;">
-                    <label style="width:10%;">Status karyawan</label>
+                    <label style="width:15%;">Status karyawan</label>
                     <select class="form form-control status_karyawan" style="width:20%;">
                         <?php foreach($status as $s) { ?>
                             <option value="<?php echo $s['id'] ?>"><?php echo $s['nama_status'] ?></option>
@@ -70,7 +70,7 @@
             <br>
 
             <div class="pull-right">
-                <button class="btn btn-secondary " onclick="window.location.href='hris/HrisKategori' "> <i class="fa fa-angle-left" style="margin-right:10px;" aria-hidden="true"></i>  Back</button>
+                <button class="btn btn-secondary " onclick="window.location.href='hris/HrisKandidatBaru' "> <i class="fa fa-angle-left" style="margin-right:10px;" aria-hidden="true"></i>  Back</button>
                 <button class="btn btn-primary " onclick="hf.save(this, event)"> <i class="fa fa-floppy-o" style="margin-right:10px;" aria-hidden="true"></i>  Save Data</button>
             </div>
 

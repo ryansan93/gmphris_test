@@ -8,6 +8,7 @@ class FormAckUsulanKaryawan extends Public_Controller {
 
     function __construct()
     {
+        date_default_timezone_set('Asia/Jakarta');
         parent::__construct();
         $this->url = $this->current_base_uri;
         $this->hakAkses = hakAkses($this->url);
@@ -55,7 +56,22 @@ class FormAckUsulanKaryawan extends Public_Controller {
 
     public function load_form()
     {
+
+    
         $content['list'] =  $this->get_list(); 
+        if (!empty($_POST['kode'])) {
+            $kode_get = urldecode($_POST['kode']);
+            foreach ($content['list'] as $key => $val) {
+                if (trim($val['document']) == trim($kode_get)) {
+                    $val['selected']    = 'selected';
+                    $selected           = $val;
+                    unset($content['list'][$key]);
+                    array_unshift($content['list'], $selected);
+                    break;
+                }
+            }
+        }
+        
         $content['unit'] =  $this->get_unit();
         // cetak_r($content, 1);
         echo $this->load->view($this->pathView . 'v_list', $content, TRUE);
@@ -296,12 +312,26 @@ class FormAckUsulanKaryawan extends Public_Controller {
                 'status' => $params['keputusan'],
             ];
 
+            if ( $params['keputusan'] == 2 || $params['keputusan'] == 4) {
+                $update['acknowledged_rejected_by'] = $_SESSION['detail_user']['nama_detuser'];
+                $update['tgl_ack']                  = $params['keputusan'] == 2 ? date("Y-m-d H:i:s") : null;
+            }
+
+            if ( $params['keputusan'] == 3 || $params['keputusan'] == 5) {
+                $update['approved_rejected_by']     = $_SESSION['detail_user']['nama_detuser'];
+                $update['tgl_approve']              = $params['keputusan'] == 3 ? date("Y-m-d H:i:s") : null;
+            }
+
             $keterangan = !empty($params['keterangan']) ? $params['keterangan'] : '';
 
             if ($params['keputusan'] == 5) {
                 $update['keterangan_ceo'] = $keterangan;
+                $update['tgl_reject'] =  date("Y-m-d H:i:s");
+                
             } else {
                 $update['keterangan_hrd'] = $keterangan;
+                $update['tgl_reject'] =  date("Y-m-d H:i:s");
+
             }
 
             $m_db->where('id', $id_data)->update($update);

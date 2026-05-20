@@ -8,6 +8,7 @@ class HrisStatusKandidat extends Public_Controller {
 
     function __construct()
     {
+        date_default_timezone_set('Asia/Jakarta');
         parent::__construct();
         $this->url = $this->current_base_uri;
         $this->hakAkses = hakAkses($this->url);
@@ -186,7 +187,8 @@ class HrisStatusKandidat extends Public_Controller {
 
     public function load_form(){
 
-        $content['list'] =  $this->get_list();
+        $content['akses']   = $this->hakAkses;
+        $content['list']    =  $this->get_list();
         // cetak_r($content, 1);
 
 

@@ -56,7 +56,7 @@
         <button class="btn-filter done" onclick="fr.filter(this, event, 6)">DONE</button>
     </div>
     <br>
-    <div class="col-xs-12 no-padding list_data" >
+    <div class="col-xs-12 no-padding list_data" style="overflow-x:scroll" >
         <div class="spinner-load"></div>
     </div>
 </fieldset>

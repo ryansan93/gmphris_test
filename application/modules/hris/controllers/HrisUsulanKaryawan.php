@@ -154,12 +154,13 @@ class HrisUsulanKaryawan extends Public_Controller {
     }
 
 
-    public function load_form(){
+    public function load_form()
+    {
 
+        $content['akses']           = $this->hakAkses;
         $content['list'] =  $this->get_list_data();
         $content['unit'] = $this->get_unit();
         // cetak_r($content, 1);
-
 
         echo $this->load->view($this->pathView . 'v_list', $content, TRUE);
     }
