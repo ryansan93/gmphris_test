@@ -698,6 +698,12 @@ let up ={
             wilayah : $('.perwakilan_tujuan').val(),
         };
 
+        if (!params.level || !params.wilayah) {
+            $(".atasan_baru").html('<option disabled selected>-- Pilih Atasan Baru --</option>');
+            $(".atasan_baru").trigger('change');
+            return;
+        }
+
         $.ajax({
             url: 'hris/UsulanMutasi/set_atasan_baru',
             data: params,

@@ -77,7 +77,7 @@ class UsulanMutasi extends Public_Controller {
             SELECT khu.kode_unit AS unit
             FROM karyawan_history kh
             INNER JOIN karyawan_history_unit khu ON kh.id = khu.id
-            INNER JOIN karyawan k ON kh.nik = k.nik
+            INNER JOIN karyawan k ON kh.nik = k.nik and k.status = 1
             WHERE k.id = $id_karyawan and kh.tgl_selesai is null
         ";
 
@@ -1097,13 +1097,16 @@ class UsulanMutasi extends Public_Controller {
         $level      = $_POST['level'] ?? null;
         $wilayah    = $_POST['wilayah'] ?? [];
 
+        // cetak_r($_POST, 1);
+
         if (empty($wilayah) || !is_array($wilayah)) {
             echo json_encode([]);
             return;
         }
         $wil = "'" . implode("','", $wilayah) . "'";
 
-        $sql = " SELECT k.id, k.nik, k.nama, j.nama as nama_jabatan,  wk.wilayah 
+        if (!empty($level)) {
+            $sql = " SELECT k.id, k.nik, k.nama, j.nama as nama_jabatan,  wk.wilayah 
             FROM karyawan k
             INNER JOIN wilayah_karyawan wk 
                 ON k.id = wk.id_karyawan
@@ -1112,14 +1115,18 @@ class UsulanMutasi extends Public_Controller {
                 AND k.level < ".$level."
                 AND wk.wilayah IN (".$wil.") ";
 
-        // cetak_r($sql, 1);
+            
 
-        $d_conf = $m_conf->hydrateRaw($sql);
-        $data = [];
-        if ($d_conf->count() > 0) {
-            $data = $d_conf->toArray();
+            $d_conf = $m_conf->hydrateRaw($sql);
+            $data = [];
+            if ($d_conf->count() > 0) {
+                $data = $d_conf->toArray();
+            }
+            echo json_encode($data);
+        } else {
+            echo json_encode(['message' => 'Level tidak ditemukan']);
         }
-        echo json_encode($data);
+        
     }
 
     public function get_data_outstanding()

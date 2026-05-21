@@ -14,7 +14,7 @@
         transition: all 0.2s ease;
         flex: 0 1 calc(25% - 10px);
         box-sizing: border-box;
-        min-height: 120px;
+        min-height: 50px;
         display: flex;
         flex-direction: column;
     }
@@ -45,14 +45,12 @@
         word-break: break-word;
     }
 
-    /* Tablet - 3 cards per row */
     @media (max-width: 1200px) {
         .card-notif {
             flex: 0 1 calc(33.333% - 10px);
         }
     }
 
-    /* Small Tablet - 2 cards per row */
     @media (max-width: 768px) {
         .wrapper-notif {
             gap: 8px;
@@ -76,7 +74,6 @@
         }
     }
 
-    /* Mobile - 1 card per row */
     @media (max-width: 480px) {
         .wrapper-notif {
             gap: 6px;
@@ -103,37 +100,22 @@
 
 <!-- < ?php echo '<pre>';print_r($data);die; ?>  -->
 <?php if ( !empty($data) && count($data) > 0 ) { ?>
-
     <div class="wrapper-notif">
-
         <?php foreach($data as $index => $val){ ?>
-
             <?php if ( !empty($val['display']) ) { ?>
-
                 <?php foreach($val['display'] as $row){ ?>
-
                     <div class="card-notif" onclick="window.location.href='<?php echo $val['link'] . '?kode=' . urlencode($row['key']) ?>'">
-
                         <div class="card-title">
                             <?php echo $val['nama_fitur']; ?>
                         </div>
-
                         <div class="card-content">
                             <?php echo $row['display']; ?>
                         </div>
-
                     </div>
-
                 <?php } ?>
-
             <?php } ?>
-
         <?php } ?>
-
     </div>
-
 <?php } else { ?>
-
-    Tidak ada notifikasi.
-
+    <span>Tidak ada notifikasi.</span>
 <?php } ?>

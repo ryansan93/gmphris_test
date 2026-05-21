@@ -193,18 +193,11 @@
                         <div class="form-content">
 
                             <div class="input-group date datetimepicker" id="tgl_usulan">
-
-                                <input type="text"
-                                    name="tgl_usulan"
-                                    class="datepicker form-control text-center"
-                                    placeholder="Tanggal Usulan" />
-
+                                <input type="text" name="tgl_usulan" class="datepicker form-control text-center" placeholder="Tanggal Usulan" />
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-calendar"></span>
                                 </span>
-
                             </div>
-
                         </div>
 
                     </div>

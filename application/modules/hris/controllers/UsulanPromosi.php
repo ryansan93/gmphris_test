@@ -77,7 +77,7 @@ class UsulanPromosi extends Public_Controller {
             SELECT khu.kode_unit AS unit
             FROM karyawan_history kh
             INNER JOIN karyawan_history_unit khu ON kh.id = khu.id
-            INNER JOIN karyawan k ON kh.nik = k.nik
+            INNER JOIN karyawan k ON kh.nik = k.nik and k.status = 1
             WHERE k.id = $id_karyawan and kh.tgl_selesai is null
         ";
 

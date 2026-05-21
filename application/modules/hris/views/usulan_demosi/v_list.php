@@ -19,9 +19,9 @@
                 <tr class="data-row" style="<?php echo !empty($l['selected']) ? 'background-color: #FFF9D6;' : '' ?>" > 
                     <td class="text-center"><?php echo $l['kode'] ?></td>
                     <td class="text-center"><?php echo tglIndonesia($l['tanggal'], "-" , " ") ?></td>
-                    <td class="text-center"><?php echo ucwords(strtolower($l['nama_pengusul'])) ?></td>
+                    <td class="text-left"><?php echo ucwords(strtolower($l['nama_pengusul'])) ?></td>
                     <td class="text-center"><?php echo $l['nama_jabatan_pengusul'] ?></td>
-                    <td class="text-center"><?php echo ucwords(strtolower($l['nama_karyawan'])) ?></td>
+                    <td class="text-left"><?php echo ucwords(strtolower($l['nama_karyawan'])) ?></td>
                     <td class="text-left" style="white-space:nowrap;">
                         <?php echo $l['nama_jabatan_asal'] ?>
                         <br>
