@@ -24,7 +24,10 @@ class HrisDataKandidat_model extends Conf{
 
 	public function notifAckDataUsulanKaryawanBaru()
 	{
-		$sql = " select * from hris_usulan_karyawan_baru where status in (1) ";
+		$sql = " select hukb.*, k.nama as nama_pengusul, j.nama as nama_jabatan from hris_usulan_karyawan_baru hukb
+		left join karyawan k on k.nik = hukb.nama_pengusul and k.status = 1
+		left join jabatan j on k.jabatan = j.kode
+		where hukb.status in (1)  ";
 
 		$d_dpd = $this->hydrateRaw($sql);
 
@@ -39,7 +42,7 @@ class HrisDataKandidat_model extends Conf{
 
 	public function notifDataKandidatForm()
 	{
-		$sql 	= "select * from hris_data_kandidat hdk WHERE  hdk.status_kandidat = 1 and hdk.tgl_selesai_isi is not null ";
+		$sql 	= " select * from hris_data_kandidat hdk WHERE  hdk.status_kandidat = 1 and hdk.document is not null ";
 		
 		$d_dpd 	= $this->hydrateRaw($sql);
 
@@ -53,7 +56,10 @@ class HrisDataKandidat_model extends Conf{
 
 	public function notifApprovekDataUsulanKaryawanBaru()
 	{
-		$sql = " select * from hris_usulan_karyawan_baru where status in (2) ";
+		$sql = " select hukb.*, k.nama as nama_pengusul, j.nama as nama_jabatan from hris_usulan_karyawan_baru hukb
+		left join karyawan k on k.nik = hukb.nama_pengusul and k.status = 1
+		left join jabatan j on k.jabatan = j.kode
+		where hukb.status in (2) ";
 
 		$d_dpd = $this->hydrateRaw($sql);
 

@@ -100,6 +100,7 @@ class HrisForm extends Public_Controller {
             $m_form->keterangan     = $params['header']['keterangan'];
             $m_form->urutan         = $params['header']['urutan'];
             $m_form->kategori       = $params['header']['kategori'];
+            $m_form->jenis_form     = $params['header']['jenis_form'];
             $m_form->save();
 
             $id_form = $m_form->id;
@@ -228,7 +229,6 @@ class HrisForm extends Public_Controller {
 
     public function edit_data()
     {
-        
 
         $this->add_external_js(array(
             "assets/jquery/easy-autocomplete/jquery.easy-autocomplete.min.js",
@@ -249,7 +249,8 @@ class HrisForm extends Public_Controller {
         //  cetak_r($content, 1);
         $content['title_panel']     = 'HRIS - Hris Form / Edit Data';
 
-        $data['view']         = $this->load->view($this->pathView . 'v_edit_data', $content, TRUE);
+        $data['title_menu']         = 'HRIS - Hris Form / Edit Data';
+        $data['view']               = $this->load->view($this->pathView . 'v_edit_data', $content, TRUE);
         $this->load->view($this->template, $data);
     }
 

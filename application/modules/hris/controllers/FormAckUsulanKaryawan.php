@@ -324,14 +324,13 @@ class FormAckUsulanKaryawan extends Public_Controller {
 
             $keterangan = !empty($params['keterangan']) ? $params['keterangan'] : '';
 
-            if ($params['keputusan'] == 5) {
+            if ($params['keputusan'] == 5 || $params['keputusan'] == 4) {
                 $update['keterangan_ceo'] = $keterangan;
                 $update['tgl_reject'] =  date("Y-m-d H:i:s");
                 
             } else {
-                $update['keterangan_hrd'] = $keterangan;
-                $update['tgl_reject'] =  date("Y-m-d H:i:s");
-
+                $update['keterangan_ceo'] = null;
+                $update['tgl_reject'] = null;
             }
 
             $m_db->where('id', $id_data)->update($update);

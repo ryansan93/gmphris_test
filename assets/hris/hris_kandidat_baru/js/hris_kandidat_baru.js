@@ -323,8 +323,205 @@ let hf = {
         });
 	}, // end - set_atasan
 
-    show_detail : () => {
-        
+    upload_document : (elm, event) => {
+
+        $('<input type="file" accept="image/*">')
+            .on('change', function () {
+
+                let params = {
+                    file: this.files[0],
+                    id_data_karyawan: $(elm).attr('id_data'),
+                    label: $(elm).attr('label')
+                };
+
+                if (!params.file) return;
+
+                let reader = new FileReader();
+
+                reader.onload = function (e) {
+
+                    bootbox.dialog({
+                        title: 'Preview Gambar',
+                        size: 'large',
+                        message: `
+                            <div class="text-center">
+                                <img src="${e.target.result}"
+                                    style="max-width:100%;max-height:500px;">
+                            </div>
+                        `,
+                        buttons: {
+                            cancel: {
+                                label: '<i class="fa fa-times"></i> Tutup',
+                                className: 'btn-secondary'
+                            },
+                            save: {
+                                label: '<i class="fa fa-check"></i> Simpan',
+                                className: 'btn-primary',
+                                callback: function () {
+                                    hf.exec_upload_document(params);
+                                }
+                            }
+                        }
+                    });
+
+                };
+
+                reader.readAsDataURL(params.file);
+
+            })
+            .trigger('click');
+    },
+
+    exec_upload_document : (data) => {
+
+        let formData = new FormData();
+        formData.append('file', data.file);
+        formData.append('id_data_karyawan', data.id_data_karyawan);
+        formData.append('label', data.label);
+
+        $.ajax({
+            url : 'hris/HrisKandidatBaru/upload_document',
+            data : formData,    
+            type : 'POST',
+            dataType : 'json',
+            processData: false,
+            contentType: false,
+            beforeSend : function(){
+                showLoading();
+            },
+            success : function(data){
+                hideLoading();
+
+                if (data.status) {
+                    bootbox.alert(data.message, function () {
+                        window.location.reload();
+                    }
+                    );
+                } else {
+                    bootbox.alert(data.message);
+                }
+            },
+        });
+    },
+
+    delete_document : (elm, event) => {
+
+        bootbox.confirm({
+            title: 'Konfirmasi',
+            message: 'Apakah Anda yakin ingin menghapus dokumen ini?',
+            buttons: {
+                confirm: {
+                    label: 'Ya',
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    label: 'Batal',
+                    className: 'btn-secondary'
+                }
+            },
+            callback: function(result) {
+
+                if (!result) {
+                    return;
+                }
+
+                let params = {
+                    id_data_karyawan : $(elm).attr('id_data'),
+                    label : $(elm).attr('label'),
+                };
+
+                $.ajax({
+                    url : 'hris/HrisKandidatBaru/delete_document',
+                    data : params,
+                    type : 'POST',
+                    dataType : 'json',
+                    beforeSend : function(){
+                        showLoading();
+                    },
+                    success : function(data){
+                        hideLoading();
+
+                        if (data.status) {
+                            bootbox.alert(data.message, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            bootbox.alert(data.message);
+                        }
+                    },
+                    error : function() {
+                        hideLoading();
+                        bootbox.alert('Terjadi kesalahan saat menghapus dokumen.');
+                    }
+                });
+            }
+        });
+
+    },
+
+   edit_item : (elm, event) => {
+
+        const get_url = new URLSearchParams(window.location.search);
+
+        let params = {
+            id : get_url.get('id'),
+            label : $(elm).attr("label"),
+            value : $(elm).attr("value"),
+            parent : $(elm).attr("parent"),
+        }
+
+        bootbox.dialog({
+            title: "Edit " + params.label,
+            message: `
+                <div class="form-group">
+                    <label>${params.label}</label>
+                    <input type="text" class="form-control edit-value" value="${params.value}">
+                </div>
+            `,
+            buttons: {
+                cancel: {
+                    label: "Batal",
+                    className: "btn-secondary"
+                },
+                save: {
+                    label: "Simpan",
+                    className: "btn-primary",
+                    callback: function () {
+
+                        let new_value = $(".edit-value").val().trim();
+
+                        $.ajax({
+                            url: 'hris/HrisKandidatBaru/edit_item',
+                            data: {
+                                id: params.id,
+                                label: params.label,
+                                value: new_value,
+                                parent: params.parent,
+                            },
+                            type: 'POST',
+                            dataType: 'json',
+                            beforeSend: function () {
+                                showLoading();
+                            },
+                            success: function (data) {
+                                hideLoading();
+                                if (data.status) {
+                                    bootbox.alert(data.message, function () {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    bootbox.alert(data.message);
+                                }
+                            },
+                        })
+
+
+                        return true;
+                    }
+                }
+            }
+        });
+
     },
 }
 

@@ -38,6 +38,7 @@ let hf ={
 
         $(".detail_area").find(".detail_form").each(function(index){
             let nama_kategori = $(this).find(".nama_kategori").val().trim();
+            let durasi = $(this).find(".durasi").val().trim();
 
             if (nama_kategori === "") {
                 isValidDetail = false;
@@ -47,6 +48,7 @@ let hf ={
 
             detail.push({
                 nama_kategori: nama_kategori,
+                durasi: durasi,
             });
         });
 

@@ -129,7 +129,7 @@ class HrisStatusKaryawan extends Public_Controller {
     public function get_data_kategori()
     {
         $m_conf     = new \Model\Storage\Conf();
-        $sql        = "select * from hris_kategori";
+        $sql        = "select * from hris_kategori order by kode_kategori asc";
 
         $d_conf     = $m_conf->hydrateRaw( $sql );
         $data       = null;
@@ -215,13 +215,15 @@ class HrisStatusKaryawan extends Public_Controller {
                     $m_db_new->$key = $val;
                 }
 
-                $tgl_selesai = date('Y-m-d', strtotime($params['tgl_berlaku'].' +6 months'));
+                $tgl_selesai            = date('Y-m-d', strtotime($params['tgl_berlaku'].' +'.$params['duration'].' months'));
                 $m_db_new->status       = 1;
                 $m_db_new->kategori     = $params['kategori'];
-                $m_db_new->tgl_berlaku  = date('Y-m-d', strtotime($params['tgl_berlaku'].' +1 day'));
+                $m_db_new->tgl_berlaku  = date('Y-m-d', strtotime($params['tgl_berlaku']));
                 $m_db_new->tgl_selesai  = $tgl_selesai;
                 $m_db_new->keterangan   = $params['alasan'];
-            
+                // cetak_r($m_db_new, 1);
+                // $m_db_new->duration     = $params['duration'];
+
                 $m_db_new->save();
 
                 $deskripsi_log = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];

@@ -252,6 +252,7 @@ class ReportHistoryKaryawan extends Public_Controller {
         $wilayah         = $this->get_list_wilayah();
         $unit            = $this->get_list_unit();
 
+      
         $mapping_wilayah = [];
         foreach ($wilayah as $w) {
             $mapping_wilayah[$w['id']] = $w['nama'];
@@ -329,6 +330,9 @@ class ReportHistoryKaryawan extends Public_Controller {
         ];
 
         $data_list       = $this->get_list_data($need);
+
+        //   cetak_r($data_list, 1);
+
         $wilayah         = $this->get_list_wilayah();
         $unit            = $this->get_list_unit();
 
@@ -410,7 +414,7 @@ class ReportHistoryKaryawan extends Public_Controller {
             jbt_asal.nama AS nama_jabatan_asal, jbt_tujuan.nama AS nama_jabatan_tujuan,
             jp.nama  as nama_jabatan_pengusul
             FROM hris_usulan_mutasi hum
-            INNER JOIN karyawan_history kh 
+            left JOIN karyawan_history kh 
                 ON hum.karyawan = kh.nik 
                 AND hum.jabatan_tujuan = kh.jabatan 
                 AND hum.tgl_berlaku BETWEEN kh.tgl_mulai AND ISNULL(kh.tgl_selesai, '9999-12-31')
@@ -429,8 +433,12 @@ class ReportHistoryKaryawan extends Public_Controller {
 
             if (isset($need['jenis']) && $need['jenis'] == 'FILTER') {
 
-                if (!empty($need['data']['nik'])) {
-                    $sql .= " AND hum.karyawan = '".$need['data']['nik']."' ";
+                if (!empty($need['data']['karyawan'])) {
+                    $sql .= " AND hum.karyawan = '".$need['data']['karyawan']."' ";
+                }
+
+                if (!empty($need['data']['pengusul'])) {
+                    $sql .= " AND hum.pengusul = '".$need['data']['pengusul']."' ";
                 }
 
                 if (
@@ -465,7 +473,14 @@ class ReportHistoryKaryawan extends Public_Controller {
 
         $d_conf = $m_conf->hydrateRaw($sql);
 
-        return $d_conf->count() > 0 ? $d_conf->toArray() : [];
+        $data = $d_conf->count() > 0 ? $d_conf->toArray() : [];
+
+        $grouped = [];
+        foreach ($data as $row) {
+            $grouped[$row['karyawan']][] = $row;
+        }
+        // cetak_r($grouped, 1);
+        return $data;
     }
 
     public function show_detail()
@@ -476,8 +491,8 @@ class ReportHistoryKaryawan extends Public_Controller {
         ];
         
 
-        $data_detail                    = $this->get_list_data($need);
-        $kode = $_POST['kode'] ?? null;
+        $data_detail    = $this->get_list_data($need);
+        $kode           = $_POST['kode'] ?? null;
 
         $filtered = array_filter($data_detail, function ($row) use ($kode) {
             return $row['kode'] == $kode;

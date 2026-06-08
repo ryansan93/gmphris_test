@@ -102,6 +102,7 @@ let up ={
 
         let data = {
             jabatan_text : $(elm).find("option:selected").attr("jabatan_text"),
+            level_atasan : $(elm).find("option:selected").attr("level"),
             jabatan_val  : $(elm).find("option:selected").attr("jabatan_val"),
             id_karyawan  : $(elm).find("option:selected").attr("id_karyawan") ?? null,
             id_atasan    : $(elm).find("option:selected").attr("id_atasan") ?? null,
@@ -155,7 +156,7 @@ let up ={
             $(".jabatan_pengusul").val(data.jabatan_text);
             $(".jabatan_pengusul").attr("jabatan_val", data.jabatan_val);
 
-            up.set_karyawan_bawahan(data.id_atasan);
+            up.set_karyawan_bawahan(data.id_atasan, data.level_atasan);
 
         } else {
             $(".jabatan_asal").val(data.jabatan_text);
@@ -167,42 +168,8 @@ let up ={
 
     },
 
-    // set_karyawan_bawahan: (id_karyawan) => {
 
-    //     let select = $(".karyawan");
-
-    //     if (!select.data("original_option")) {
-    //         select.data(
-    //             "original_option",
-    //             select.html()
-    //         );
-    //     }
-
-    //     select.html(
-    //         select.data("original_option")
-    //     );
-
-    //     select.prepend(
-    //         '<option value="">-- Pilih Karyawan --</option>'
-    //     );
-
-    //     select.find("option").each(function () {
-
-    //         let atasan = $(this).attr("atasan");
-
-    //         if (!$(this).val()) {
-    //             return;
-    //         }
-
-    //         if (String(id_karyawan) !== String(atasan)) {
-    //             $(this).remove();
-    //         }
-
-    //     });
-
-    // },
-
-    set_karyawan_bawahan: (id_karyawan) => {
+    set_karyawan_bawahan: (id_karyawan, level_atasan) => {
 
         let select = $(".karyawan");
 
@@ -224,12 +191,13 @@ let up ={
         select.find("option").each(function () {
 
             let atasan = $(this).attr("atasan");
+            let level_karyawan = $(this).attr("level");
 
             if (!$(this).val()) {
                 return;
             }
 
-            if (String(id_karyawan) !== String(atasan)) {
+            if (String(id_karyawan) !== String(atasan) || (level_atasan && level_karyawan && parseInt(level_karyawan) <= parseInt(level_atasan))) {
                 $(this).remove();
             }
 
@@ -487,7 +455,7 @@ let up ={
 
     },
 
-    keputusan: (elm, val) => {
+    keputusan: async (elm, val) => {
 
         const STATUS = {
             DRAFT: 1,
@@ -498,6 +466,8 @@ let up ={
         };
 
         let kode = $(elm).attr("kode"); 
+
+        let tgl_berlaku = await up.config_tgl_berlaku(kode);
 
         let text = val == STATUS.ACK ? 'Acknowledge' 
                 : val == STATUS.APPROVE ? 'Approve' 
@@ -547,6 +517,9 @@ let up ={
                         </span>
                     </div>
                 </div>
+                // <div>
+                //     <i style="font-size:10px;"> *note : Tanggal berlaku harus minimal H+1 dari tanggal mulai jabatan lama. <br>( Tgl berlaku saat ini : `+ tgl_berlaku+` )<i>
+                // </div>
             `;
 
             let dialog = bootbox.dialog({
@@ -580,7 +553,8 @@ let up ={
             dialog.on('shown.bs.modal', function () {
                 $('#tgl_berlaku').datetimepicker({
                     locale: 'id',
-                    format: 'DD MMM YYYY'
+                    format: 'DD MMM YYYY',
+                    minDate: moment(tgl_berlaku).add(1, 'days')
                 });
             });
 
@@ -717,7 +691,7 @@ let up ={
                 hideLoading();
                 let option = '<option disabled selected>-- Pilih Atasan Baru --</option>';
                 $.each(data, function(i, v){
-                    option += `<option value="${v.id}">${v.nama} - ${v.nama_jabatan} </option>`;
+                    option += `<option value="${v.nik}">${v.nama} - ${v.nama_jabatan} </option>`;
                 });
 
                 $(".atasan_baru").html(option);
@@ -725,6 +699,20 @@ let up ={
             },
         });
     },
+
+    config_tgl_berlaku: async (kode) => {
+
+        let result = await $.ajax({
+            url : 'hris/UsulanPromosi/get_config_tgl_berlaku',
+            data : {
+                kode : kode,
+            },
+            type : 'POST',
+            dataType : 'json',
+        });
+
+        return result;
+    }
 };
 
 

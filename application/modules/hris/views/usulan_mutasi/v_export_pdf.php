@@ -318,6 +318,13 @@
 									<th class="text-left" style="width: 10px;">:</th>
 									<th class="text-left" style="width: 5%;"><?php echo $data['jenis']?></th>
 								</tr>
+								<tr>
+									<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Tgl Berlaku </span></th>
+									<th class="text-left" style="width: 10px;">:</th>
+									<th class="text-left" style="width: 5%;"><?php echo tglIndonesia($data['tgl_berlaku'], '-', ' ') ?></th>
+								</tr>
+
+								
 
 								<!-- <tr>
 									<th class="text-left" style="width: 1%;"><span style="margin-left:15px;" >Unit </span></th>
@@ -507,7 +514,7 @@
 								</td>
 							</tr>
 							<tr style="border:1px solid black;">
-								<td style="width: 70%;" class="text-center"><b>Berlaku Mulai <?php echo tglIndonesia($data['tgl_berlaku'], '-', ' ') ?></b></td>
+								<td style="width: 70%;" class="text-center"></td>
 								<td style="width: 30%;" class="text-center">
 									<div>(.......................................)</div>
 								</td>

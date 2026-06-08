@@ -35,9 +35,19 @@
                 </div>
             </div>
 
-            <div class="filter-full">
-                <label>Karyawan</label>
-                <select class="select2 form-control nik">
+            <div class="filter-item">
+                <label>Pengusul</label>
+                <select class="select2 form-control pengusul">
+                    <option selected value="">-- Pilih Karyawan --</option>
+                    <?php foreach($karyawan as $k){ ?>
+                        <option value="<?php echo $k['nik'] ?>"><?php echo ucwords(strtolower($k['nama'])) ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+
+             <div class="filter-item">
+                <label>Karyawan yang Diusulkan</label>
+                <select class="select2 form-control karyawan">
                     <option selected value="">-- Pilih Karyawan --</option>
                     <?php foreach($karyawan as $k){ ?>
                         <option value="<?php echo $k['nik'] ?>"><?php echo ucwords(strtolower($k['nama'])) ?></option>

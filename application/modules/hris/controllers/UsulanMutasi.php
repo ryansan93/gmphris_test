@@ -46,7 +46,7 @@ class UsulanMutasi extends Public_Controller {
             $content['wilayah']         = $this->get_list_wilayah();
             $content['outstanding']     = $this->get_data_outstanding();
             
-            // cetak_r($_SESSION, 1);
+            // cetak_r($content['karyawan'], 1);
             $content['jabatan']         =  $m_conf->hydrateRaw("select * from jabatan")->toArray();
 
             // Load Indexx
@@ -193,14 +193,12 @@ class UsulanMutasi extends Public_Controller {
 
         // cetak_r($db_karyawan, 1);
 
-
         $karyawan = [];
-        foreach($db_karyawan as $dk){
-            if ((int)$dk['status'] === 1){
+        foreach ($db_karyawan as $dk) {
+            if ( (int)$dk['status'] === 1 && date("Y-m-d") >= date("Y-m-d", strtotime($dk['tgl_berlaku'])) ) {
                 $karyawan[$dk['id']] = $dk;
             }
         }
-
         foreach ($karyawan as &$k) {
             foreach ($jabatan as $j) {
                 if ($k['jabatan'] == $j['kode']) {
@@ -764,7 +762,8 @@ class UsulanMutasi extends Public_Controller {
 
                         $m_karyawan_new->id             = $newId;
                         $m_karyawan_new->status         = 1;
-                        $m_karyawan_new->atasan         = $data_mutasi['atasan_mutasi'] ?? null;
+                        $m_karyawan_new->atasan_nik     = $data_mutasi['atasan_mutasi'] ?? null;
+                        $m_karyawan_new->atasan         = $this->get_id_karyawan_by_nik($data_mutasi['atasan_mutasi'] ?? null);
                         $m_karyawan_new->jabatan        = $data_mutasi['jabatan_tujuan'];
                         $m_karyawan_new->tgl_berlaku    = $params['tgl_berlaku'] ?? null;
 
@@ -1113,9 +1112,10 @@ class UsulanMutasi extends Public_Controller {
             INNER JOIN jabatan j on k.jabatan = j.kode 
             WHERE k.status = 1
                 AND k.level < ".$level."
-                AND wk.wilayah IN (".$wil.") ";
+                AND wk.wilayah IN (".$wil.") 
+                order by j.nama, k.nama asc ";
 
-            
+            //  cetak_r($sql, 1);
 
             $d_conf = $m_conf->hydrateRaw($sql);
             $data = [];
@@ -1143,6 +1143,32 @@ class UsulanMutasi extends Public_Controller {
         }
 
         return $data;
+    }
+
+    public function get_config_tgl_berlaku()
+    {
+        $params = $_POST;
+
+        $m_conf = new \Model\Storage\Conf();
+
+        $sql = " SELECT kh.tgl_mulai
+		FROM hris_usulan_mutasi hum
+		INNER JOIN (
+		    SELECT TOP 1 nik, tgl_mulai
+		    FROM karyawan_history
+		    ORDER BY id DESC
+		) kh 
+		ON hum.karyawan = kh.nik
+		WHERE hum.kode = '".$params['kode']."'";
+
+        $d_conf     = $m_conf->hydrateRaw( $sql );
+        
+        $data       = null;
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+       
+        echo json_encode(date('Y-m-d', strtotime($data[0]['tgl_mulai'] ?? null)));
     }
    
 

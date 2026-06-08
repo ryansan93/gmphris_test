@@ -279,8 +279,9 @@ class HrisKandidatBaru extends Public_Controller {
         $content['akses']           = $this->hakAkses;
         $content['title_panel']     = 'HRIS - Kadidat Baru';
         
-        $content['biodata'] = $this->get_bio_data($_GET['id']);
-        // cetak_r($content, 1);
+        $content['biodata']         = $this->get_bio_data($_GET['id']);
+        $content['data_kandidat']   = $this->get_upload_document($_GET['id'])[0];
+        // cetak_r($content['biodata'], 1);
 
         // echo $this->load->view($this->pathView . 'v_detail', $content, TRUE);
 
@@ -289,9 +290,7 @@ class HrisKandidatBaru extends Public_Controller {
         $data['view'] = $this->load->view($this->pathView . 'v_detail', $content, TRUE);
         $this->load->view($this->template, $data);
 
-
         // return $content;
-
 
     }
 
@@ -328,6 +327,23 @@ class HrisKandidatBaru extends Public_Controller {
         }
 
         return $result;
+
+    }
+
+    public function get_upload_document($id_kandidat)
+    {
+        $m_conf     = new \Model\Storage\Conf();
+        $sql        = " select * from hris_data_kandidat where id in  ($id_kandidat)";
+
+        $d_conf     = $m_conf->hydrateRaw( $sql );
+        $data       = null;
+        
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+        // cetak_r($data, 1);
+
+        return $data;
 
     }
 
@@ -441,7 +457,7 @@ class HrisKandidatBaru extends Public_Controller {
                     $m_skb              = new \Model\Storage\HrisStatusKaryawanBaru_model();
                     $m_skb->pengusul    = $_SESSION['detail_user']['nama_detuser'];
                     $m_skb->nik         = $m_karyawan->nik;
-                    $m_skb->kategori    = 'HRIS/K/004'; //harcode training pertama 3 bulan dahulu
+                    $m_skb->kategori    = 'HRIS/K/003'; //harcode training pertama 3 bulan dahulu
                     $m_skb->keterangan  = 'Training 3 Bulan';
                     $m_skb->status      = 1;
                     $m_skb->tgl_berlaku = $params['tgl_masuk'];
@@ -541,7 +557,128 @@ class HrisKandidatBaru extends Public_Controller {
 		return $d_wilayah;
 	}
 
-    
+    public function upload_document()
+    {
+
+        try {
+
+            $file               = $_FILES['file'];
+            $id_data_karyawan   = $_POST['id_data_karyawan'];
+            $label              = $_POST['label'];
+
+            // cetak_r($_POST, 1);
+
+            $path = FCPATH . 'uploads/recruitment/';
+
+            if (!is_dir($path)) {
+                mkdir($path, 0777, true);
+            }
+
+            $file_ori = $file['name'];
+            $tmp_name = $file['tmp_name'];
+
+            $ext = pathinfo($file_ori, PATHINFO_EXTENSION);
+
+            $file_encrypt = md5(uniqid() . time() . rand()) . '.' . $ext;
+
+            move_uploaded_file( $tmp_name, $path . $file_encrypt );
+
+            $m_db = new \Model\Storage\HrisDataKandidatDetail_model();
+
+            $m_db->where('id_data_karyawan', $id_data_karyawan)->where('label', $label)->update([
+                'value' => $file_encrypt
+            ]);
+
+            $this->result['status'] = 1;
+            $this->result['message'] = 'Document berhasil diupload.';
+
+        } catch (\Exception $e) {
+
+            $this->result['status'] = 0;
+            $this->result['message'] = $e->getMessage();
+        }
+
+        display_json($this->result);
+    }
+
+    public function delete_document()
+    {
+        try {
+
+            $id_data_karyawan = $_POST['id_data_karyawan'];
+            $label            = $_POST['label'];
+
+            // cetak_r($_POST, 1);
+
+            $m_db = new \Model\Storage\HrisDataKandidatDetail_model();
+
+            $data = $m_db->where('id_data_karyawan', $id_data_karyawan)->where('label', $label)->first();
+
+            if (empty($data)) {
+                throw new \Exception('Data tidak ditemukan.');
+            }
+
+            $file_name = $data['value'];
+
+            if (!empty($file_name) && $file_name != '-') {
+                $path_file = FCPATH . 'uploads/recruitment/' . $file_name;
+                if (file_exists($path_file)) {
+                    unlink($path_file);
+                }
+            }
+
+            $m_db->where('id_data_karyawan', $id_data_karyawan)->where('label', $label)->update([
+                'value' => '-'
+            ]);
+
+            $this->result['status'] = 1;
+            $this->result['message'] = 'Document berhasil dihapus.';
+
+        } catch (\Exception $e) {
+
+            $this->result['status'] = 0;
+            $this->result['message'] = $e->getMessage();
+        }
+
+        display_json($this->result);
+    }
+
+    public function edit_item()
+    {
+        $params = $_POST;
+
+        // cetak_r($params, 1);
+
+        try {
+
+            $id_data_karyawan = $params['id'];
+            $label            = $params['label'];
+            $value            = $params['value'];
+            $parent           = $params['parent'] ?? null;
+
+            $m_db = new \Model\Storage\HrisDataKandidatDetail_model();
+
+            $query = $m_db->where('id_data_karyawan', $id_data_karyawan)->where('label', $label);
+
+            if (!empty($parent)) {
+                $query->where('parent_column', $parent);
+            }
+            
+            $query->update([
+                'value' => $value
+            ]);
+
+            $this->result['status'] = 1;
+            $this->result['message'] = 'Data berhasil diupdate.';
+
+        } catch (\Exception $e) {
+
+            $this->result['status'] = 0;
+            $this->result['message'] = $e->getMessage();
+        }
+
+        display_json($this->result);
+    }
 
    
 

@@ -97,6 +97,7 @@ class Pegawai extends Public_Controller
 			}
 		}
 
+		// cetak_r(json_encode($data), 1);
 		$content['data'] = $data;
 		$html = $this->load->view('parameter/pegawai/list', $content);
 

@@ -51,6 +51,7 @@ let hf ={
             keterangan : $(".keterangan").val().trim(),
             urutan : $(".urutan_hdr").val(),
             kategori : $(".kategori").attr("kode_kategori"),
+            jenis_form : $(".jenis_form").val(),
         }
 
         if (header.title === "") {

@@ -75,7 +75,8 @@ let up ={
         let params = {
             startdate : tgl_awal,
             enddate : tgl_akhir,
-            nik : $(".nik").val(),
+            karyawan : $(".karyawan").val(),
+            pengusul : $(".pengusul").val(),
         };
 
         // console.log(params)

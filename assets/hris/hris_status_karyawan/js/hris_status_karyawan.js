@@ -61,16 +61,21 @@ let up ={
             tgl_selesai : $(elm).attr("tgl_selesai"),
         };
 
-        let kategoriSaatIni = $(elm).attr('last_kategori');
+        let kategoriSaatIni = $(elm).attr('last_kategori'); // HRIS/K/005
 
         if (!kategoriSaatIni) {
             console.log('kategori tidak ada');
             return;
         }
 
+        let pecah       = kategoriSaatIni.split('/');
+        let lastNumber  = parseInt(pecah[pecah.length - 1]); 
+        let nextNumber  = String(lastNumber + 1).padStart(3, '0'); 
+
         let optionKategori = '';
 
         $('.kategori option').each(function () {
+
             let val         = $(this).val();
             let duration    = $(this).attr("duration");
 
@@ -78,8 +83,17 @@ let up ={
                 return;
             }
 
+            let kategoriBagian = val.split('/');
+            let nomorKategori = parseInt(kategoriBagian[kategoriBagian.length - 1]);
+
+            if (nomorKategori <= lastNumber) {
+                return;
+            }
+
+            let isSelected = val.includes('/' + nextNumber) ? 'selected': '';
+
             optionKategori += `
-                <option duration="${duration}" value="${val}">
+                <option duration="${duration}" value="${val}" ${isSelected}>
                     ${$(this).text()}
                 </option>
             `;
@@ -133,6 +147,7 @@ let up ={
                         params.tgl_berlaku  = dateSQL(date);
                         params.kategori     = $('.kategori_baru').val();
                         params.alasan       = $('.alasan_new').val();
+                        params.duration     = $('.kategori_baru option:selected').attr('duration');
 
                         up.exec_update_status(params);
                     }

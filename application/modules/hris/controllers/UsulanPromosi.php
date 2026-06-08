@@ -192,8 +192,8 @@ class UsulanPromosi extends Public_Controller {
         $jabatan        = $m_conf->hydrateRaw("select * from jabatan")->toArray();
 
         $karyawan = [];
-        foreach($db_karyawan as $dk){
-            if ((int)$dk['status'] === 1){
+        foreach ($db_karyawan as $dk) {
+            if ( (int)$dk['status'] === 1 && date("Y-m-d") >= date("Y-m-d", strtotime($dk['tgl_berlaku'])) ) {
                 $karyawan[$dk['id']] = $dk;
             }
         }
@@ -219,7 +219,7 @@ class UsulanPromosi extends Public_Controller {
     {
         
         $params = $_POST;
-        // cetak_r($params, 1);
+        
        
         try {
             $m_db                       = new \Model\Storage\HrisUsulanMutasi_model();
@@ -236,6 +236,7 @@ class UsulanPromosi extends Public_Controller {
             $m_db->unit_tujuan          = implode(',', $_POST['unit_tujuan']);
             $m_db->perwakilan_asal      = implode(',', $_POST['perwakilan_asal']);
             $m_db->unit_asal            = implode(',', $_POST['unit_asal']);
+            $m_db->atasan_mutasi        = $params['atasan_baru'] ?? null;
             $m_db->created_date         = date("Y-m-d H:i:s");
             $m_db->save();
 
@@ -402,6 +403,8 @@ class UsulanPromosi extends Public_Controller {
                     jp.nama  as nama_jabatan_pengusul,
                     asal.nama as nama_jabatan_asal, 
                     tujuan.nama as nama_jabatan_tujuan, 
+                    jp.level as level_jabatan_pengusul,
+                    tujuan.level as level_jabatan_tujuan,
                     hum.*  
                 FROM hris_usulan_mutasi hum
                 INNER JOIN karyawan ON hum.karyawan = karyawan.nik AND karyawan.status = 1
@@ -514,9 +517,6 @@ class UsulanPromosi extends Public_Controller {
         $nama_wilayah_asal = array_column($nama_wilayah_asal, 'nama');
         $content['nama_wilayah_asal'] = $nama_wilayah_asal;
 
-        // cetak_r($content , 1);
-
-        
         echo $this->load->view($this->pathView . 'v_detail', $content, TRUE);
 
     }
@@ -660,13 +660,16 @@ class UsulanPromosi extends Public_Controller {
         display_json($this->result);
     }
 
+
     public function keputusan()
     {
         $params = $_POST;
 
         // cetak_r($params, 1);
-
+        
+        
         try {
+
             $kode_usulan = $params['kode'] ?? null;
 
             if (!$kode_usulan) {
@@ -678,7 +681,9 @@ class UsulanPromosi extends Public_Controller {
             $d_db = $m_db->where('kode', $kode_usulan)->first();
             $data_mutasi = $d_db->toArray();
 
-            // cetak_r($_SESSION, 1);
+            $level = $this->get_level_from_jabatan($data_mutasi['jabatan_tujuan'] ?? null);
+
+            // cetak_r($data_mutasi, 1);
 
             if (!$d_db) {
                 throw new \Exception("Data form tidak ditemukan.");
@@ -763,13 +768,14 @@ class UsulanPromosi extends Public_Controller {
                         }
 
                         // generate id baru
-                        $newId = $m_karyawan->getNextIdentity();
-
-                        // data baru
-                        $m_karyawan_new->id = $newId;
-                        $m_karyawan_new->status = 1;
-                        $m_karyawan_new->jabatan = $data_mutasi['jabatan_tujuan'];
-                        $m_karyawan_new->tgl_berlaku = $params['tgl_berlaku'] ?? null;
+                        $newId                          = $m_karyawan->getNextIdentity();
+                        $m_karyawan_new->id             = $newId;
+                        $m_karyawan_new->status         = 1;
+                        $m_karyawan_new->atasan_nik     = $data_mutasi['atasan_mutasi'] ?? null;
+                        $m_karyawan_new->atasan         = $this->get_id_karyawan_by_nik($data_mutasi['atasan_mutasi'] ?? null);
+                        $m_karyawan_new->jabatan        = $data_mutasi['jabatan_tujuan'];
+                        $m_karyawan_new->level          = $level;
+                        $m_karyawan_new->tgl_berlaku    = $params['tgl_berlaku'] ?? null;
 
                         // insert baru
                         $m_karyawan_new->save();
@@ -1114,6 +1120,111 @@ class UsulanPromosi extends Public_Controller {
         }
 
         return $data;
+    }
+
+    public function get_config_tgl_berlaku()
+    {
+        $params = $_POST;
+
+        $m_conf = new \Model\Storage\Conf();
+
+        $sql = " SELECT kh.tgl_mulai
+		FROM hris_usulan_mutasi hum
+		INNER JOIN (
+		    SELECT TOP 1 nik, tgl_mulai
+		    FROM karyawan_history
+		    ORDER BY id DESC
+		) kh 
+		ON hum.karyawan = kh.nik
+		WHERE hum.kode = '".$params['kode']."'";
+
+        
+
+        $d_conf     = $m_conf->hydrateRaw( $sql );
+        
+        $data       = null;
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+
+        $tgl_usulan = $m_conf->hydrateRaw("select tanggal from hris_usulan_mutasi where kode = '".$params['kode']."'")->first()->toArray();
+        // cetak_r($tgl_usulan, 1);
+       
+        echo json_encode(date('Y-m-d', strtotime($data[0]['tgl_mulai'] ??  $tgl_usulan['tanggal'])));
+    }
+
+
+    public function get_level_from_jabatan($kode_jabatan)
+    {
+        $m_conf = new \Model\Storage\Conf();
+
+        $sql = " SELECT level FROM jabatan WHERE kode = '". $kode_jabatan ."' ";
+
+        $d_conf     = $m_conf->hydrateRaw( $sql );
+
+        
+        $data       = null;
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+
+        // cetak_r($data, 1);
+
+        return $data[0]['level'] ?? null;
+    }
+
+
+    public function set_atasan_baru()
+    {
+        $m_conf     = new \Model\Storage\Conf();
+        $level      = $_POST['level'] ?? null;
+        $wilayah    = $_POST['wilayah'] ?? [];
+
+        // cetak_r($_POST, 1);
+
+        if (empty($wilayah) || !is_array($wilayah)) {
+            echo json_encode([]);
+            return;
+        }
+        $wil = "'" . implode("','", $wilayah) . "'";
+
+        if (!empty($level)) {
+            $sql = " SELECT k.id, k.nik, k.nama, j.nama as nama_jabatan,  wk.wilayah 
+            FROM karyawan k
+            INNER JOIN wilayah_karyawan wk 
+                ON k.id = wk.id_karyawan
+            INNER JOIN jabatan j on k.jabatan = j.kode 
+            WHERE k.status = 1
+                AND k.level < ".$level."
+                AND wk.wilayah IN (".$wil.") 
+                order by j.nama, k.nama asc ";
+
+            //  cetak_r($sql, 1);
+
+            $d_conf = $m_conf->hydrateRaw($sql);
+            $data = [];
+            if ($d_conf->count() > 0) {
+                $data = $d_conf->toArray();
+            }
+            echo json_encode($data);
+        } else {
+            echo json_encode(['message' => 'Level tidak ditemukan']);
+        }
+        
+    }
+
+
+    public function get_id_karyawan_by_nik($nik)
+    {
+        $m_conf = new \Model\Storage\Conf();
+
+        $sql = " SELECT id from karyawan WHERE nik = '$nik' and status = 1 ";
+
+        $db = $m_conf->hydrateRaw($sql)->toArray();
+
+        // $cetak_r($sql, 1);
+
+        return $db[0]['id'] ?? null;
     }
 
 }

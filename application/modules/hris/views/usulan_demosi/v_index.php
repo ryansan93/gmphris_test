@@ -212,7 +212,7 @@
                                 </option>
 
                                 <?php foreach ($karyawan as $k) { ?>
-                                    <option id_atasan="<?php echo $k['id']; ?>"
+                                    <option level="<?php echo $k['level']; ?>" id_atasan="<?php echo $k['id']; ?>"
                                             jabatan_val="<?php echo $k['jabatan']; ?>"
                                             jabatan_text="<?php echo $k['detail_jabatan']['nama']; ?>"
                                             value="<?php echo $k['nik']; ?>">
@@ -395,6 +395,20 @@
                             </div>
 
                         </div>
+                    </div>
+
+                     <!-- Atasan Baru -->
+                    <div class="form-row">
+
+                        <span class="form-label">Atasan Baru</span>
+                        <span class="form-separator">:</span>
+
+                        <div class="form-content">
+
+                            <select class="select2 atasan_baru"></select>
+
+                        </div>
+
                     </div>
 
                     <!-- Alasan -->

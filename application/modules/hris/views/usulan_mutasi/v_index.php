@@ -220,6 +220,7 @@
                                 <?php foreach ($karyawan as $k) { ?>
 
                                     <option id_atasan="<?php echo $k['id']; ?>"
+                                            level="<?php echo $k['level']; ?>"
                                             jabatan_val="<?php echo $k['jabatan']; ?>"
                                             jabatan_text="<?php echo $k['detail_jabatan']['nama']; ?>"
                                             value="<?php echo $k['nik']; ?>">

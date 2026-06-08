@@ -36,7 +36,6 @@ class HrisKategori extends Public_Controller {
             $content['title_panel']     = 'HRIS - Master Kategori';
 
             // cetak_r($content['akses'], 1);
-          
 
             // Load Indexx
             $data['title_menu']     = 'HRIS - Master Kategori';
@@ -84,13 +83,13 @@ class HrisKategori extends Public_Controller {
                 $m_form_detail = new \Model\Storage\HrisKategori_model();
                 $m_form_detail->kode_kategori      = $this->generate_kode();
                 $m_form_detail->nama_kategori      = $v_det['nama_kategori'];
+                $m_form_detail->duration           = $v_det['durasi'];
                 $m_form_detail->save();
 
                 $id            = $m_form_detail->id;
                 $deskripsi_log = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
                 Modules::run('base/event/save', $m_form_detail, $deskripsi_log, null, $kode, $m_form_detail);
             }
-
 
             $this->result['status'] = 1;
             $this->result['message'] = 'Data berhasil di simpan.';

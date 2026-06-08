@@ -316,7 +316,8 @@ class HrisUsulanKaryawan extends Public_Controller {
         $content['karyawan']        = $this->get_data_karyawan();
         $content['kandidat']        = $this->get_data_kandidat();
         $content['edit_data']       = $this->get_data_edit($_GET['id_data']);
-        // cetak_r($content, 1);
+        
+        // cetak_r($content['edit_data'], 1);
         // $content['detail']          = $this->get_data_detail($_GET['id_data']);
         $content['unit']            = $this->get_unit();
         $content['title_panel']     = 'HRIS - Hris Usulan Karyawan / Edit Data';

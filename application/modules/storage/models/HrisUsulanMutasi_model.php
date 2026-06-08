@@ -9,7 +9,10 @@ class HrisUsulanMutasi_model extends Conf {
 	public function notifUsulan($need)
 	{
 
-		$sql = " select * from hris_usulan_mutasi where status = ". $need['status'] ." and jenis = '". $need['jenis'] ."' ";
+		$sql = " select hum.*, k.nama as nama_karyawan, j.nama as nama_jabatan from hris_usulan_mutasi hum
+		inner join karyawan k on k.nik = hum.karyawan and k.status = 1
+		inner join jabatan j on j.kode = hum.jabatan_asal
+		where hum.status = ". $need['status'] ." and hum.jenis = '". $need['jenis'] ."' ";
 
 		$d_dpd = $this->hydrateRaw($sql);
 

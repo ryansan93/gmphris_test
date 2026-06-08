@@ -61,7 +61,7 @@ class Home extends Public_Controller
 
 					$display = array_map(function($val){
 						return [
-							'display'     => $val['document'],
+							'display'     => $val['document'] . ' - ' . $val['nama_pengusul'] . ' (' . $val['nama_jabatan'] . ')',
 							'key'      => $val['document'],
 						];
 					}, $data_usulan_karyawan);
@@ -97,7 +97,7 @@ class Home extends Public_Controller
 
 					$display = array_map(function($val){
 						return [
-							'display'     	=> $val['document'],
+							'display'     => $val['document'] . ' - ' . $val['nama_pengusul'] . ' (' . $val['nama_jabatan'] . ')',
 							'key' 		=> $val['document'],
 						];
 					}, $data);
@@ -209,7 +209,7 @@ class Home extends Public_Controller
 
 					$display = array_map(function($val){
 						return [
-							'display' => $val['kode'],
+							'display' => $val['kode'] . ' - ' . $val['nama_karyawan'] . ' (' . $val['nama_jabatan'] . ')',
 							'key' => $val['kode'],
 						];
 					}, $data);
@@ -249,7 +249,7 @@ class Home extends Public_Controller
 
 					$display = array_map(function($val){
 						return [
-							'display' => $val['kode'],
+							'display' => $val['kode'] . ' - ' . $val['nama_karyawan'] . ' (' . $val['nama_jabatan'] . ')',
 							'key' => $val['kode'],
 						];
 					}, $data);
@@ -289,7 +289,7 @@ class Home extends Public_Controller
 
 					$display = array_map(function($val){
 						return [
-							'display' => $val['kode'],
+							'display' => $val['kode'] . ' - ' . $val['nama_karyawan'] . ' (' . $val['nama_jabatan'] . ')',
 							'key' => $val['kode'],
 						];
 					}, $data);
@@ -328,7 +328,7 @@ class Home extends Public_Controller
 
 					$display = array_map(function($val){
 						return [
-							'display' => $val['kode'],
+							'display' => $val['kode'] . ' - ' . $val['nama_karyawan'] . ' (' . $val['nama_jabatan'] . ')',
 							'key' => $val['kode'],
 						];
 					}, $data);
@@ -362,12 +362,14 @@ class Home extends Public_Controller
 				$m_um = new \Model\Storage\HrisUsulanMutasi_model();
 				$data = $m_um->notifUsulan($need);
 
+				// cetak_r($data, 1);
+
 				if ( $data ) {
 					$key = 'usulan_mutasi_ack';
 
 					$display = array_map(function($val){
 						return [
-							'display' => $val['kode'],
+							'display' => $val['kode'] . ' - ' . $val['nama_karyawan'] . ' (' . $val['nama_jabatan'] . ')',
 							'key' => $val['kode'],
 						];
 					}, $data);
@@ -406,7 +408,7 @@ class Home extends Public_Controller
 
 					$display = array_map(function($val){
 						return [
-							'display' => $val['kode'],
+							'display' => $val['kode'] . ' - ' . $val['nama_karyawan'] . ' (' . $val['nama_jabatan'] . ')',
 							'key' => $val['kode'],
 						];
 					}, $data);

@@ -102,6 +102,7 @@ let up ={
     set_jabatan: (elm, e, kolom) => {
 
         let data = {
+            level_atasan : $(elm).find("option:selected").attr("level"),
             jabatan_text : $(elm).find("option:selected").attr("jabatan_text"),
             jabatan_val  : $(elm).find("option:selected").attr("jabatan_val"),
             id_karyawan  : $(elm).find("option:selected").attr("id_karyawan") ?? null,
@@ -156,7 +157,7 @@ let up ={
             $(".jabatan_pengusul").val(data.jabatan_text);
             $(".jabatan_pengusul").attr("jabatan_val", data.jabatan_val);
 
-            up.set_karyawan_bawahan(data.id_atasan);
+            up.set_karyawan_bawahan(data.id_atasan, data.level_atasan);
 
         } else {
 
@@ -181,7 +182,7 @@ let up ={
                     if (isNaN(optionLevel)) return;
 
       
-                    if (optionLevel <= level) {
+                    if (optionLevel !== (level + 1)) {
                         $(this).remove();
                     }
 
@@ -216,7 +217,7 @@ let up ={
 
     },
 
-    set_karyawan_bawahan: (id_karyawan) => {
+    set_karyawan_bawahan: (id_karyawan, level_atasan) => {
 
         let select = $(".karyawan");
 
@@ -238,12 +239,13 @@ let up ={
         select.find("option").each(function () {
 
             let atasan = $(this).attr("atasan");
+            let level_karyawan = $(this).attr("level");
 
             if (!$(this).val()) {
                 return;
             }
 
-            if (String(id_karyawan) !== String(atasan)) {
+            if (String(id_karyawan) !== String(atasan) || (level_atasan && level_karyawan && parseInt(level_karyawan) <= parseInt(level_atasan))) {
                 $(this).remove();
             }
 
@@ -276,6 +278,7 @@ let up ={
             unit_tujuan         : $('.unit_tujuan').val(),
             perwakilan_asal     : $('.perwakilan_asal').val(),
             unit_asal           : $('.unit_asal').val(),
+            atasan_baru         : $('.atasan_baru').val(),
         };
 
         if (!params.pengusul) {
@@ -498,7 +501,7 @@ let up ={
 
     },
 
-    keputusan: (elm, val) => {
+    keputusan: async (elm, val) => {
 
         const STATUS = {
             DRAFT: 1,
@@ -509,6 +512,8 @@ let up ={
         };
 
         let kode = $(elm).attr("kode"); 
+
+        let tgl_berlaku = await up.config_tgl_berlaku(kode);
 
         let text = val == STATUS.ACK ? 'Acknowledge' 
                 : val == STATUS.APPROVE ? 'Approve' 
@@ -591,7 +596,8 @@ let up ={
             dialog.on('shown.bs.modal', function () {
                 $('#tgl_berlaku').datetimepicker({
                     locale: 'id',
-                    format: 'DD MMM YYYY'
+                    format: 'DD MMM YYYY',
+                    minDate: moment(tgl_berlaku)
                 });
             });
 
@@ -698,7 +704,56 @@ let up ={
         $('.jabatan_asal').val('');
         $('.alasan').val('');
 
-    }
+    },
+    
+    config_tgl_berlaku: async (kode) => {
+
+        let result = await $.ajax({
+            url : 'hris/UsulanPromosi/get_config_tgl_berlaku',
+            data : {
+                kode : kode,
+            },
+            type : 'POST',
+            dataType : 'json',
+        });
+
+        return result;
+    },
+
+    set_atasan_baru: () => {
+
+        let params = {
+            level   : $(".jabatan_tujuan").find("option:selected").attr("level"),
+            wilayah : $('.perwakilan_tujuan').val(),
+        };
+
+        if (!params.level || !params.wilayah) {
+            $(".atasan_baru").html('<option disabled selected>-- Pilih Atasan Baru --</option>');
+            $(".atasan_baru").trigger('change');
+            return;
+        }
+
+        $.ajax({
+            url: 'hris/UsulanPromosi/set_atasan_baru',
+            data: params,
+            type: 'POST',
+            dataType: 'json',
+            beforeSend: function () {
+                showLoading();
+            },
+            success: function (data) {
+
+                hideLoading();
+                let option = '<option disabled selected>-- Pilih Atasan Baru --</option>';
+                $.each(data, function(i, v){
+                    option += `<option value="${v.nik}">${v.nama} - ${v.nama_jabatan} </option>`;
+                });
+
+                $(".atasan_baru").html(option);
+                $(".atasan_baru").trigger('change');
+            },
+        });
+    },
 };
 
 
@@ -724,6 +779,8 @@ $(document).ready(function() {
     
     $('.perwakilan_tujuan').on('change', function (e) {
         up.set_unit_by_wilayah(this, e);
+
+        up.set_atasan_baru();
     });
     up.set_unit_by_wilayah();
 

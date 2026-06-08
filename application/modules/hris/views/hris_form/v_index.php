@@ -88,6 +88,15 @@
                             </div>
                         </div>
 
+                         <div style="display:flex; flex-direction:column;">
+                            <span style="width:200px;">Jenis Form</span>
+                            <select type="text" class="form form-control jenis_form">
+                                <option>Pilih Jenis Form</option>
+                                <option value="INPUT">INPUT</option>
+                                <option value="UPLOAD">UPLOAD</option>
+                            </select>
+                        </div>
+
                     </div>
                 </div>
 
