@@ -396,6 +396,7 @@ class HrisKandidatBaru extends Public_Controller {
                 $m_karyawan->level      = $params['level'];
                 $m_karyawan->nik        = $m_karyawan->getNextNomor('K');
                 $m_karyawan->atasan     = $params['atasan'];
+                $m_karyawan->atasan_nik = $params['atasan_nik'];
                 $m_karyawan->nama       = $params['nama'];
                 $m_karyawan->kordinator = $params['koordinator'];
                 $m_karyawan->marketing  = $params['marketing'];
@@ -482,14 +483,20 @@ class HrisKandidatBaru extends Public_Controller {
                 Modules::run( 'base/event/update', $m_db,  $params['id_data'], $deskripsi_log_karyawan );
             }
 
-            $message_telegram =
-            "🔔 KANDIDAT BARU \n\n".
-            "User : ".$_SESSION['detail_user']['nama_detuser']."\n".
-            "Kode : ".$params['id_data']."\n".
-            "Status : ".$params['keputusan'];
- 
-            $this->telegram_lib->sendMessages($message_telegram);
+            $status = '';
+            if ($params['keputusan'] == 2) {
+                $status = 'Approved';
+            } elseif ($params['keputusan'] == 3) {
+                $status = 'Rejected';
+            }
 
+            $message_telegram =
+                "🔔 KANDIDAT BARU\n\n".
+                "User : ".$_SESSION['detail_user']['nama_detuser']."\n".
+                "Kode : ".$params['id_data']."\n".
+                "Status : ".$status;
+
+            $this->telegram_lib->sendMessages($message_telegram);
 
             $this->result['status'] = 1;
             $this->result['message'] = 'Data berhasil di update.';

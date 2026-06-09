@@ -53,8 +53,8 @@ class UsulanDemosi extends Public_Controller {
             // Load Indexx
             $data['title_menu']     = 'HRIS - Usulan Demosi';
 
-            $message_telegram = '['.$_SESSION['id_user'].'] '. $_SESSION['detail_user']['nama_detuser'] . ' membuka halaman ' . $data['title_menu']; 
-            $this->telegram_lib->sendMessages($message_telegram);
+            // $message_telegram = '['.$_SESSION['id_user'].'] '. $_SESSION['detail_user']['nama_detuser'] . ' membuka halaman ' . $data['title_menu']; 
+            // $this->telegram_lib->sendMessages($message_telegram);
 
             $data['view'] = $this->load->view($this->pathView . 'v_index', $content, TRUE);
             $this->load->view($this->template, $data);

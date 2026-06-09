@@ -37,7 +37,7 @@
                 <select class="select2 atasan">
                     <option value="">-- Pilih Atasan --</option>
                     <?php foreach($atasan as $a){?>
-                        <option value="<?php echo $a['id'] ?>"><?php echo $a['nama'] ?></option>
+                        <option atasan_nik="<?php echo $a['nik'] ?>" value="<?php echo $a['id'] ?>"><?php echo $a['nama'] ?></option>
                     <?php } ?>
                 </select>
                 <!-- <input type="text" class="form-control jabatan" data-required="1"> -->
