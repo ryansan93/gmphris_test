@@ -320,8 +320,9 @@ class HrisUsulanKaryawan extends Public_Controller {
         // cetak_r($content['edit_data'], 1);
         // $content['detail']          = $this->get_data_detail($_GET['id_data']);
         $content['unit']            = $this->get_unit();
+        // $content['posisi']          = $;
         $content['title_panel']     = 'HRIS - Hris Usulan Karyawan / Edit Data';
-        $data['title_menu']     = 'HRIS - Usulan Karyawan';
+        $data['title_menu']         = 'HRIS - Usulan Karyawan';
         
 
         $data['view']         = $this->load->view($this->pathView . 'v_edit_data', $content, TRUE);

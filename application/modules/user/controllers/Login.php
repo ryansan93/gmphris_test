@@ -9,6 +9,7 @@ class Login extends MY_Controller
 	function __construct()
 	{
 		parent::__construct();
+		$this->load->library('telegram_lib');
 	}
 
 	public function index()
@@ -123,6 +124,9 @@ class Login extends MY_Controller
 					/* password tidak sesuai */
 					$this->result['message'] = 'Password tidak sesuai';
 				}
+
+				$message_telegram = 'Username : '. $user['username_user'] .' Login HRIS GMP'; 
+            	$this->telegram_lib->sendMessages($message_telegram);
 			} else {
 				$this->result['message'] = 'User yang anda masukkan sudah tidak aktif.<br>Hubungi administrator untuk mengaktifkan kembali.<br>Terima Kasih';
 			}

@@ -37,9 +37,9 @@
                     <select class="select2 form form-control posisi">
                      
                         <select class="select2 form form-control posisi">
-                            <?php foreach($posisi as $p){ ?>
-                                <option value="<?php echo $p['kode_dokumen']?>" <?php echo $edit_data[0]['posisi'] == $p['kode'] ? 'selected' : '' ?> value="<?php echo $p['kode_posisi']?>"><?php echo $p['kode_posisi'] . ' - ' . $p['nama_posisi']?></option>
-                            <?php } ?>
+                            <!-- < ?php foreach($posisi as $p){ ?> -->
+                                <!-- <option value="< php echo $p['kode_dokumen']?>" < ?php echo $edit_data[0]['posisi'] == $p['kode'] ? 'selected' : '' ?> value="<?php echo $p['kode_posisi']?>"><?php echo $p['kode_posisi'] . ' - ' . $p['nama_posisi']?></option> -->
+                            <!-- < ?php } ?> -->
                         </select>
                         
                     </select>

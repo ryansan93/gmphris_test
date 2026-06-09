@@ -523,6 +523,25 @@ let hf = {
         });
 
     },
+
+    show_keterangan: (elm, e) => {
+
+        let keterangan = $(elm).attr("keterangan");
+
+        bootbox.dialog({
+            title: "Keterangan",
+            size: 'small',
+            message: `
+                <textarea class="form-control" rows="4" style="resize: none;" readonly>${keterangan}</textarea>
+            `,
+            buttons: {
+                close: {
+                    label: 'Tutup',
+                    className: 'btn-secondary'
+                }
+            }
+        });
+    },
 }
 
 $(document).ready(function() {

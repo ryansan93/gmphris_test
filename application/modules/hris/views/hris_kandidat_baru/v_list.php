@@ -1,6 +1,12 @@
 <div class="pull-right" style="display:flex; flex-direction:row; gap:20px; border: 1px solid #bbb9b9; border-radius:5px; margin-bottom:10px; padding:5px;">
+
     <div style="display:flex; flex-direction:row;  align-items:center; gap:5px; ">
-        <div style="border:1px solid black; background-color:#FCFF9C; border-radius:50%; width:15px; height:15px"></div>
+        <div style="border:1px solid black; background-color:#FFF9D6; border-radius:50%; width:15px; height:15px"></div>
+        <span>Data Terpilih</span>
+    </div>
+
+    <div style="display:flex; flex-direction:row;  align-items:center; gap:5px; ">
+        <div style="border:1px solid black; background-color:#FFD252; border-radius:50%; width:15px; height:15px"></div>
         <span>Belum isi form</span>
     </div>
 
@@ -30,7 +36,7 @@
         <?php if (!empty($list)) { ?>
             <?php foreach($list as $l){?>
                 <tr style="<?php echo !empty($l['selected']) ? 'background-color: #FFF9D6;' : '' ?>">
-                    <td style="background-color:<?php echo $l['is_active'] == 'NONACTIVE' ? '#C9FF9C' : '#FCFF9C' ?>"></td>
+                    <td style="background-color:<?php echo $l['is_active'] == 'NONACTIVE' ? '#C9FF9C' : '#FFD252' ?>"></td>
                     <td class="text-center" style="white-space:nowrap;">
                         <a href="<?php echo base_url('hris/HrisKandidatBaru/show_document_kandidat?id='. $l['id_data_karyawan']) ?>" target="_blank">
                            <?php echo $l['document'] ? $l['document'] : '-' ?>
@@ -41,7 +47,7 @@
                         <?php echo $l['status_kandidat'] == 3 ? 'Ditolak' : $l['nama_status'] ?>
                     
                     </td>
-                    <td class="text-center" style="white-space:nowrap;"><?php echo ucwords(strtolower($l['nama_pengusul'])) . ' - ' . $l['jabatan_pengusul'] ?></td>
+                    <td class="text-center" style="white-space:nowrap;"><?php echo ucwords(strtolower($l['nama_pengusul'])) . ' - ' . ucwords(strtolower($l['jabatan_pengusul'])) ?></td>
                     <td class="text-center" style="position:relative; white-space:nowrap;">
 
                         <?php 
@@ -62,7 +68,10 @@
 
                             <?php if (!empty($l['keterangan_reject'])) { ?>
 
-                                <span><?= $l['keterangan_reject']; ?></span>
+                                <span title="Lihat Keterangan" keterangan="<?php echo $l['keterangan_reject']; ?>"  onclick="hf.show_keterangan(this, event)" style="cursor:pointer; color:#771818; background-color:#f7a7a7; border-radius:10px; padding:5px; text-align:center; font-weight:bold;">
+                                    Reject
+                                </span>
+                                
 
                             <?php } else if (!empty($l['tgl_masuk'])) { ?>
 

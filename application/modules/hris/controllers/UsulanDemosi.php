@@ -13,6 +13,7 @@ class UsulanDemosi extends Public_Controller {
         parent::__construct();
         $this->url = $this->current_base_uri;
         $this->hakAkses = hakAkses($this->url);
+        $this->load->library('telegram_lib');
     }
 
     public function index($segment=0)
@@ -51,6 +52,9 @@ class UsulanDemosi extends Public_Controller {
 
             // Load Indexx
             $data['title_menu']     = 'HRIS - Usulan Demosi';
+
+            $message_telegram = '['.$_SESSION['id_user'].'] '. $_SESSION['detail_user']['nama_detuser'] . ' membuka halaman ' . $data['title_menu']; 
+            $this->telegram_lib->sendMessages($message_telegram);
 
             $data['view'] = $this->load->view($this->pathView . 'v_index', $content, TRUE);
             $this->load->view($this->template, $data);
@@ -242,6 +246,10 @@ class UsulanDemosi extends Public_Controller {
 
             $deskripsi_log = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
             Modules::run('base/event/save', $m_db, $deskripsi_log, null, $m_db->kode , $m_db);
+
+
+            $message_telegram = '['.$_SESSION['id_user'].'] '. $_SESSION['detail_user']['nama_detuser'] . ' Usulan Demosi kode :' . $m_db->kode; 
+            $this->telegram_lib->sendMessages($message_telegram);
 
 
             $this->result['status'] = 1;
@@ -859,6 +867,14 @@ class UsulanDemosi extends Public_Controller {
             
             $deskripsi_log = 'di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];
             Modules::run('base/event/update', $d_db, $deskripsi_log, null, $kode_usulan, $d_db);
+
+            $message_telegram =
+                "🔔 USULAN DEMOSI\n\n".
+                "User : ".$_SESSION['detail_user']['nama_detuser']."\n".
+                "Kode : ".$kode_usulan."\n".
+                "Status : ".$params['keputusan'];
+
+            $this->telegram_lib->sendMessages($message_telegram);
 
             $this->result['status']  = 1;
             $this->result['message'] = 'Data berhasil di update.';

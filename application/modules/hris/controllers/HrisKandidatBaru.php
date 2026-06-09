@@ -12,6 +12,7 @@ class HrisKandidatBaru extends Public_Controller {
         parent::__construct();
         $this->url = $this->current_base_uri;
         $this->hakAkses = hakAkses($this->url);
+        $this->load->library('telegram_lib');
     }
 
     public function index($segment=0)
@@ -47,6 +48,11 @@ class HrisKandidatBaru extends Public_Controller {
 
             $data['view'] = $this->load->view($this->pathView . 'v_index', $content, TRUE);
             $this->load->view($this->template, $data);
+
+            // cetak_r($_SESSION, 1);
+
+            // $message_telegram = '['.$_SESSION['id_user'].'] '. $_SESSION['detail_user']['nama_detuser'] . ' membuka halaman ' . $data['title_menu']; 
+            // $this->telegram_lib->sendMessages($message_telegram);
 
         } else {
             showErrorAkses();
@@ -116,6 +122,9 @@ class HrisKandidatBaru extends Public_Controller {
             $deskripsi_log = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
             Modules::run('base/event/save', $m_db, $deskripsi_log, null, $id, $m_db);
 
+            $message_telegram = '['.$_SESSION['id_user'].'] '. $_SESSION['detail_user']['nama_detuser'] . 'Add Data Kode : ' . $v_det['nama_karyawan']; 
+            $this->telegram_lib->sendMessages($message_telegram);
+
             $this->result['status'] = 1;
             $this->result['message'] = 'Data berhasil di simpan.';
         } catch (Exception $e) {
@@ -147,9 +156,7 @@ class HrisKandidatBaru extends Public_Controller {
 
         try {
            
-            
-            
-
+        
             $this->result['status'] = 1;
             $this->result['message'] = 'Data berhasil di update.';
 
@@ -474,6 +481,14 @@ class HrisKandidatBaru extends Public_Controller {
                 $deskripsi_log_karyawan = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
                 Modules::run( 'base/event/update', $m_db,  $params['id_data'], $deskripsi_log_karyawan );
             }
+
+            $message_telegram =
+            "🔔 KANDIDAT BARU \n\n".
+            "User : ".$_SESSION['detail_user']['nama_detuser']."\n".
+            "Kode : ".$params['id_data']."\n".
+            "Status : ".$params['keputusan'];
+ 
+            $this->telegram_lib->sendMessages($message_telegram);
 
 
             $this->result['status'] = 1;
