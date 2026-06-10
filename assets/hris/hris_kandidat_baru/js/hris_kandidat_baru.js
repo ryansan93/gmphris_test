@@ -544,6 +544,32 @@ let hf = {
             }
         });
     },
+
+
+    sinkron_document: (elm, e) => {
+
+        let params = {
+            document : $(elm).attr("doc"),
+        }
+
+        $.ajax({
+            url: 'hris/HrisKandidatBaru/sinkron_document',
+            data: params,
+            type: 'POST',
+            dataType: 'json',
+            beforeSend: function () {
+                showLoading();
+            },
+            success: function (data) {
+                hideLoading();
+                // console.log(data)
+
+                toastr.info(data.message);
+            },
+        })
+
+
+    },
 }
 
 $(document).ready(function() {

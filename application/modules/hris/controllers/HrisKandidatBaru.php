@@ -360,7 +360,7 @@ class HrisKandidatBaru extends Public_Controller {
 
         $params = $_POST;
 
-        // cetak_r($params, 1);
+        
 
 
 
@@ -380,11 +380,11 @@ class HrisKandidatBaru extends Public_Controller {
             }
 
             // HRIS DATA KANDIDAT
-            $m_db->where('id', $params['id_data'])->update([
-                'status_kandidat'   => $params['keputusan'] == 1 ? 2 : 3,
-                'tgl_masuk'         => $params['keputusan'] == 1 ? $params['tgl_masuk'] : null,
-                'keterangan_reject' => $params['keputusan'] == 2 ? $params['keterangan_reject'] : null,
-            ]);
+            // $m_db->where('id', $params['id_data'])->update([
+            //     'status_kandidat'   => $params['keputusan'] == 1 ? 2 : 3,
+            //     'tgl_masuk'         => $params['keputusan'] == 1 ? $params['tgl_masuk'] : null,
+            //     'keterangan_reject' => $params['keputusan'] == 2 ? $params['keterangan_reject'] : null,
+            // ]);
             // END HRIS DATA KANDIDAT
 
             if ( $params['keputusan'] == 1 ){
@@ -403,6 +403,7 @@ class HrisKandidatBaru extends Public_Controller {
                 $m_karyawan->jabatan    = $params['jabatan'];
                 $m_karyawan->status     = 1;
                 $m_karyawan->tgl_berlaku = $params['tgl_masuk'];
+                // cetak_r($params, 1);
                 $m_karyawan->save();
 
                 // UPDATE NIK HRIS DATA KANDIDAT
@@ -700,6 +701,43 @@ class HrisKandidatBaru extends Public_Controller {
         }
 
         display_json($this->result);
+    }
+
+
+    public function sinkron_document()
+    {
+        $nama_file = $_POST['document'];
+
+        $source      = base_url() . 'recruitment-gmp/uploads/recruitment/' . $nama_file;
+        $destination = base_url() . 'gmphris_test/uploads/recruitment/' . $nama_file;
+
+        if (empty($nama_file) || $nama_file == '-') {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Dokumen tidak tersedia'
+            ]);
+            return;
+        } 
+
+        if (!file_exists($source)) {
+            echo json_encode([
+                'status' => false,
+                'message' => 'File sumber tidak ditemukan'
+            ]);
+            return;
+        }
+
+        if (copy($source, $destination)) {
+            echo json_encode([
+                'status' => true,
+                'message' => 'File berhasil disalin'
+            ]);
+        } else {
+            echo json_encode([
+                'status' => false,
+                'message' => 'Gagal menyalin file'
+            ]);
+        }
     }
 
    

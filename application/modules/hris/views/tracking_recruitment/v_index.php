@@ -12,7 +12,7 @@
         </div>
 
         <div>
-            <button class="btn btn-primary" onclick="hf.filter_data(this, event)"><i class="fa fa-search"
+            <button class="btn btn-primary" onclick="tr.filter_data(this, event)"><i class="fa fa-search"
                     style="margin-right: 10px;" aria-hidden="true"></i> Filter</button>
         </div>
     </div>

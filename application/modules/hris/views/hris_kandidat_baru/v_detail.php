@@ -48,17 +48,18 @@
                             <?php if (empty($item['value'])) { ?>
 
                                 <?php if ($item['title'] == 'Data Document Kandidat') { ?>
+                                
                                     <div style="display:flex; gap:5px; flex-direction:row; ">
                                     <div style=" border:1px solid #9b9b9b; border-radius:5px; padding:5px 10px; width:100%; min-height:33px; box-sizing:border-box; ">
                                             <i>Data tidak tersediaa</i>
                                         </div>
 
                                         <div id_data="<?= $item['id_data_karyawan'] ?>" label="<?php echo $item['label']; ?>" onclick="hf.upload_document(this, event)" style="cursor:pointer; display:flex; justify-content: center; align-items: center; min-width:33px; border:1px solid #7e6c2f; color: #7e6c2f; background-color: #fcdd79; border-radius:5px; padding:5px; height:33px;">
-                                            <span><i class="fa fa-upload" aria-hidden="true"></i></span>
+                                            <span title="upload document" ><i class="fa fa-upload" aria-hidden="true"></i></span>
                                         </div>
 
                                         <div id_data="<?= $item['id_data_karyawan'] ?>" label="<?php echo $item['label']; ?>" onclick="hf.delete_document(this, event)" style="cursor:pointer; display:flex; justify-content: center; align-items: center; min-width:33px; border:1px solid #7e2f2f; color: #7e2f2f; background-color: #fc7979; border-radius:5px; padding:5px; height:33px;">
-                                            <span><i class="fa fa-close" aria-hidden="true"></i></span>
+                                            <span title="delete document" ><i class="fa fa-close" aria-hidden="true"></i></span>
                                         </div>
                                     </div>
                                 <?php } else { ?>
@@ -76,23 +77,35 @@
 
                             <?php } else { ?>
                                 <?php if ($item['title'] == 'Data Document Kandidat') { ?>
-                                    <div style="display:flex; gap:5px; flex-direction:row; ">
-                                        <div style=" border:1px solid #9b9b9b; border-radius:5px; padding:5px 10px; width:100%; min-height:33px; box-sizing:border-box; ">
-                                            <?php if($item['value'] == '-') { ?>
-                                                <i>Data tidak tersedia</i>
-                                            <?php } else { ?>
+                                    <div style="display:flex; gap:5px; flex-direction:row;">
+                                        <?php if($item['value'] != '-') { ?>
+
+                                            <div style=" border:1px solid #9b9b9b; border-radius:5px; padding:5px 10px; width:80%; min-height:33px; box-sizing:border-box; ">
                                                 <a href="http://localhost/gmphris_test/uploads/recruitment/<?= htmlspecialchars($item['value']) ?>" target="_blank" style="color:#007bff; text-decoration:none;" >
                                                     <i class="fa fa-file" aria-hidden="true"></i> Show Document
                                                 </a>
-                                            <?php } ?>
-                                        </div>
+                                            </div>
+
+                                            <div id_data="<?= $item['id_data_karyawan'] ?>" doc="<?php echo $item['value']; ?>" label="<?php echo $item['label']; ?>" onclick="hf.sinkron_document(this, event)" style="cursor:pointer; display:flex; justify-content: center; align-items: center; min-width:33px; border:1px solid #2f607e; color: #2f607e; background-color: #57b2eb; border-radius:5px; padding:5px; height:33px;">
+                                                <span title="sinkron document" ><i class="fa fa-refresh" aria-hidden="true"></i></span>
+                                            </div>
+
+                                        <?php } else { ?>
+
+                                            <div style=" border:1px solid #9b9b9b; border-radius:5px; padding:5px 10px; width:80%; min-height:33px; box-sizing:border-box; ">
+                                                <i>Data tidak tersedia</i>
+                                            </div>
+
+                                        <?php } ?>
+
+                                     
 
                                         <div id_data="<?= $item['id_data_karyawan'] ?>" label="<?php echo $item['label']; ?>" onclick="hf.upload_document(this, event)" style="cursor:pointer; display:flex; justify-content: center; align-items: center; min-width:33px; border:1px solid #7e6c2f; color: #7e6c2f; background-color: #fcdd79; border-radius:5px; padding:5px; height:33px;">
-                                            <span><i class="fa fa-upload" aria-hidden="true"></i></span>
+                                            <span title="upload document" ><i class="fa fa-upload" aria-hidden="true"></i></span>
                                         </div>
 
                                         <div id_data="<?= $item['id_data_karyawan'] ?>" label="<?php echo $item['label']; ?>" onclick="hf.delete_document(this, event)" style="cursor:pointer; display:flex; justify-content: center; align-items: center; min-width:33px; border:1px solid #7e2f2f; color: #7e2f2f; background-color: #fc7979; border-radius:5px; padding:5px; height:33px;">
-                                            <span><i class="fa fa-close" aria-hidden="true"></i></span>
+                                            <span title="delete document" ><i class="fa fa-trash" aria-hidden="true"></i></span>
                                         </div>
                                     </div>
                                 <?php } else { ?>

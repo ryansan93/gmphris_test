@@ -517,9 +517,6 @@ let up ={
                         </span>
                     </div>
                 </div>
-                // <div>
-                //     <i style="font-size:10px;"> *note : Tanggal berlaku harus minimal H+1 dari tanggal mulai jabatan lama. <br>( Tgl berlaku saat ini : `+ tgl_berlaku+` )<i>
-                // </div>
             `;
 
             let dialog = bootbox.dialog({

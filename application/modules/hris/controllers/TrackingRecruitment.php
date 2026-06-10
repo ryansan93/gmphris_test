@@ -49,6 +49,7 @@ class Trackingrecruitment extends Public_Controller {
     public function load_form()
     {
         $data['list'] = $this->get_list_data();
+        // cetak_r($data, 1);
         $this->load->view($this->pathView . 'v_list', $data);
     }
 
@@ -56,7 +57,7 @@ class Trackingrecruitment extends Public_Controller {
     {
         $m_conf = new \Model\Storage\Conf();
 
-        $sql = " select hukb.document, k.nama as nama_pengusul, j.nama as nama_jabatan
+        $sql = " select hukb.document, k.nama as nama_pengusul, j.nama as nama_jabatan, hukb.jumlah
                 from hris_usulan_karyawan_baru hukb 
                 inner join karyawan k on hukb.nama_pengusul = k.nik and k.status = 1
                 inner join jabatan j on hukb.posisi = j.kode
@@ -102,7 +103,7 @@ class Trackingrecruitment extends Public_Controller {
             $content['data_karyawan'] = $this->get_data_karyawan($nik_karyawan);
         }
 
-        // cetak_r($content['data_usulan'], 1);
+        // cetak_r($content['data_karyawan'], 1);
         
 
         $data['title_menu']     = 'HRIS - Tracking Recruitment';

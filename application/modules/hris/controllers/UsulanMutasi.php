@@ -77,8 +77,7 @@ class UsulanMutasi extends Public_Controller {
 
         $m_conf = new \Model\Storage\Conf();
 
-        $sql_new_unit = "
-            SELECT khu.kode_unit AS unit
+        $sql_new_unit = " SELECT khu.kode_unit AS unit
             FROM karyawan_history kh
             INNER JOIN karyawan_history_unit khu ON kh.id = khu.id
             INNER JOIN karyawan k ON kh.nik = k.nik and k.status = 1
@@ -1185,6 +1184,20 @@ class UsulanMutasi extends Public_Controller {
        
         echo json_encode(date('Y-m-d', strtotime($data[0]['tgl_mulai'] ?? null)));
     }
+
+    public function get_id_karyawan_by_nik($nik)
+    {
+        $m_conf = new \Model\Storage\Conf();
+
+        $sql = " SELECT id from karyawan WHERE nik = '$nik' and status = 1 ";
+
+        $db = $m_conf->hydrateRaw($sql)->toArray();
+
+        // $cetak_r($sql, 1);
+
+        return $db[0]['id'] ?? null;
+    }
+
    
 
 }
