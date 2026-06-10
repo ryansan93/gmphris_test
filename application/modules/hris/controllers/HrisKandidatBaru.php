@@ -122,7 +122,7 @@ class HrisKandidatBaru extends Public_Controller {
             $deskripsi_log = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
             Modules::run('base/event/save', $m_db, $deskripsi_log, null, $id, $m_db);
 
-            $message_telegram = '['.$_SESSION['id_user'].'] '. $_SESSION['detail_user']['nama_detuser'] . 'Add Data Kode : ' . $v_det['nama_karyawan']; 
+            $message_telegram = '['.$_SESSION['id_user'].'] '. $_SESSION['detail_user']['nama_detuser'] . ' Add Data Kode : ' . $v_det['nama_karyawan']; 
             $this->telegram_lib->sendMessages($message_telegram);
 
             $this->result['status'] = 1;
@@ -138,11 +138,9 @@ class HrisKandidatBaru extends Public_Controller {
 
     public function edit_data()
     {
-        $params = $_POST;
-        // cetak_r($params, 1);
+        $params                     = $_POST;
         $data                       = $this->includes;
         $content['kategori']        = $this->getKategori($params['kode_kategori'])[0];
-        //  cetak_r($content, 1);
 
         echo $this->load->view($this->pathView . 'v_edit_data', $content, TRUE);
     }
@@ -708,8 +706,9 @@ class HrisKandidatBaru extends Public_Controller {
     {
         $nama_file = $_POST['document'];
 
-        $source      = base_url() . 'recruitment-gmp/uploads/recruitment/' . $nama_file;
-        $destination = base_url() . 'gmphris_test/uploads/recruitment/' . $nama_file;
+        $source      = 'C:/xampp/htdocs/recruitment-gmp/uploads/recruitment/' . $nama_file;
+        // cetak_r($source, 1);
+        $destination = FCPATH . 'uploads/recruitment/' . $nama_file;
 
         if (empty($nama_file) || $nama_file == '-') {
             echo json_encode([
@@ -739,6 +738,57 @@ class HrisKandidatBaru extends Public_Controller {
             ]);
         }
     }
+
+    // public function sinkron_document()
+    // {
+    //     $nama_file = $_POST['document'];
+
+    //     if (empty($nama_file) || $nama_file == '-') {
+    //         echo json_encode([
+    //             'status'  => false,
+    //             'message' => 'Dokumen tidak tersedia'
+    //         ]);
+    //         return;
+    //     }
+
+    //     // URL file di aplikasi Recruitment
+    //     $source = 'https://recruitment.domain.com/uploads/recruitment/' . $nama_file;
+
+    //     // Lokasi penyimpanan di HRIS
+    //     $destination = FCPATH . 'uploads/recruitment/' . $nama_file;
+
+    //     $ch = curl_init($source);
+
+    //     $fp = fopen($destination, 'wb');
+
+    //     curl_setopt($ch, CURLOPT_FILE, $fp);
+    //     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    //     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    //     curl_exec($ch);
+
+    //     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    //     curl_close($ch);
+    //     fclose($fp);
+
+    //     if ($httpCode == 200) {
+    //         echo json_encode([
+    //             'status'  => true,
+    //             'message' => 'File berhasil disalin'
+    //         ]);
+    //     } else {
+
+    //         if (file_exists($destination)) {
+    //             unlink($destination);
+    //         }
+
+    //         echo json_encode([
+    //             'status'  => false,
+    //             'message' => 'File sumber tidak ditemukan'
+    //         ]);
+    //     }
+    // }
 
    
 
