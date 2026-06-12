@@ -78,10 +78,31 @@ let tr ={
             }
         });
     },
+
+
+    filter_data: () => {
+        let key = $(".filter").val().toLowerCase();
+        
+        if (key === '') {
+            $(".tracking-card").show();
+        } else {
+            $(".tracking-card").each(function() {
+                let text = $(this).text().toLowerCase();
+                if (text.includes(key)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+    },
 }
 
 $(document).ready(function() {
     tr.load_form();
     
+    $(".filter").on('keyup', function() {
+        tr.filter_data();
+    });
 });
 

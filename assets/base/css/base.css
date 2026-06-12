@@ -499,6 +499,171 @@ html{
   display: flex!important;
 }
 
+/* Responsive Navbar - Mobile Below 768px */
+@media (max-width: 767px) {
+  .navbar {
+    padding: 0.3rem 0.5rem;
+  }
+  
+  #menu-toggle {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0;
+  }
+  
+  div.title {
+    margin-left: 0.5rem;
+    font-size: 14px;
+    flex: 1;
+    min-width: 100px;
+  }
+  
+  .notify-row {
+    margin-top: 0;
+    margin-left: 0;
+  }
+  
+  .navbar-nav {
+    gap: 0.5rem;
+  }
+  
+  .control-label {
+    margin-right: 0.5rem !important;
+    font-size: 12px;
+  }
+}
+
+/* Responsive Navbar - Extra Small Below 480px */
+@media (max-width: 479px) {
+  .navbar {
+    padding: 0.25rem 0.3rem;
+  }
+  
+  #menu-toggle {
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+    font-size: 16px;
+  }
+  
+  div.title {
+    margin-left: 0.3rem;
+    font-size: 12px;
+    display: none;
+  }
+  
+  .notify-row {
+    margin-top: 0;
+    margin-left: 0;
+  }
+  
+  .notify-row .nav-item {
+    margin-right: 0.5rem;
+  }
+  
+  .control-label {
+    display: none;
+  }
+  
+  .img-circle {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
+  .navbar-nav {
+    gap: 0;
+  }
+}
+
+/* Ultra Responsive - Below 400px */
+@media (max-width: 399px) {
+  .navbar {
+    padding: 0.2rem 0.3rem;
+    flex-wrap: wrap;
+  }
+  
+  #menu-toggle {
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+    font-size: 14px;
+  }
+  
+  #menu-toggle i {
+    display: none;
+  }
+  
+  #menu-toggle i.fa-navicon {
+    display: inline-block;
+  }
+  
+  div.title {
+    display: none;
+  }
+  
+  .collapse.navbar-collapse {
+    width: 100%;
+    order: 3;
+  }
+  
+  .notify-row {
+    margin-top: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+    flex-basis: 100%;
+  }
+  
+  .notify-row .nav-item {
+    flex: 1;
+  }
+  
+  .navbar-nav.pull-right {
+    margin-left: auto;
+  }
+  
+  .control-label {
+    display: none;
+  }
+  
+  .img-circle {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  
+  .dropdown-item {
+    font-size: 11px;
+    padding: 0.4rem 0.75rem;
+  }
+  
+  .dropdown-menu {
+    min-width: 160px !important;
+    max-width: 90vw;
+    right: -10px !important;
+  }
+  
+  .notif {
+    padding: 0.25rem;
+    font-size: 16px;
+  }
+  
+  /* Fix col-md in notification items for mobile */
+  .col-md-12 {
+    width: 100%;
+    flex-basis: 100%;
+  }
+  
+  .col-md-8 {
+    width: 100%;
+    flex-basis: 100%;
+    text-align: left !important;
+    margin-bottom: 3px;
+  }
+  
+  .col-md-4 {
+    width: 100%;
+    flex-basis: 100%;
+    text-align: left !important;
+  }
+}
+
 /* VERTICAL ALIGN TH */
 .table > thead:first-child > tr:first-child > th {
   vertical-align: middle;

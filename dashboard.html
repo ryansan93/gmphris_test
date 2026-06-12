@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIYA MITRA POULTRY - HRIS Dashboard</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-section h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        
+        .content-panel {
+            padding: 20px;
+        }
+        
+        .alert-notification {
+            display: inline-block;
+            border-left: 5px solid #28a745;
+            border-radius: 0 5px 5px 0;
+            background: #D1FFB8;
+            padding: 12px 16px;
+            color: #155724;
+            margin-bottom: 30px;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .alert-notification i {
+            margin-right: 8px;
+        }
+        
+        .alert-notification small {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .stat-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card .card-body {
+            padding: 25px;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+        }
+        
+        .stat-card h4 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .stat-card .text-muted {
+            font-size: 0.95rem;
+            color: #7f8c8d !important;
+        }
+        
+        .notif-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .notif-section legend {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c3e50;
+            padding: 0 10px;
+            margin-bottom: 15px;
+        }
+        
+        .notif-contain {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            color: #7f8c8d;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stat-card i {
+                font-size: 2rem;
+            }
+            
+            .stat-card h4 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-section">
+        <div class="container-lg">
+            <h1>GRIYA MITRA POULTRY - HRIS</h1>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-lg content-panel">
+        <!-- Alert Notification -->
+        <div class="alert-notification">
+            <i class="fas fa-bell"></i>
+            <strong>Liburan Nasional Hari Raya</strong>
+            <small>(12 Juni 2026) • 5 hari lagi</small>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Statistics Cards -->
+        <div class="row g-3 mb-4">
+            <!-- Total Karyawan -->
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-2.4">
+                <div class="card stat-card border-0 shadow-sm">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-users text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="mb-0">150</h4>
+                            <small class="text-muted">Total Karyawan</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Karyawan Aktif -->
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-2.4">
+                <div class="card stat-card border-0 shadow-sm">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-user-check text-success"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="mb-0">140</h4>
+                            <small class="text-muted">Karyawan Aktif</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Probation -->
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-2.4">
+                <div class="card stat-card border-0 shadow-sm">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-user-clock text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="mb-0">8</h4>
+                            <small class="text-muted">Probation</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kontrak -->
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-2.4">
+                <div class="card stat-card border-0 shadow-sm">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-file-signature text-info"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="mb-0">25</h4>
+                            <small class="text-muted">Kontrak</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tetap -->
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-2.4">
+                <div class="card stat-card border-0 shadow-sm">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-id-card text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="mb-0">107</h4>
+                            <small class="text-muted">Karyawan Tetap</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifikasi Section -->
+        <div class="notif-section">
+            <fieldset>
+                <legend>NOTIFIKASI</legend>
+                <div class="notif-contain">
+                    Tidak ada notifikasi.
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -378,11 +378,11 @@ class HrisKandidatBaru extends Public_Controller {
             }
 
             // HRIS DATA KANDIDAT
-            // $m_db->where('id', $params['id_data'])->update([
-            //     'status_kandidat'   => $params['keputusan'] == 1 ? 2 : 3,
-            //     'tgl_masuk'         => $params['keputusan'] == 1 ? $params['tgl_masuk'] : null,
-            //     'keterangan_reject' => $params['keputusan'] == 2 ? $params['keterangan_reject'] : null,
-            // ]);
+            $m_db->where('id', $params['id_data'])->update([
+                'status_kandidat'   => $params['keputusan'] == 1 ? 2 : 3,
+                'tgl_masuk'         => $params['keputusan'] == 1 ? $params['tgl_masuk'] : null,
+                'keterangan_reject' => $params['keputusan'] == 2 ? $params['keterangan_reject'] : null,
+            ]);
             // END HRIS DATA KANDIDAT
 
             if ( $params['keputusan'] == 1 ){

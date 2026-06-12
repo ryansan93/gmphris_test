@@ -23,8 +23,9 @@ class Home extends Public_Controller
 
 		$data['title_menu'] = 'Dashboard';
 
-		// $content['list_notif'] = $this->list_notif();
-		// $content['jml_notif'] = count($this->list_notif());
+		$content['day_off'] 			= $this->dayOff();
+		$content['karyawan_aktif']		= $this->getKaryawanAktif();
+		$content['karyawan_nonaktif']	= $this->getKaryawanNonAktif();
 		
 		$content['formDashboardDirut'] = null;
 		if ( hakAksesKhusus('dashboard_dirut') ) {
@@ -507,6 +508,100 @@ class Home extends Public_Controller
 		$html = $this->load->view('home/listNotifikasi', $content, true);
 
 		echo $html;
+	}
+
+	public function dayOff()
+	{
+		$url = 'https://libur.deno.dev/api';
+
+		$ch = curl_init();
+
+		curl_setopt_array($ch, [
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_SSL_VERIFYPEER => false,
+		]);
+
+		$response = curl_exec($ch);
+		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$error = curl_error($ch);
+
+		curl_close($ch);
+
+		if ($error) {
+			echo json_encode([
+				'status' => false,
+				'message' => $error
+			]);
+			return;
+		}
+
+		if ($httpCode != 200) {
+			echo json_encode([
+				'status' => false,
+				'message' => 'Gagal mengambil data'
+			]);
+			return;
+		}
+
+		$data = json_decode($response, true);
+
+		$today = date('Y-m-d');
+		$bulanIni = date('m');
+		$tahunIni = date('Y');
+
+		$nextHoliday = null;
+
+		foreach ($data as $row) {
+			$tanggal = $row['date'];
+
+			if ( $row['is_national_holiday'] == true && date('Y', strtotime($tanggal)) == $tahunIni && date('m', strtotime($tanggal)) == $bulanIni && $tanggal > $today ) {
+				$nextHoliday = $row;
+				break;
+			}
+		}
+
+		// cetak_r($nextHoliday, 1);
+		return $nextHoliday ?? null;
+
+	}
+
+	public function getKaryawanAktif()
+	{
+		$m_conf     = new \Model\Storage\Conf();
+        $sql        = " select distinct nik, nama, jabatan from karyawan where status = 1 ";
+        $d_conf     = $m_conf->hydrateRaw( $sql );
+        $data       = null;
+
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+
+        return $data;
+	}
+
+	public function getKaryawanNonAktif()
+	{
+
+		$m_conf     = new \Model\Storage\Conf();
+        $sql        = " SELECT DISTINCT k1.nik, k1.nama, k1.jabatan
+						FROM karyawan k1
+						WHERE k1.status = 0
+						AND NOT EXISTS (
+							SELECT 1
+							FROM karyawan k2
+							WHERE k2.nik = k1.nik
+							AND k2.status = 1
+						) ";
+        $d_conf     = $m_conf->hydrateRaw( $sql );
+        $data       = null;
+
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+
+        return $data;
 	}
 
 	

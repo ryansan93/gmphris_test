@@ -139,7 +139,7 @@
           ?>
 
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0 pull-left notify-row">
-            <li id="header_notification_bar" class="nav-item dropdown">
+            <li style="position:absolute;" id="header_notification_bar" class="nav-item dropdown">
               <a data-toggle="dropdown" class="notif">
                 <i class="fa fa-bell-o cursor-p" style="border: 1px solid black; padding: 7px; border-radius: 5px;"></i>
                 <?php if ( $jml_notif > 0 ): ?>
@@ -148,7 +148,7 @@
                   </span>
                 <?php endif ?>
               </a>
-              <ul class="dropdown-menu dropdown-menu-left extended notification no-padding">
+              <ul style="position:absolute;" class="dropdown-menu dropdown-menu-left extended notification no-padding">
                 <!-- <div class="notify-arrow notify-arrow-yellow" style="left: 197px;"></div> -->
                 <li class="dropdown-item setting bg-warning">
                   <div class="yellow"><i class="fa fa-exclamation-circle"></i> <b>You have <?php echo $jml_notif; ?> new notifications</b></div>
@@ -196,7 +196,7 @@
             </li>
           </ul>
 
-          <div class="col-md-8 title"><?php echo $title_menu; ?></div>
+          <div class="col-md-8 title d-none d-lg-block"><?php echo $title_menu; ?></div>
 
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0 pull-right">
             <!-- <li>
@@ -207,8 +207,8 @@
                 </div>
               </div>
             </li> -->
-            <li id="header_notification_bar" class="nav-item dropdown">
-              <span class="control-label" style="margin-right: 1rem;" ><?php echo $this->session->userdata()['detail_user']['nama_detuser']; ?></span class="control-label">
+            <li   id="header_notification_bar"  class="nav-item dropdown">
+              <span class="control-label d-none d-sm-inline" style="margin-right: 1rem;" ><?php echo $this->session->userdata()['detail_user']['nama_detuser']; ?></span class="control-label">
               <?php
                 $src = 'assets/images/icon-user.png';
                 if ( isset($this->session->userdata()['detail_user']['avatar_detuser']) ) {
@@ -216,7 +216,7 @@
                 }
               ?>
               <img data-toggle="dropdown" src="assets/images/icon-user.png" class="img-circle" aria-expanded="true" width="30" height="30">
-              <ul class="dropdown-menu dropdown-menu-right extended notification">
+              <ul style="position:absolute;" class="dropdown-menu dropdown-menu-right extended notification">
                 <li class="dropdown-item setting">
                   Setting
                 </li>
