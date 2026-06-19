@@ -1144,6 +1144,8 @@ class UsulanDemosi extends Public_Controller {
 		ON hum.karyawan = kh.nik
 		WHERE hum.kode = '".$params['kode']."'";
 
+        // cetak_r($sql, 1);
+
         $d_conf     = $m_conf->hydrateRaw( $sql );
         
         $data       = null;
@@ -1178,6 +1180,7 @@ class UsulanDemosi extends Public_Controller {
         $m_conf     = new \Model\Storage\Conf();
         $level      = $_POST['level'] ?? null;
         $wilayah    = $_POST['wilayah'] ?? [];
+        $nik        = $_POST['karyawan'] ?? [];
 
         // cetak_r($_POST, 1);
 
@@ -1196,6 +1199,7 @@ class UsulanDemosi extends Public_Controller {
             WHERE k.status = 1
                 AND k.level < ".$level."
                 AND wk.wilayah IN (".$wil.") 
+                and k.nik != '".$nik."'
                 order by j.nama, k.nama asc ";
 
             //  cetak_r($sql, 1);

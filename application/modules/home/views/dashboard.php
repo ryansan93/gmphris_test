@@ -108,14 +108,25 @@
 		<br>
 	
 		<?php
-			$selisih_hari = floor( (strtotime($day_off['date']) - strtotime(date('Y-m-d'))) / 86400 );
+			$selisih_hari = 0;
+
+			if (!empty($day_off) && isset($day_off['date'])) {
+				$selisih_hari = floor(
+					(strtotime($day_off['date']) - strtotime(date('Y-m-d'))) / 86400
+				);
+			}
 		?>
 
-		<div style="display: inline-block; border-left:5px solid #28a745; border-radius:0 5px 5px 0; background:#D1FFB8; padding:8px 12px; color:#155724;">
-			<i class="fa fa-bell"></i>
-			<?php echo $day_off['name']; ?>
-			<small> (<?php echo tglIndonesia($day_off['date'], "-", " "); ?>) • <?php echo $selisih_hari; ?> hari lagi </small>
-		</div>
+		<?php if (!empty($day_off) && $selisih_hari > 0) { ?>
+			<div style="display: inline-block; border-left:5px solid #28a745; border-radius:0 5px 5px 0; background:#D1FFB8; padding:8px 12px; color:#155724;">
+				<i class="fa fa-bell"></i>
+				<?= $day_off['name']; ?>
+				<small>
+					(<?= tglIndonesia($day_off['date'], "-", " "); ?>)
+					• <?= $selisih_hari; ?> hari lagi
+				</small>
+			</div>
+		<?php } ?>
 
 		<br>
 		<br>

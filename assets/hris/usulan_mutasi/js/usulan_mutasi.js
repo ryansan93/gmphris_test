@@ -667,6 +667,7 @@ let up ={
         let params = {
             level   : $(".karyawan").find("option:selected").attr("level"),
             wilayah : $('.perwakilan_tujuan').val(),
+            karyawan : $(".karyawan").val(),
         };
 
         if (!params.level || !params.wilayah) {

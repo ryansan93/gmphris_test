@@ -317,6 +317,12 @@ let up ={
             return false;
         }
 
+        if (!params.unit_tujuan) {
+            toastr.warning("Unit tujuan wajib dipilih");
+            $(".unit_tujuan").focus();
+            return false;
+        }
+
         if (!params.alasan || params.alasan.trim() === '') {
             toastr.warning("Alasan wajib diisi");
             $(".alasan").focus();
@@ -515,6 +521,8 @@ let up ={
 
         let tgl_berlaku = await up.config_tgl_berlaku(kode);
 
+        // console.log(tgl_berlaku);
+
         let text = val == STATUS.ACK ? 'Acknowledge' 
                 : val == STATUS.APPROVE ? 'Approve' 
                 : val == STATUS.REJECTHRD ? 'Reject' 
@@ -597,7 +605,7 @@ let up ={
                 $('#tgl_berlaku').datetimepicker({
                     locale: 'id',
                     format: 'DD MMM YYYY',
-                    minDate: moment(tgl_berlaku)
+                    minDate: moment(tgl_berlaku).add(1, 'days')
                 });
             });
 
@@ -725,6 +733,7 @@ let up ={
         let params = {
             level   : $(".jabatan_tujuan").find("option:selected").attr("level"),
             wilayah : $('.perwakilan_tujuan').val(),
+            karyawan : $(".karyawan").val(),
         };
 
         if (!params.level || !params.wilayah) {
@@ -734,7 +743,7 @@ let up ={
         }
 
         $.ajax({
-            url: 'hris/UsulanPromosi/set_atasan_baru',
+            url: 'hris/UsulanDemosi/set_atasan_baru',
             data: params,
             type: 'POST',
             dataType: 'json',

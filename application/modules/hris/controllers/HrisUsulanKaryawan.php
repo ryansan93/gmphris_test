@@ -177,7 +177,7 @@ class HrisUsulanKaryawan extends Public_Controller {
     public function get_data_karyawan()
     {
         $m_conf = new \Model\Storage\Conf();
-        $sql = "select * from karyawan order by nama asc";
+        $sql = "select * from karyawan where status = 1 order by nama asc";
 
         $d_conf = $m_conf->hydrateRaw($sql);
         $data = null;

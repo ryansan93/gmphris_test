@@ -11,7 +11,7 @@
 			<td><?php echo !empty($v_data['nama_wilayah']) ? $v_data['nama_wilayah'] : '-'; ?></td>
 			<td><?php echo !empty($v_data['nama_unit']) ? $v_data['nama_unit'] : '-'; ?></td>
 			<td><?php echo ( $v_data['status_aktif'] == 1 ) ? 'AKTIF' : 'NON AKTIF'; ?></td>
-			<td><?php echo !empty($v_data['tgl_mulai']) ? tglIndonesia($v_data['tgl_mulai'], "-", " ") : '-'; ?></td>
+			<td><?php echo !empty($v_data['tgl_berlaku']) ? tglIndonesia($v_data['tgl_berlaku'], "-", " ") : '-'; ?></td>
 			<td><button type="button" class="col-xs-12 btn btn-primary" onclick="pegawai.modalGaji(this)" data-nik="<?php echo $v_data['nik']; ?>"><i class="fa fa-usd"></i></button></td>
 		</tr>
 	<?php } ?>

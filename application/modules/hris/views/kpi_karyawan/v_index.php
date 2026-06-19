@@ -1,192 +1,24 @@
-<div style="display:flex; flex-direction:row; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+<?php $bulanSekarang = date('n'); ?>
 
-    <div style="flex: 1 1 calc(20% - 8px); min-width:180px; border:1px solid #D6E8FC; background-color: #EAF3FE; padding:10px; border-radius:5px;">
-        <div style="display:flex; flex-direction:row; gap:10px;">
-            <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Rata rata KPI Perusahaan</span>
+<label>Periode Bulan</label>
+<select class="select2 periode_kpi" id="periode_kpi" name="periode_kpi" onchange="kpi.get_data_periode(this, event)">
+    <option value="1" <?= $bulanSekarang == 1 ? 'selected' : '' ?>>Januari</option>
+    <option value="2" <?= $bulanSekarang == 2 ? 'selected' : '' ?>>Februari</option>
+    <option value="3" <?= $bulanSekarang == 3 ? 'selected' : '' ?>>Maret</option>
+    <option value="4" <?= $bulanSekarang == 4 ? 'selected' : '' ?>>April</option>
+    <option value="5" <?= $bulanSekarang == 5 ? 'selected' : '' ?>>Mei</option>
+    <option value="6" <?= $bulanSekarang == 6 ? 'selected' : '' ?>>Juni</option>
+    <option value="7" <?= $bulanSekarang == 7 ? 'selected' : '' ?>>Juli</option>
+    <option value="8" <?= $bulanSekarang == 8 ? 'selected' : '' ?>>Agustus</option>
+    <option value="9" <?= $bulanSekarang == 9 ? 'selected' : '' ?>>September</option>
+    <option value="10" <?= $bulanSekarang == 10 ? 'selected' : '' ?>>Oktober</option>
+    <option value="11" <?= $bulanSekarang == 11 ? 'selected' : '' ?>>November</option>
+    <option value="12" <?= $bulanSekarang == 12 ? 'selected' : '' ?>>Desember</option>
+</select>
 
-                 <div style="display:flex; flex-direction:row; gap:10px; align-items:center;">
-                    <span style="font-size:20px; color: #1F2937; font-weight:bold;">87,45</span>
-                    <div style="display:flex; padding:3px; border-radius:15px; background-color: #cee1fb; height:20px; justify-content:center; align-items:center;">
-                        <span style="color:#3B82F6; font-size:12px;">Sangat Baik</span>
-                    </div>
-                </div>
+<hr>
 
-                <span style="font-size:10px"><b style="color: #22C55E;"> <i class="fa fa-long-arrow-up" aria-hidden="true"></i> 5.12%</b> dari periode lalu</span>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:10px; justify-content:center; align-items:center;">
-                <div style="display:flex; padding:10px; border-radius:50%; background-color: #DCEBFF; justify-content:center; align-items:center;">
-                    <i class="fa fa-line-chart" style="font-size:30px; color:#3B82F6" aria-hidden="true"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div style="flex: 1 1 calc(20% - 8px); min-width:180px; border:1px solid #D6E8FC; background-color: #EAF3FE; padding:10px; border-radius:5px;">
-        <div style="display:flex; flex-direction:row; gap:10px;">
-            <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Karyawan Dinilai</span>
-
-                 <div style="display:flex; flex-direction:row; gap:10px; align-items:center;">
-                    <span style="font-size:20px; color: #1F2937; font-weight:bold;">87,45</span>
-                    <div style="display:flex; padding:3px; border-radius:15px; background-color: #cee1fb; height:20px; justify-content:center; align-items:center;">
-                        <span style="color:#3B82F6; font-size:12px;">Sangat Baik</span>
-                    </div>
-                </div>
-
-                <span style="font-size:10px"><b style="color: #22C55E;"> <i class="fa fa-long-arrow-up" aria-hidden="true"></i> 5.12%</b> dari periode lalu</span>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:10px; justify-content:center; align-items:center;">
-                <div style="display:flex; padding:10px; border-radius:50%; background-color: #DCEBFF; justify-content:center; align-items:center;">
-                    <i class="fa fa-line-chart" style="font-size:30px; color:#3B82F6" aria-hidden="true"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div style="flex: 1 1 calc(20% - 8px); min-width:180px; border:1px solid #D6E8FC; background-color: #EAF3FE; padding:10px; border-radius:5px;">
-        <div style="display:flex; flex-direction:row; gap:10px;">
-            <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Menunggu Approval</span>
-
-                 <div style="display:flex; flex-direction:row; gap:10px; align-items:center;">
-                    <span style="font-size:20px; color: #1F2937; font-weight:bold;">87,45</span>
-                    <div style="display:flex; padding:3px; border-radius:15px; background-color: #cee1fb; height:20px; justify-content:center; align-items:center;">
-                        <span style="color:#3B82F6; font-size:12px;">Sangat Baik</span>
-                    </div>
-                </div>
-
-                <span style="font-size:10px"><b style="color: #22C55E;"> <i class="fa fa-long-arrow-up" aria-hidden="true"></i> 5.12%</b> dari periode lalu</span>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:10px; justify-content:center; align-items:center;">
-                <div style="display:flex; padding:10px; border-radius:50%; background-color: #DCEBFF; justify-content:center; align-items:center;">
-                    <i class="fa fa-line-chart" style="font-size:30px; color:#3B82F6" aria-hidden="true"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div style="flex: 1 1 calc(20% - 8px); min-width:180px; border:1px solid #D6E8FC; background-color: #EAF3FE; padding:10px; border-radius:5px;">
-        <div style="display:flex; flex-direction:row; gap:10px;">
-            <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Belum Dinilai</span>
-
-                 <div style="display:flex; flex-direction:row; gap:10px; align-items:center;">
-                    <span style="font-size:20px; color: #1F2937; font-weight:bold;">87,45</span>
-                    <div style="display:flex; padding:3px; border-radius:15px; background-color: #cee1fb; height:20px; justify-content:center; align-items:center;">
-                        <span style="color:#3B82F6; font-size:12px;">Sangat Baik</span>
-                    </div>
-                </div>
-
-                <span style="font-size:10px"><b style="color: #22C55E;"> <i class="fa fa-long-arrow-up" aria-hidden="true"></i> 5.12%</b> dari periode lalu</span>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:10px; justify-content:center; align-items:center;">
-                <div style="display:flex; padding:10px; border-radius:50%; background-color: #DCEBFF; justify-content:center; align-items:center;">
-                    <i class="fa fa-line-chart" style="font-size:30px; color:#3B82F6" aria-hidden="true"></i>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="index_content">
 
 </div>
 
-<br>
-
-<div style="display:flex; flex-direction:row; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-
-    <div style="flex: 1 1 calc(20% - 8px); min-width:200px; border:1px solid #D6E8FC; background-color: white; padding:10px; border-radius:5px;">
-        <div style="display:flex; flex-direction:row; gap:10px;">
-
-            <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
-                <div style="width:50px; display:flex; padding:10px; border-radius:50%; background-color: #3B82F6; justify-content:center; align-items:center;">
-                    <i class="fa fa-pencil-square-o" style="font-size:30px; color:white" aria-hidden="true"></i>
-                </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Penilaian KPI</span>
-                <span style="font-size:12px; color: #1F2937;">Input dan kelola penilaian KPI Karyawan</span>
-                <button style="border:1px solid grey; border-radius:5px;">Buka</button>
-            </div>
-            
-        </div>
-    </div>
-
-     <div style="flex: 1 1 calc(20% - 8px); min-width:200px; border:1px solid #D6E8FC; background-color: white; padding:10px; border-radius:5px;">
-        <div style="display:flex; flex-direction:row; gap:10px;">
-
-            <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
-                <div style="width:50px; display:flex; padding:10px; border-radius:50%; background-color: #FFB859; justify-content:center; align-items:center;">
-                    <i class="fa fa-check-circle-o" style="font-size:30px; color: white" aria-hidden="true"></i>
-                </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #FFB859; font-weight:bold;">Penilaian KPI</span>
-                <span style="font-size:12px; color: #1F2937;">Input dan kelola penilaian KPI Karyawan</span>
-                <button style="border:1px solid grey; border-radius:5px;">Buka</button>
-            </div>
-            
-        </div>
-    </div>
-
-     <div style="flex: 1 1 calc(20% - 8px); min-width:200px; border:1px solid #D6E8FC; background-color: white; padding:10px; border-radius:5px;">
-        <div style="display:flex; flex-direction:row; gap:10px;">
-
-            <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
-                <div style="width:50px; display:flex; padding:10px; border-radius:50%; background-color: #3B82F6; justify-content:center; align-items:center;">
-                    <i class="fa fa-pencil-square-o" style="font-size:30px; color:#DCEBFF" aria-hidden="true"></i>
-                </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Penilaian KPI</span>
-                <span style="font-size:12px; color: #1F2937;">Input dan kelola penilaian KPI Karyawan</span>
-                <button style="border:1px solid grey; border-radius:5px;">Buka</button>
-            </div>
-            
-        </div>
-    </div>
-
-     <div style="flex: 1 1 calc(20% - 8px); min-width:200px; border:1px solid #D6E8FC; background-color: white; padding:10px; border-radius:5px;">
-        <div style="display:flex; flex-direction:row; gap:10px;">
-
-            <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
-                <div style="width:50px; display:flex; padding:10px; border-radius:50%; background-color: #3B82F6; justify-content:center; align-items:center;">
-                    <i class="fa fa-pencil-square-o" style="font-size:30px; color:#DCEBFF" aria-hidden="true"></i>
-                </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Penilaian KPI</span>
-                <span style="font-size:12px; color: #1F2937;">Input dan kelola penilaian KPI Karyawan</span>
-                <button style="border:1px solid grey; border-radius:5px;">Buka</button>
-            </div>
-            
-        </div>
-    </div>
-
-     <div style="flex: 1 1 calc(20% - 8px); min-width:200px; border:1px solid #D6E8FC; background-color: white; padding:10px; border-radius:5px;">
-        <div style="display:flex; flex-direction:row; gap:10px;">
-
-            <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
-                <div style="width:50px; display:flex; padding:10px; border-radius:50%; background-color: #3B82F6; justify-content:center; align-items:center;">
-                    <i class="fa fa-pencil-square-o" style="font-size:30px; color:#DCEBFF" aria-hidden="true"></i>
-                </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Penilaian KPI</span>
-                <span style="font-size:12px; color: #1F2937;">Input dan kelola penilaian KPI Karyawan</span>
-                <button style="border:1px solid grey; border-radius:5px;">Buka</button>
-            </div>
-            
-        </div>
-    </div>
-
-   
-</div>

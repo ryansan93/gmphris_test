@@ -601,7 +601,7 @@ let up ={
                 $('#tgl_berlaku').datetimepicker({
                     locale: 'id',
                     format: 'DD MMM YYYY',
-                    minDate: moment(tgl_berlaku)
+                    minDate: moment(tgl_berlaku).add(1, 'days')
                 });
             });
 
@@ -729,6 +729,7 @@ let up ={
         let params = {
             level   : $(".jabatan_tujuan").find("option:selected").attr("level"),
             wilayah : $('.perwakilan_tujuan').val(),
+            karyawan : $(".karyawan").val(),
         };
 
         if (!params.level || !params.wilayah) {

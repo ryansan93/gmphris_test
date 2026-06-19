@@ -23,7 +23,8 @@ class Home extends Public_Controller
 
 		$data['title_menu'] = 'Dashboard';
 
-		$content['day_off'] 			= $this->dayOff();
+		$content['day_off'] 			= $this->dayOff() ?? [];
+		// cetak_r($content, 1);
 		$content['karyawan_aktif']		= $this->getKaryawanAktif();
 		$content['karyawan_nonaktif']	= $this->getKaryawanNonAktif();
 		
@@ -467,6 +468,43 @@ class Home extends Public_Controller
 				}
 			}
 		// END NOTIFIKASI STATUS KARYAWAN
+
+
+		// NOTIFIKASI KPI KARYAWAN
+			$url_kpi_karyawan = 'hris/KpiKaryawan/approvalKpi/';
+			$akses = hakAkses('/'. $url_kpi_karyawan);
+
+			
+
+			// if ( !empty($akses['a_edit']) && $akses['a_edit'] == 1 ) {
+
+				$m_kpi = new \Model\Storage\HrisKpiPenilaian_model();
+				$data = []; //$m_kpi->notifKpiKaryawan();
+
+				// cetak_r($data, 1);
+
+				if ( $data ) {
+					$key = 'kpi_karyawan';
+
+					$display = array_map(function($val){
+						return [
+							'display' => $val['nik'] . ' - ' .  $val['nama_karyawan'] . ' ('. $val['periode'] .')',
+							'key' => $val['id'],
+						];
+					}, $data);
+
+					$notif[$key] = $this->mappingNotif(
+						$data,
+						$url_kpi_karyawan,
+						'HRIS - Notifikasi KPI Karyawan',
+						$display
+					);
+
+					$notif[$key]['link']  = $url_kpi_karyawan;
+					$notif[$key]['jenis'] = 'window.open';
+				}
+			// }
+		// END NOTIFIKASI KPI KARYAWAN
 		
 		// cetak_r($notif, 1);
 
