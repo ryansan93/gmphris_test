@@ -9,7 +9,7 @@
         <div style="display:flex; flex-direction:column;">
             <label for="">Periode</label>
             <select name="bulan" class="select2 bulan" onchange="kpi.filter_report_by_periode(this, event);">
-                <option value="">-- Pilih Bulan --</option>
+                <option value="0" disabled selected>-- Pilih Bulan --</option>
                 <option value="1">Januari</option>
                 <option value="2">Februari</option>
                 <option value="3">Maret</option>
@@ -60,7 +60,7 @@
                                 <td><?php echo $l['nik']; ?></td>
                                 <td><?php echo ucwords(strtolower($l['nama'])); ?></td>
                                 <td><?php echo $l['nama_jabatan']; ?></td>
-                                <td><?php echo $l['total_nilai']; ?></td>
+                                <td class="text-right"><?php echo $l['total_nilai']; ?></td>
                             </tr>
                         <?php } ?>
                     <?php } ?>

@@ -1,3 +1,17 @@
+<style>
+    .btn-custom {
+        border:1px solid orange; 
+        background-color: #F5CC27; 
+        border-radius:5px;
+        font-size:12px;
+        margin-left:15px;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .btn-custom:hover{
+        background-color: orange; 
+    }
+</style>
 <div id="setting_kpi">
 
     <div class="panel-heading no-padding">
@@ -25,6 +39,7 @@
 
                 <div class="col-xs-12 no-padding notifContain">
 
+                    <input type="text" class="form form-control" placeholder="Masukan kata kunci" oninput="kpi.filter_setting_kpi(this,event)">
                 </div>
             </fieldset>
 
@@ -63,10 +78,12 @@
 
             <div>
                 <label for="">Jabatan</label>
-                <select class="select2 jabatan" id="">
+                <select class="select2 jabatan" onchange="kpi.periodeOutstanding(this, event);">
                     <option disabled selected> Pilih Jabatan</option>
                     <?php foreach($jabatan as $j){ ?>
-                        <option value="<?php echo $j['kode'] ?>"><?php echo $j['nama'] ?></option>
+                        <?php if($j['kode'] == 'ppl' || $j['kode'] == 'penimbang'){ ?>
+                            <option value="<?php echo $j['kode'] ?>"><?php echo $j['nama'] ?></option>
+                        <?php } ?>
                     <?php } ?>
                 </select>
             </div>
@@ -99,6 +116,7 @@
             <fieldset>
                 <legend>
                     <b>Input Data Bobot</b>
+                    <button class="btn-custom" onclick="kpi.getKpiPeriode(this, event)">Ambil KPI</button>
                 </legend>
 
 

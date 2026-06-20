@@ -196,8 +196,7 @@
                 <div>
                     <div style="position:relative; width:50px; height:50px; border-radius:50%; background:#3B82F6; display:flex; justify-content:center; align-items:center;">
                         <i class="fa fa-circle-o" style="position:absolute; font-size:40px; color:white;"></i>
-                        <i class="fa fa-circle-o" style="position:absolute; font-size:20px; color:white;"></i>
-                        <i class="fa fa-circle-o" style="position:absolute; font-size:5px; color:white;"></i>
+                        <i class="fa fa-cog" style="position:absolute; font-size:20px; color:white;"></i>
                     </div>
                 </div>
 

@@ -13,22 +13,27 @@ let kpi = {
             bulan : $('.bulan').val(),
         }
 
-        $.ajax({
-            url : 'hris/KpiKaryawan/loadDataBobot',
-            data : params,
-            type : 'POST',
-            dataType : 'html',
-            beforeSend : function(){ 
-                showLoading(); 
-            },
-            success : function(html){
-                hideLoading(); 
-                $(".nama-jabatan").val(params.nama_jabatan);
+        if(params.nama_jabatan){
 
-                // console.log(html)
-                $(".list_bobot").find('tbody').html(html);
-            },
-        });
+            $.ajax({
+                url : 'hris/KpiKaryawan/loadDataBobot',
+                data : params,
+                type : 'POST',
+                dataType : 'html',
+                beforeSend : function(){ 
+                    showLoading(); 
+                },
+                success : function(html){
+                    hideLoading(); 
+                    $(".nama-jabatan").val(params.nama_jabatan);
+    
+                    // console.log(html)
+                    $(".list_bobot").find('tbody').html(html);
+                },
+            });
+
+        }
+
     },
 
     getPeriode: (elm, e) => {
@@ -370,26 +375,72 @@ let kpi = {
             jabatan : $("#setting_kpi").find(".jabatan").val(),
             periode : $("#setting_kpi").find(".periode").val(),
             keterangan : $("#setting_kpi").find(".keterangan").val(),
+        };
+
+        if (!header.nama) {
+            toastr.error('Nama template harus diisi.');
+            return;
+        }
+
+        if (!header.jabatan) {
+            toastr.error('Jabatan harus dipilih.');
+            return;
+        }
+
+        if (!header.periode) {
+            toastr.error('Periode harus dipilih.');
+            return;
         }
 
         let detail = [];
+        let totalBobot = 0;
+        let valid = true;
 
-        $(".row-input").each(function(){
-            let temp = {
-                index_kpi : $(this).find(".nama_kpi").val(),
-                keterangan : $(this).find(".keterangan_detail").val(),
-                bobot : $(this).find(".bobot").val(),
+        $(".row-input").each(function(index){
+
+            let namaKpi = $(this).find(".nama_kpi").val();
+            let keterangan = $(this).find(".keterangan_detail").val();
+            let bobot = parseFloat($(this).find(".bobot").val()) || 0;
+
+            if (!namaKpi) {
+                toastr.error(`Nama KPI pada baris ${index + 1} harus diisi.`);
+                valid = false;
+                return false;
             }
 
-            detail.push(temp);
-        })
+            if (bobot <= 0) {
+                toastr.error(`Bobot pada baris ${index + 1} harus lebih dari 0.`);
+                valid = false;
+                return false;
+            }
+
+            totalBobot += bobot;
+
+            detail.push({
+                index_kpi : namaKpi,
+                keterangan : keterangan,
+                bobot : bobot
+            });
+        });
+
+        if (!valid) {
+            return;
+        }
+
+        if (detail.length === 0) {
+            toastr.error('Minimal harus ada 1 KPI.');
+            return;
+        }
+
+        if (totalBobot !== 100) {
+            toastr.error(`Total bobot harus 100%. Saat ini ${totalBobot}%.`);
+            return;
+        }
 
         let params = {
             header : header,
             detail : detail,
-        }
-
-        // console.log(params);
+        };
 
         bootbox.confirm({
             title: '<i class="glyphicon glyphicon-question-sign"></i> Konfirmasi',
@@ -557,9 +608,7 @@ let kpi = {
 
                         if(data.status == 1){
                             toastr.success(data.message);
-
                             setTimeout(function(){
-                                // window.location.href = 'hris/KpiKaryawan';
                                 kpi.load_data_setting();
                             }, 1000);
                         } else {
@@ -572,6 +621,18 @@ let kpi = {
                     }
                 });
             }
+        });
+
+    },
+
+    filter_setting_kpi:(elm, e) => {
+
+        let keyword = $(elm).val().toLowerCase();
+
+        $('.list_data_setting_kpi tbody tr').filter(function() {
+            $(this).toggle(
+                $(this).text().toLowerCase().indexOf(keyword) > -1
+            );
         });
 
     },
@@ -719,6 +780,140 @@ let kpi = {
             },
         });
     },
+
+    getKpiPeriode: () => {
+        $.ajax({
+            url: 'hris/KpiKaryawan/getKpiPeriode',
+            type: 'POST',
+            dataType: 'json',
+            beforeSend: function() {
+                showLoading();
+            },
+            success: function(data) {
+                hideLoading();
+
+                let option = '<option value="">Pilih KPI</option>';
+
+                $.each(data, function(i, v) {
+                    option += `
+                        <option value="${v.id}">
+                            ${v.nama_template} - Periode ${v.periode}
+                        </option>
+                    `;
+                });
+
+                bootbox.dialog({
+                    title: 'Pilih KPI',
+                    message: `
+                        <div class="form-group">
+                            <label>KPI</label>
+                            <select id="kpi_select" class="form-control" style="width:100%">
+                                ${option}
+                            </select>
+                        </div>
+                    `,
+                    buttons: {
+                        cancel: {
+                            label: 'Batal',
+                            className: 'btn-secondary'
+                        },
+                        confirm: {
+                            label: 'Generate',
+                            className: 'btn-primary',
+                            callback: function() {
+                                let id = $('#kpi_select').val();
+
+                                if (!id) {
+                                    bootbox.alert('Silakan pilih KPI');
+                                    return false;
+                                }
+
+                                let selected = data.find(x => x.id == id);
+
+                                let html = '';
+                                selected.detail.forEach(item => {
+                                    html += `
+                                        <div class="row-input" style="display:flex; flex-direction:row; gap:10px; margin-bottom:5px;">
+                                            <input 
+                                                class="form form-control nama_kpi" 
+                                                type="text" 
+                                                value="${item.nama_kpi ?? ''}"
+                                                placeholder="Masukan nama KPI">
+
+                                            <input 
+                                                class="form form-control keterangan_detail" 
+                                                type="text" 
+                                                value="${item.keterangan ?? ''}"
+                                                placeholder="Masukan keterangan">
+
+                                            <input 
+                                                class="form form-control bobot"
+                                                oninput="kpi.config_bobot(this, event)"
+                                                type="number"
+                                                style="width:25%"
+                                                value="${Number(item.bobot)}"
+                                                placeholder="Masukan bobot">
+
+                                            <button class="btn btn-primary add-row" onclick="kpi.add_row_setting(this, event)">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+
+                                            <button class="btn btn-danger" onclick="kpi.delete_row_setting(this, event)">
+                                                <i class="fa fa-close"></i>
+                                            </button>
+                                        </div>
+                                    `;
+                                });
+
+                                $(".detail-input").html(html);
+                            }
+                        }
+                    },
+                    onShown: function() {
+                        $('#kpi_select').select2({
+                            dropdownParent: $('.bootbox')
+                        });
+                    }
+                });
+            }
+        });
+    },
+
+    periodeOutstanding: () => {
+        $.ajax({
+            url: 'hris/KpiKaryawan/getKpiPeriode',
+            type: 'POST',
+            dataType: 'json',
+            beforeSend: function() {
+                showLoading();
+            },
+            success: function(data) {
+
+                hideLoading();
+
+                // buat key gabungan: periode|jabatan
+                let used = data.map(item => `${item.periode}|${item.jabatan_id}`);
+
+                console.log('used KPI:', used);
+
+                $('.periode option').each(function() {
+
+                    let periode = $(this).val();
+
+                    // ambil jabatan dari select lain (misalnya select jabatan)
+                    let jabatan = $('.jabatan').val();
+
+                    let key = `${periode}|${jabatan}`;
+
+                    if (used.includes(key)) {
+                        $(this).prop('disabled', true);
+                    }
+                });
+
+                $('.periode').trigger('change');
+            }
+        });
+    }
 }
 
 $(document).ready(function() {

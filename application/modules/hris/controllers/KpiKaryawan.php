@@ -192,8 +192,6 @@ class KpiKaryawan extends Public_Controller
         $params = $_POST;
 
 		// cetak_r($params, 1);
-
-       
         
         try {
             $m_header     			  	= new \Model\Storage\HrisKpiPenilaian_model();
@@ -216,7 +214,6 @@ class KpiKaryawan extends Public_Controller
                 $m_detail->skor  			= $v_det['score'];
                 $m_detail->catatan	 		= $v_det['keterangan'] ?? null;
                 $m_detail->save();
-
             }
 
             $id            = $m_header->id;
@@ -415,6 +412,7 @@ class KpiKaryawan extends Public_Controller
 
 		echo $this->load->view('hris/kpi_karyawan/v_list_setting_kpi', $content, true);
 	}
+	
 
 	public function getDataSetting($need = null)
 	{
@@ -659,13 +657,11 @@ class KpiKaryawan extends Public_Controller
 
 	public function getNilaiAverageKpi($data)
 	{
-		$bulan = (int)$data['periode'];
-		$tahun = date('Y');
-
-		$tgl_awal = date('Y-m-01', strtotime("$tahun-$bulan-01"));
-		$tgl_akhir = date('Y-m-t', strtotime("$tahun-$bulan-01"));
-
-		$tgl_awal_lalu = date('Y-m-01', strtotime($tgl_awal . ' -1 month'));
+		$bulan 			= (int)$data['periode'];
+		$tahun 			= date('Y');
+		$tgl_awal 		= date('Y-m-01', strtotime("$tahun-$bulan-01"));
+		$tgl_akhir 		= date('Y-m-t', strtotime("$tahun-$bulan-01"));
+		$tgl_awal_lalu 	= date('Y-m-01', strtotime($tgl_awal . ' -1 month'));
 		$tgl_akhir_lalu = date('Y-m-t', strtotime($tgl_awal . ' -1 month'));
 
 		$m_conf = new \Model\Storage\Conf();
@@ -829,5 +825,26 @@ class KpiKaryawan extends Public_Controller
 		}
 
 		return $report;
+	}
+
+	public function getKpiPeriode()
+	{
+		$m_conf = new \Model\Storage\Conf();
+		$header	= $m_conf->hydrateRaw("SELECT * from hris_kpi_master_header")->toArray();
+		$detail	= $m_conf->hydrateRaw("SELECT * from hris_kpi_master_detail")->toArray(); 
+
+		foreach ($header as $key => $val) {
+			$header[$key]['detail'] = [];
+
+			foreach ($detail as $v_detail) {
+				if ($v_detail['id_header'] == $val['id']) {
+					$header[$key]['detail'][] = $v_detail;
+				}
+			}
+    	}
+
+		// cetak_r($header, 1);
+
+		echo json_encode($header);
 	}
 }
