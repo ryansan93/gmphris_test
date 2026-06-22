@@ -5,8 +5,7 @@
         </div>
     </legend>
     <div class="col-xs-12 no-padding notifContain">
-
-
+        <input type="text" class="form form-control" placeholder="Masukan kata kunci" oninput="kpi.filter_approval_kpi(this,event)">
     </div>
 </fieldset>
 

@@ -29,7 +29,11 @@ class KpiKaryawan extends Public_Controller
 			));
 
 			
+			
 			$data 				= $this->includes;
+			$content['charts']	= $this->getDataCharts();
+			// cetak_r($data, 1);
+
 			$content['akses'] 	= $akses;
 			$data['title_menu'] = 'KPI Karyawan';
 			$data['view'] 		= $this->load->view('hris/kpi_karyawan/v_index', $content, true);
@@ -38,6 +42,47 @@ class KpiKaryawan extends Public_Controller
 		} else {
 			showErrorAkses();
 		}
+	}
+
+	public function getDataCharts()
+	{
+		$m_conf = new \Model\Storage\Conf();
+
+		$sql = " SELECT hkp.nik, k.nama as nama_karyawan, total_nilai,
+				FORMAT(hkp.tanggal_mulai, 'MMMM yyyy', 'id-ID') AS periode_kpi
+				from hris_kpi_penilaian hkp
+				inner join karyawan k on hkp.nik = k.nik and k.status = 1
+				order by hkp.tanggal_mulai asc ";
+
+		$d_conf = $m_conf->hydrateRaw($sql);
+
+		$data       = null;
+
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+
+		$data_charts = [];
+
+		foreach ($data as $d) {
+			$key = $d['nik'] . ' - ' . ucwords(strtolower($d['nama_karyawan']));
+
+			$data_charts[$key]['label'][] = $d['periode_kpi'];
+			$data_charts[$key]['nilai'][] = $d['total_nilai'];
+		}
+
+		foreach ($data_charts as $key => $val) {
+			$data_charts[$key] = [
+				'label' =>  implode(',', array_map(function($v) {
+								return "'" . $v . "'";
+							}, $val['label'])),
+				'nilai' =>  implode(',', $val['nilai']),
+			];
+		}
+				
+		// cetak_r($data_charts, 1);
+
+		return $data_charts;
 	}
 
 	public function penilaianKpi()
@@ -382,7 +427,7 @@ class KpiKaryawan extends Public_Controller
 		$this->add_external_js(array(
 			'assets/select2/js/select2.min.js',
 			"assets/toastr/js/toastr.js",
-			"assets/toastr/js/toastr.min.js",
+			"assets/toastr/js/toastr.min.js",			
 			'assets/hris/kpi_karyawan/js/kpi_karyawan.js'
 		));
 		$this->add_external_css(array(

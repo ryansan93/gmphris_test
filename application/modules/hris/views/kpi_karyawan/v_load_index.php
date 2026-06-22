@@ -1,5 +1,4 @@
 <div style="display:flex; flex-direction:row; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-
     <div style="flex: 1 1 calc(20% - 8px); min-width:180px; border:1px solid #D6E8FC; background-color: #EAF3FE; padding:10px; border-radius:5px;">
         <div style="display:flex; flex-direction:row; gap:10px; justify-content:space-between;">
 
@@ -31,8 +30,8 @@
 
                  <div style="display:flex; flex-direction:row; gap:10px; align-items:center;">
                     <span style="font-size:20px; color: #1F2937; font-weight:bold;"> <?php echo number_format($nilai, 2, ',', '.') ?></span>
-                    <div style="display:flex; padding:3px; border-radius:15px; background-color: #cee1fb; height:20px; justify-content:center; align-items:center;">
-                        <span style="color: #3B82F6; font-size:12px;">Sangat Baik</span>
+                    <div style="display:flex; padding:3px; border-radius:15px; background-color: <?php echo $bgcolor ?>; height:20px; justify-content:center; align-items:center;">
+                        <span style="color: <?php echo $textcolor ?>; font-size:12px;"><?php echo $kategori; ?></span>
                     </div>
                 </div>
 
@@ -101,10 +100,10 @@
         </div>
     </div>
 
-    <div style="flex: 1 1 calc(20% - 8px); min-width:180px; border:1px solid #D6E8FC; background-color: #EAF3FE; padding:10px; border-radius:5px;">
+    <div style="flex: 1 1 calc(20% - 8px); min-width:180px; border:1px solid #ffeae0; background-color: #ffeae0; padding:10px; border-radius:5px;">
         <div style="display:flex; flex-direction:row; gap:10px; justify-content:space-between;">
             <div style="display:flex; flex-direction:column; ">
-                <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Belum Dinilai</span>
+                <span style="font-size:12px; color: #F78A4D; font-weight:bold;">Belum Dinilai</span>
 
                  <div style="display:flex; flex-direction:row; gap:10px; align-items:center;">
                     <span style="font-size:20px; color: #1F2937; font-weight:bold;"><?php echo $data_karyawan['belum_dinilai']?></span>
@@ -114,9 +113,9 @@
             </div>
 
             <div style="display:flex; flex-direction:column; gap:10px; justify-content:center; align-items:center; width:30%">
-                <div style="display:flex; position:relative; height:50px; width:50px; padding:10px; border-radius:50%; background-color: #DCEBFF; justify-content:center; align-items:center;">
-                    <i class="fa fa-user" style="position:absolute; font-size:30px; color:#3B82F6" aria-hidden="true"></i>
-                    <i class="fa fa-question" style="position:absolute; margin-top:-17px; margin-left:17px; color:#3B82F6" aria-hidden="true"></i>
+                <div style="display:flex; position:relative; height:50px; width:50px; padding:10px; border-radius:50%; background-color: #FFDBC7; justify-content:center; align-items:center;">
+                    <i class="fa fa-user" style="position:absolute; font-size:30px; color: #F78A4D" aria-hidden="true"></i>
+                    <i class="fa fa-question" style="position:absolute; margin-top:-17px; margin-left:17px; color: #F78A4D" aria-hidden="true"></i>
                 </div>
             </div>
         </div>
@@ -126,114 +125,3 @@
 
 <br>
 
-<div style="display:flex; flex-direction:row; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-
-    <div style="display:flex; flex-wrap:wrap; gap:10px;">
-
-        <!-- Penilaian KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
-            <div style="display:flex; gap:10px; height:100%;">
-                <div>
-                    <div style="width:50px; display:flex; padding:10px; border-radius:50%; background:#3B82F6; justify-content:center; align-items:center;">
-                        <i class="fa fa-pencil-square-o" style="font-size:30px; color:white;"></i>
-                    </div>
-                </div>
-
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <span style="font-size:12px; color:#3B82F6; font-weight:bold;">Penilaian KPI</span>
-                    <span style="font-size:12px; color:#1F2937;">Input dan kelola penilaian KPI Karyawan</span>
-
-                    <button onclick="window.location.href='hris/KpiKaryawan/penilaianKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
-                        Buka →
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Approval KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
-            <div style="display:flex; gap:10px; height:100%;">
-                <div>
-                    <div style="width:50px; display:flex; padding:10px; border-radius:50%; background:#FFB859; justify-content:center; align-items:center;">
-                        <i class="fa fa-check-circle-o" style="font-size:30px; color:white;"></i>
-                    </div>
-                </div>
-
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <span style="font-size:12px; color:#FFB859; font-weight:bold;">Approval KPI</span>
-                    <span style="font-size:12px; color:#1F2937;">Review dan approval penilaian KPI</span>
-
-                    <button onclick="window.location.href='hris/KpiKaryawan/approvalKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
-                        Buka →
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Ranking KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
-            <div style="display:flex; gap:10px; height:100%;">
-                <div>
-                    <div style="width:50px; display:flex; padding:10px; border-radius:50%; background:#3B82F6; justify-content:center; align-items:center;">
-                        <i class="fa fa-signal" style="font-size:30px; color:white;"></i>
-                    </div>
-                </div>
-
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <span style="font-size:12px; color:#3B82F6; font-weight:bold;">Ranking KPI</span>
-                    <span style="font-size:12px; color:#1F2937;">Lihat ranking KPI karyawan berdasarkan periode</span>
-
-                    <button style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
-                        Buka →
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Target KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
-            <div style="display:flex; gap:10px; height:100%;">
-                <div>
-                    <div style="position:relative; width:50px; height:50px; border-radius:50%; background:#3B82F6; display:flex; justify-content:center; align-items:center;">
-                        <i class="fa fa-circle-o" style="position:absolute; font-size:40px; color:white;"></i>
-                        <i class="fa fa-cog" style="position:absolute; font-size:20px; color:white;"></i>
-                    </div>
-                </div>
-
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <span style="font-size:12px; color:#3B82F6; font-weight:bold;">Setting KPI</span>
-                    <span style="font-size:12px; color:#1F2937;">Kelola target KPI per jabatan dan posisi</span>
-
-                    <button onclick="window.location.href='hris/KpiKaryawan/settingKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
-                        Buka →
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Laporan KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
-            <div style="display:flex; gap:10px; height:100%;">
-                <div>
-                    <div style="width:50px; display:flex; padding:10px; border-radius:50%; background:#3B82F6; justify-content:center; align-items:center;">
-                        <i class="fa fa-file" style="font-size:30px; color:white;"></i>
-                    </div>
-                </div>
-
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <span style="font-size:12px; color:#3B82F6; font-weight:bold;">Laporan KPI</span>
-                    <span style="font-size:12px; color:#1F2937;">Laporan dan analisis hasil KPI karyawan</span>
-
-                    <button onclick="window.location.href='hris/KpiKaryawan/laporanKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
-                        Buka →
-                    </button>
-                </div>
-            </div>
-        </div>
-
-    </div>
-   
-</div>
-
-<br>
-<br>

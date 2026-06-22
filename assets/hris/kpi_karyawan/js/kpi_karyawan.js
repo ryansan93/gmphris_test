@@ -2,7 +2,51 @@ let kpi = {
     
     setting_up: () => {
         $(".select2").select2();
+
     },
+
+    loadCharts: (elm, e) => {
+
+    let opt = $(elm).find("option:selected");
+
+    let rawLabel = opt.attr('label');   // "April 2026','Juni 2026','Mei 2026"
+    let rawNilai = opt.attr('nilai');    // "77.75,86.90,78.30"
+
+    console.log('label raw:', rawLabel);
+    console.log('nilai raw:', rawNilai);
+
+    if (!rawLabel || !rawNilai) return;
+
+    // FIX: convert string -> array
+    let label = rawLabel
+        .split(',')
+        .map(v => v.replace(/['"]/g, '').trim());
+
+    let nilai = rawNilai
+        .split(',')
+        .map(v => parseFloat(v.trim()));
+
+    const ctx = document.getElementById('kpiChart');
+
+    if (window.kpiChartInstance) {
+        window.kpiChartInstance.destroy();
+    }
+
+    window.kpiChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: label,
+            datasets: [{
+                label: 'Total Nilai KPI - ' + opt.val(),
+                data: nilai,
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                tension: 0.3,
+                fill: true
+            }]
+        }
+    });
+},
 
     loadDataBobot: (elm, e) => {
 
@@ -637,6 +681,19 @@ let kpi = {
 
     },
 
+
+    filter_approval_kpi:(elm, e) => {
+
+        let keyword = $(elm).val().toLowerCase();
+
+        $('.list_approval').filter(function() {
+            $(this).toggle(
+                $(this).text().toLowerCase().indexOf(keyword) > -1
+            );
+        });
+
+    },
+
     setting_delete: (elm, e) => {
 
         let params = {
@@ -712,6 +769,7 @@ let kpi = {
                 hideLoading();
 
                 $(".index_content").html(resp);
+                
             },
             error : function() {
                 hideLoading();
