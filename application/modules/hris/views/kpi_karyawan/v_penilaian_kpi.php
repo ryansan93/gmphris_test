@@ -10,18 +10,18 @@
             <label for="">Periode</label>
             <select name="bulan" class="select2 bulan" onchange="kpi.getPeriode();">
                 <option value="">-- Pilih Bulan --</option>
-                <option value="1">Januari</option>
-                <option value="2">Februari</option>
-                <option value="3">Maret</option>
-                <option value="4">April</option>
-                <option value="5">Mei</option>
-                <option value="6">Juni</option>
-                <option value="7">Juli</option>
-                <option value="8">Agustus</option>
-                <option value="9">September</option>
-                <option value="10">Oktober</option>
-                <option value="11">November</option>
-                <option value="12">Desember</option>
+                <option <?php echo $_GET['periode'] == 1 ? 'selected' : '' ?> value="1">Januari</option>
+                <option <?php echo $_GET['periode'] == 2 ? 'selected' : '' ?> value="2">Februari</option>
+                <option <?php echo $_GET['periode'] == 3 ? 'selected' : '' ?> value="3">Maret</option>
+                <option <?php echo $_GET['periode'] == 4 ? 'selected' : '' ?> value="4">April</option>
+                <option <?php echo $_GET['periode'] == 5 ? 'selected' : '' ?> value="5">Mei</option>
+                <option <?php echo $_GET['periode'] == 6 ? 'selected' : '' ?> value="6">Juni</option>
+                <option <?php echo $_GET['periode'] == 7 ? 'selected' : '' ?> value="7">Juli</option>
+                <option <?php echo $_GET['periode'] == 8 ? 'selected' : '' ?> value="8">Agustus</option>
+                <option <?php echo $_GET['periode'] == 9 ? 'selected' : '' ?> value="9">September</option>
+                <option <?php echo $_GET['periode'] == 10 ? 'selected' : '' ?> value="10">Oktober</option>
+                <option <?php echo $_GET['periode'] == 11 ? 'selected' : '' ?> value="11">November</option>
+                <option <?php echo $_GET['periode'] == 12 ? 'selected' : '' ?> value="12">Desember</option>
             </select>
             <input style="display:none;" type="date" class="tgl_mulai">
             <input style="display:none;" type="date" class="tgl_selesai">

@@ -1,11 +1,41 @@
 
+<style>
+    .charts-area {
+        width: 50%;
+    }
 
+    #kpiChrats{
+        width : 100%; 
+        height : 30%;
+    }
+
+    .grafik-area{
+        display:flex; 
+        flex-direction:row;
+        gap:10px;
+    }
+
+    @media (max-width: 900px) {
+        .charts-area {
+            width: 100%;
+        }
+
+        #kpiChrats{
+            height : 50%;
+        }
+
+        .grafik-area{
+            flex-direction:column;
+        }
+    }
+</style>
 <script src="assets/chart/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix"></script>
 
 
 <fieldset style="margin-bottom: 15px;">
-    <legend>
-        <div class="col-xs-12 no-padding">
+    <legend style="width:50%">
+        <div class="col-xs-12 no-padding" >
             <b>Dashboard KPI</b>
         </div>
     </legend>
@@ -54,7 +84,7 @@
                     <span style="font-size:12px; color:#3B82F6; font-weight:bold;">Penilaian KPI</span>
                     <span style="font-size:12px; color:#1F2937;">Input dan kelola penilaian KPI Karyawan</span>
 
-                    <button onclick="window.location.href='hris/KpiKaryawan/penilaianKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
+                    <button class="btn-penilaian" onclick="window.location.href='hris/KpiKaryawan/penilaianKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
                         Buka →
                     </button>
                 </div>
@@ -149,28 +179,66 @@
 
 <br>
 
-
-<fieldset style="margin-bottom: 15px; width:50%;">
-    <legend style="width:30%;">
-        <div class="col-xs-12 no-padding" onchange="kpi.charts_performance(this, event)">
-            <b>Perfomance Karyawan</b>
+<div class="grafik-area">
+    <fieldset class="charts-area">
+        <legend style="width:50%;">
+            <div class="col-xs-12 no-padding">
+                <b>Perfomance Karyawan</b>
+            </div>
+        </legend>
+        <div class="col-xs-12 no-padding notifContain">
+    
+            <select class="select2" onchange="kpi.loadCharts(this, event)">
+                <option disabled selected>Pilih Karyawan</option>
+                <?php foreach($charts as $c_index => $c){ ?>
+                    <option value="<?php echo $c_index ?>" label="<?php echo $c["label"] ?>" nilai="<?php echo $c["nilai"] ?>" >
+                        <?php echo $c_index ?>
+                    </option>
+                <?php } ?>
+            </select>
+    
+            <canvas id="kpiChart"></canvas>
+    
         </div>
-    </legend>
-    <div class="col-xs-12 no-padding notifContain">
-
-        <select class="select2" onchange="kpi.loadCharts(this, event)">
-            <option disabled selected>Pilih Karyawan</option>
-            <?php foreach($charts as $c_index => $c){ ?>
-                <option value="<?php echo $c_index ?>" label="<?php echo $c["label"] ?>" nilai="<?php echo $c["nilai"] ?>" >
-                    <?php echo $c_index ?>
-                </option>
-            <?php } ?>
-        </select>
-
-        <canvas id="kpiChart" width="600" height="300"></canvas>
-
-    </div>
-</fieldset>
+    </fieldset>
+    
+    <fieldset class="charts-area">
+        <legend style="width:50%;">
+            <div class="col-xs-12 no-padding">
+                <b>Perfomance / Periode</b>
+            </div>
+        </legend>
+        <div class="col-xs-12 no-padding notifContain" style="min-height:100px;">
+    
+            <div style="display:flex; flex-direction:row; gap:10px;">
+                <select class="select2 periode-chart">
+                    <option disabled selected>Pilih Periode</option>
+                    <option value="1" >Januari</option>
+                    <option value="2" >Februari</option>
+                    <option value="3" >Maret</option>
+                    <option value="4" >April</option>
+                    <option value="5" >Mei</option>
+                    <option value="6" >Juni</option>
+                    <option value="7" >Juli</option>
+                    <option value="8" >Agustus</option>
+                    <option value="9" >September</option>
+                    <option value="10">>Oktober</option>
+                    <option value="11">>November</option>
+                    <option value="12">>Desember</option>
+                </select>
+    
+                <select class="select2 jabatan-chart" onchange="kpi.loadChartsPeriode(this, event)">
+                    <option disabled selected>Pilih Jabatan</option>
+                    <option value="penimbang" >Penimbang</option>
+                    <option value="ppl" >PPL</option>
+                </select>
+            </div>
+            
+            <div id="periodeChart" style="margin-top:10px;"></div>
+    
+        </div>
+    </fieldset>
+</div>
 
 
 

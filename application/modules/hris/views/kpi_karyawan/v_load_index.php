@@ -21,17 +21,22 @@
                 } else {
                     $kategori = 'Istimewa';
                     $bgcolor = '#cefbd5';
-                    $textcolor = '#3bf670';
+                    $textcolor = '#3ba459';
                 }
             ?>
             
             <div style="display:flex; flex-direction:column; ">
                 <span style="font-size:12px; color: #3B82F6; font-weight:bold;">Rata rata KPI Perusahaan</span>
 
-                 <div style="display:flex; flex-direction:row; gap:10px; align-items:center;">
-                    <span style="font-size:20px; color: #1F2937; font-weight:bold;"> <?php echo number_format($nilai, 2, ',', '.') ?></span>
-                    <div style="display:flex; padding:3px; border-radius:15px; background-color: <?php echo $bgcolor ?>; height:20px; justify-content:center; align-items:center;">
-                        <span style="color: <?php echo $textcolor ?>; font-size:12px;"><?php echo $kategori; ?></span>
+                <div style="display:flex; flex-direction:row; gap:10px; align-items:center;">
+                    <span style="font-size:20px; color:#1F2937; font-weight:bold;">
+                        <?php echo number_format($nilai, 2, ',', '.'); ?>
+                    </span>
+
+                    <div style=" display:flex; align-items:center; justify-content:center; padding:3px 10px; border-radius:15px; background-color:<?php echo $bgcolor ?>; min-height:20px;">
+                        <span style=" color:<?php echo $textcolor ?>; font-size:clamp(10px, 1.2vw, 14px); white-space:nowrap; ">
+                            <?php echo $kategori; ?>
+                        </span>
                     </div>
                 </div>
 

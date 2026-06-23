@@ -7,46 +7,60 @@ let kpi = {
 
     loadCharts: (elm, e) => {
 
-    let opt = $(elm).find("option:selected");
+        let opt = $(elm).find("option:selected");
 
-    let rawLabel = opt.attr('label');   // "April 2026','Juni 2026','Mei 2026"
-    let rawNilai = opt.attr('nilai');    // "77.75,86.90,78.30"
+        let rawLabel = opt.attr('label');  
+        let rawNilai = opt.attr('nilai');    
 
-    console.log('label raw:', rawLabel);
-    console.log('nilai raw:', rawNilai);
+        if (!rawLabel || !rawNilai) return;
 
-    if (!rawLabel || !rawNilai) return;
+        let label = rawLabel.split(',').map(v => v.replace(/['"]/g, '').trim());
+        let nilai = rawNilai.split(',').map(v => parseFloat(v.trim()));
 
-    // FIX: convert string -> array
-    let label = rawLabel
-        .split(',')
-        .map(v => v.replace(/['"]/g, '').trim());
+        const ctx = document.getElementById('kpiChart');
 
-    let nilai = rawNilai
-        .split(',')
-        .map(v => parseFloat(v.trim()));
-
-    const ctx = document.getElementById('kpiChart');
-
-    if (window.kpiChartInstance) {
-        window.kpiChartInstance.destroy();
-    }
-
-    window.kpiChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: label,
-            datasets: [{
-                label: 'Total Nilai KPI - ' + opt.val(),
-                data: nilai,
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                tension: 0.3,
-                fill: true
-            }]
+        if (window.kpiChartInstance) {
+            window.kpiChartInstance.destroy();
         }
-    });
-},
+
+        window.kpiChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: label,
+                datasets: [{
+                    label: 'Total Nilai KPI - ' + opt.val(),
+                    data: nilai,
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            }
+        });
+    },
+
+    loadChartsPeriode: (elm, e) => {
+        let params = {
+            bulan : $(".periode-chart").val(),
+            jabatan : $(".jabatan-chart").val(),
+        }
+
+        $.ajax({
+            url : 'hris/KpiKaryawan/loadChartsPeriode',
+            data : params,
+            type : 'POST',
+            dataType : 'html',
+            beforeSend : function(){ 
+                showLoading(); 
+            },
+            success : function(html){
+                hideLoading();
+                $("#periodeChart").html(html);
+            },
+        });
+      
+        
+    },
 
     loadDataBobot: (elm, e) => {
 
@@ -769,6 +783,8 @@ let kpi = {
                 hideLoading();
 
                 $(".index_content").html(resp);
+
+                $('.btn-penilaian').attr('onclick',"window.location.href='hris/KpiKaryawan/penilaianKpi?periode=" + periode + "'");
                 
             },
             error : function() {

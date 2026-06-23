@@ -52,6 +52,7 @@ class KpiKaryawan extends Public_Controller
 				FORMAT(hkp.tanggal_mulai, 'MMMM yyyy', 'id-ID') AS periode_kpi
 				from hris_kpi_penilaian hkp
 				inner join karyawan k on hkp.nik = k.nik and k.status = 1
+				where hkp.status = 'APPROVED'
 				order by hkp.tanggal_mulai asc ";
 
 		$d_conf = $m_conf->hydrateRaw($sql);
@@ -64,20 +65,23 @@ class KpiKaryawan extends Public_Controller
 
 		$data_charts = [];
 
-		foreach ($data as $d) {
-			$key = $d['nik'] . ' - ' . ucwords(strtolower($d['nama_karyawan']));
+		if(!empty($data)){
 
-			$data_charts[$key]['label'][] = $d['periode_kpi'];
-			$data_charts[$key]['nilai'][] = $d['total_nilai'];
-		}
-
-		foreach ($data_charts as $key => $val) {
-			$data_charts[$key] = [
-				'label' =>  implode(',', array_map(function($v) {
-								return "'" . $v . "'";
-							}, $val['label'])),
-				'nilai' =>  implode(',', $val['nilai']),
-			];
+			foreach ($data as $d) {
+				$key = $d['nik'] . ' - ' . ucwords(strtolower($d['nama_karyawan']));
+	
+				$data_charts[$key]['label'][] = $d['periode_kpi'];
+				$data_charts[$key]['nilai'][] = $d['total_nilai'];
+			}
+	
+			foreach ($data_charts as $key => $val) {
+				$data_charts[$key] = [
+					'label' =>  implode(',', array_map(function($v) {
+									return "'" . $v . "'";
+								}, $val['label'])),
+					'nilai' =>  implode(',', $val['nilai']),
+				];
+			}
 		}
 				
 		// cetak_r($data_charts, 1);
@@ -891,5 +895,163 @@ class KpiKaryawan extends Public_Controller
 		// cetak_r($header, 1);
 
 		echo json_encode($header);
+	}
+
+	public function loadChartsPeriode()
+	{
+		$data_periode = $this->chartsByIndex($_POST) ?? [];
+
+		if (empty($data_periode)) {
+			echo "<div>Tidak ada data</div>";
+			return;
+		}
+
+		$header = '';
+		foreach ($data_periode as $kpi) {
+			$header .= "<th style='white-space:nowrap; padding:10px;'>{$kpi['nama_kpi']}</th>";
+		}
+
+		$map = [];
+
+		foreach ($data_periode as $kpi) {
+			$kpi_id = $kpi['kpi_id'] ?? $kpi['nama_kpi'];
+
+			foreach ($kpi['data_penilaian'] as $dp) {
+
+				$nama = trim($dp['nama'] ?? '-');
+				$nilai = $dp['nilai'] ?? 0;
+
+				$map[$nama][$kpi_id] = $nilai;
+			}
+		}
+
+		$karyawanList = array_keys($map);
+
+		$rows = '';
+
+		foreach ($karyawanList as $nama_karyawan) {
+
+			$rows .= "<tr>";
+			$rows .= "<td style='white-space:nowrap; padding:10px;'>{$nama_karyawan}</td>";
+
+			foreach ($data_periode as $kpi) {
+
+				$kpi_id = $kpi['kpi_id'] ?? $kpi['nama_kpi'];
+
+				$nilai = $map[$nama_karyawan][$kpi_id] ?? 0;
+
+				if ($nilai >= 80) {
+					$color = "#2ecc71";
+				} elseif ($nilai >= 60) {
+					$color = "#f1c40f";
+				} else {
+					$color = "#e74c3c";
+				}
+
+				$rows .= "
+					<td style='text-align:center; padding:10px;''>
+						<span style='
+							display:inline-block;
+							padding:4px 8px;
+							border-radius:4px;
+							background:{$color};
+							color:#fff;
+							font-size:12px;
+							white-space:nowrap;
+						'>
+							{$nilai}
+						</span>
+					</td>
+				";
+			}
+
+			$rows .= "</tr>";
+		}
+	
+		$html = "
+		<div style='overflow:auto;'>
+			<table border='1' cellpadding='8' cellspacing='0' style='border-collapse:collapse; width:100%; font-family:Arial; font-size:13px;'>
+
+				<thead style='background:#f4f4f4;'>
+					<tr>
+						<th style='white-space:nowrap; text-align:center;'>Nama Karyawan</th>
+						{$header}
+					</tr>
+				</thead>
+
+				<tbody>
+					{$rows}
+				</tbody>
+
+			</table>
+		</div>";
+
+		echo $html;
+	}
+
+	public function chartsByIndex($data)
+	{
+		$m_conf = new \Model\Storage\Conf();
+
+		$sql_index = " 
+			select 
+				hkmh.nama_template,
+				hkmh.jabatan_id,
+				hkmd.id as kpi_id,
+				hkmd.nama_kpi,
+				hkmd.bobot
+			from hris_kpi_master_header hkmh
+			inner join hris_kpi_master_detail hkmd 
+				on hkmh.id = hkmd.id_header
+			where hkmh.periode = '".$data['bulan']."'
+			and hkmh.jabatan_id = '".$data['jabatan']."'
+		";
+
+		// cetak_r($sql_index, 1);
+
+		$d_index = $m_conf->hydrateRaw($sql_index);
+		$data_index = $d_index->count() > 0 ? $d_index->toArray() : [];
+
+		$kpi_ids = [];
+		foreach ($data_index as $row) {
+			$kpi_ids[] = $row['kpi_id'];
+		}
+		$kpi_id = implode(',', $kpi_ids);
+
+		$result = [];
+
+		if (!empty($kpi_id)){
+
+			$sql_penilaian = " select k.nama, hkp.nik, hkp.jabatan, hkpd.kpi_id, hkpd.nilai, hkpd.skor 
+			from hris_kpi_penilaian hkp
+			inner join hris_kpi_penilaian_detail hkpd on hkp.id = hkpd.penilaian_id 
+			inner join karyawan k on hkp.nik = k.nik and k.status = 1
+			where hkpd.kpi_id in (" . $kpi_id . ")";
+	
+			$d_penilaian = $m_conf->hydrateRaw($sql_penilaian);
+			$data_penilaian = $d_penilaian->count() > 0 ? $d_penilaian->toArray() : [];
+			
+			$grouped_penilaian = [];
+	
+			foreach ($data_penilaian as $p) {
+				$grouped_penilaian[$p['kpi_id']][] = $p;
+			}
+	
+			foreach ($data_index as $i) {
+				$kpi_id = $i['kpi_id'];
+	
+				$result[$kpi_id] = [
+					'kpi_id' => $kpi_id,
+					'nama_kpi' => $i['nama_kpi'],
+					'bobot' => $i['bobot'],
+					'data_penilaian' => $grouped_penilaian[$kpi_id] ?? []
+				];
+			}
+		}
+
+
+		// cetak_r($result, 1);
+
+		return $result;
 	}
 }
