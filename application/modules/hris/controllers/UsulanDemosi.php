@@ -1198,7 +1198,7 @@ class UsulanDemosi extends Public_Controller {
             INNER JOIN jabatan j on k.jabatan = j.kode 
             WHERE k.status = 1
                 AND k.level < ".$level."
-                AND wk.wilayah IN (".$wil.") 
+                AND wk.wilayah IN (".$wil.", 'all') 
                 and k.nik != '".$nik."'
                 order by j.nama, k.nama asc ";
 

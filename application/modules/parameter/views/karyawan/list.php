@@ -1,4 +1,7 @@
 <?php if ( count($data) > 0 ) { ?>
+	<!-- <tr>
+		<td colspan="12"><?php echo count($data) ?></td>
+	</tr> -->
 	<?php foreach ($data as $k_data => $v_data){ ?>
 		<tr class="cursor-p search" title="Klik 2x untuk edit data" ondblclick="karyawan.edit_form(this)" data-id="<?php echo $v_data['id']; ?>">
 			<td style="width:20px;"><?php echo $v_data['level']; ?></td>

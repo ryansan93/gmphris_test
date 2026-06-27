@@ -25,7 +25,18 @@ class Karyawan extends Public_Controller
 
 			$data 				= $this->includes;
 			$content['akses'] 	= $akses;
-			$data['title_menu'] = 'Master Karyawan';
+
+			$text = '';
+
+			if (isset($_GET['getdata'])) {
+				if ($_GET['getdata'] == 1) {
+					$text = ' - Tetap';
+				} elseif ($_GET['getdata'] == 2) {
+					$text = ' - Kontrak';
+				}
+			}
+
+			$data['title_menu'] = 'Master Karyawan'. $text ;
 			$data['view'] 		= $this->load->view('parameter/karyawan/index', $content, true);
 
 			$this->load->view($this->template, $data);
@@ -35,6 +46,60 @@ class Karyawan extends Public_Controller
 	}
 
 	public function get_list()
+	{
+		
+		// cetak_r(, 1);
+
+		$params = $_GET['key'] ?? null;
+
+		$data_karyawan = $this->getDataKaryawan($params);;
+
+		if ($params == 1) {
+			$nik_kandidat = $this->getKaryawanKontrak();
+			$nik_kandidat = array_column($nik_kandidat, 'nik');
+
+			$data_karyawan = array_filter($data_karyawan, function ($row) use ($nik_kandidat) {
+				return !in_array($row['nik'], $nik_kandidat);
+			});
+			$data_karyawan = array_values($data_karyawan);
+		} else if($params == 2) {
+			$nik_kandidat = $this->getKaryawanKontrak();
+			$nik_kandidat = array_column($nik_kandidat, 'nik');
+
+			$data_karyawan = array_filter($data_karyawan, function ($row) use ($nik_kandidat) {
+				return in_array($row['nik'], $nik_kandidat);
+			});
+			$data_karyawan = array_values($data_karyawan);
+		}
+		
+		$content['data'] = $data_karyawan;
+
+		$html = $this->load->view('parameter/karyawan/list', $content);
+
+		echo $html;
+	}
+
+	public function getKaryawanKontrak()
+	{
+		$m_conf = new \Model\Storage\Conf();
+
+		$sql = "SELECT hdk.nik
+				FROM hris_data_kandidat hdk
+				WHERE hdk.nik IS NOT NULL
+				AND hdk.status_kandidat <> 11 ";
+
+		$d_conf     = $m_conf->hydrateRaw( $sql );
+        
+        $data       = null;
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+
+		return $data;
+		
+	}
+
+	public function getDataKaryawan($params = null)
 	{
 		$m_conf = new \Model\Storage\Conf();
 
@@ -175,10 +240,9 @@ class Karyawan extends Public_Controller
 			LEFT JOIN karyawan atasan ON k.atasan_nik = atasan.nik and atasan.status = 1
 			LEFT JOIN karyawan k_now on k.nik = k_now.nik AND k_now.status = 1
 			WHERE k.id IS NOT NULL
-			-- AND k.nik = 'K26307'
+			ORDER BY k.level ASC, ISNULL(j.nama, j_temp.nama) ASC  ";
 
-			ORDER BY k.level ASC, ISNULL(j.nama, j_temp.nama) ASC 
-		";
+		// $cetak_r($params, 1);
 
  		$d_conf     = $m_conf->hydrateRaw( $sql );
         
@@ -187,12 +251,8 @@ class Karyawan extends Public_Controller
             $data = $d_conf->toArray();
         }
 
-		// cetak_r($data, 1);
+		return $data;
 
-		$content['data'] = $data;
-		$html = $this->load->view('parameter/karyawan/list', $content);
-
-		echo $html;
 	}
 
 	public function edit_form()

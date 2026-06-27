@@ -20,11 +20,11 @@ function formatPersen($nilai)
             <td class="text-center"><?php echo formatPersen($b['bobot']); ?></td>
 
             <td style="width:100px;">
-                <input type="number" class="form-control nilai" max="100" oninput="if(this.value > 100) this.value = 100;" onchange="kpi.hitungScore(this)">
+                <input type="number" class="form-control nilai text-right" max="100" oninput="if(this.value > 100) this.value = 100;" onchange="kpi.hitungScore(this)">
             </td>
 
             <td style="width:100px;">
-                <input type="number" class="form-control" disabled>
+                <input type="number" class="form-control text-right" disabled>
             </td>
 
             <td>

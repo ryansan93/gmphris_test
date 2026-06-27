@@ -294,7 +294,7 @@
                         <span class="form-label">Jabatan Tujuan</span>
                         <span class="form-separator">:</span>
                         <div class="form-content">
-                            <select class="select2 jabatan_tujuan">
+                            <select class="select2 jabatan_tujuan" onchange="up.config_atasan_setara(this, event)">
                                 <option disabled selected> -- Pilih Jabatan -- </option>
                                 <?php foreach ($jabatan as $j) { ?>
                                 <option level="<?php echo $j['level'] ?>" value="<?php echo $j['kode']; ?>">
@@ -340,7 +340,7 @@
                     </div>
 
                     <!-- Atasan Baru -->
-                    <div class="form-row">
+                    <div class="form-row new_atasan" style="display:none">
 
                         <span class="form-label">Atasan Baru</span>
                         <span class="form-separator">:</span>

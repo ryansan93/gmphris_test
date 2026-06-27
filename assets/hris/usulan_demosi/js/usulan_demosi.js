@@ -730,6 +730,13 @@ let up ={
 
     set_atasan_baru: () => {
 
+
+        function ucwords(str) {
+            return str
+                .toLowerCase()
+                .replace(/\b\w/g, c => c.toUpperCase());
+        }
+
         let params = {
             level   : $(".jabatan_tujuan").find("option:selected").attr("level"),
             wilayah : $('.perwakilan_tujuan').val(),
@@ -755,7 +762,7 @@ let up ={
                 hideLoading();
                 let option = '<option disabled selected>-- Pilih Atasan Baru --</option>';
                 $.each(data, function(i, v){
-                    option += `<option value="${v.nik}">${v.nama} - ${v.nama_jabatan} </option>`;
+                    option += `<option value="${v.nik}">${ucwords(v.nama)} - ${v.nama_jabatan} </option>`;
                 });
 
                 $(".atasan_baru").html(option);

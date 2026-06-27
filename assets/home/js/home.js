@@ -1,11 +1,11 @@
-var _getDataPanjualanDanHarga;
-var _getDataPlasmaMerah;
+// var _getDataPanjualanDanHarga;
+// var _getDataPlasmaMerah;
 var _getDataSummaryPanenDanDoc;
 
 var home = {
 	startUp: function () {
 		window.onload = function () {
-			home.getDataPanjualanDanHarga();
+			// home.getDataPanjualanDanHarga();
 			home.getDataPlasmaMerah();
 
 			if ( $('.notifContain').length > 0 ) {
@@ -71,21 +71,21 @@ var home = {
         });
 	}, // end - getDataSummaryPanenDanDoc
 
-	getDataPanjualanDanHarga: function () {
-		_getDataPanjualanDanHarga = $.ajax({
-            url: 'home/Home/getDataPanjualanDanHarga',
-            data: {},
-            type: 'POST',
-            dataType: 'JSON',
-            beforeSend: function() { /* showLoading(); */ },
-            success: function(data) {
-                /* hideLoading(); */
-				if ( !empty(data.content) ) {
-					home.chartPenjualanDanHarga(data.content.tgl_panen, data.content.harga, data.content.tonase, data.content.tgl_panen_real);
-				}
-            }, error: function(xhr, ajaxOptions, thrownError) { console.log(thrownError); }
-        });
-	}, // end - getDataPenjualan
+	// getDataPanjualanDanHarga: function () {
+	// 	_getDataPanjualanDanHarga = $.ajax({
+    //         url: 'home/Home/getDataPanjualanDanHarga',
+    //         data: {},
+    //         type: 'POST',
+    //         dataType: 'JSON',
+    //         beforeSend: function() { /* showLoading(); */ },
+    //         success: function(data) {
+    //             /* hideLoading(); */
+	// 			if ( !empty(data.content) ) {
+	// 				home.chartPenjualanDanHarga(data.content.tgl_panen, data.content.harga, data.content.tonase, data.content.tgl_panen_real);
+	// 			}
+    //         }, error: function(xhr, ajaxOptions, thrownError) { console.log(thrownError); }
+    //     });
+	// }, // end - getDataPenjualan
 
 	chartPenjualanDanHarga: function (tgl_panen, harga, tonase, tgl_panen_real) {
 		new Chart("chart_penjualan_dan_harga", {
@@ -158,21 +158,21 @@ var home = {
 		});
 	}, // end - chart
 
-	getDataPlasmaMerah: function () {
-		_getDataPlasmaMerah = $.ajax({
-            url: 'home/Home/getDataPlasmaMerah',
-            data: {},
-            type: 'POST',
-            dataType: 'JSON',
-            beforeSend: function() { /* showLoading(); */ },
-            success: function(data) {
-                /* hideLoading(); */
-				if ( !empty(data.content) ) {
-					home.chartPlasmaMerah(data.content.kode_unit, data.content.jumlah, data.content.mitra);
-				}
-            }, error: function(xhr, ajaxOptions, thrownError) { console.log(thrownError); }
-        });
-	}, // end - getDataPenjualan
+	// getDataPlasmaMerah: function () {
+	// 	_getDataPlasmaMerah = $.ajax({
+    //         url: 'home/Home/getDataPlasmaMerah',
+    //         data: {},
+    //         type: 'POST',
+    //         dataType: 'JSON',
+    //         beforeSend: function() { /* showLoading(); */ },
+    //         success: function(data) {
+    //             /* hideLoading(); */
+	// 			if ( !empty(data.content) ) {
+	// 				home.chartPlasmaMerah(data.content.kode_unit, data.content.jumlah, data.content.mitra);
+	// 			}
+    //         }, error: function(xhr, ajaxOptions, thrownError) { console.log(thrownError); }
+    //     });
+	// }, // end - getDataPenjualan
 
 	chartPlasmaMerah: function (kode_unit, jumlah, mitra) {
 		var chart = new Chart("chart_plasma_merah", {

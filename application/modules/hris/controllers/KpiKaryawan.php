@@ -446,7 +446,6 @@ class KpiKaryawan extends Public_Controller
 
 		$m_conf = new \Model\Storage\Conf();
 		$content['jabatan']	= $m_conf->hydrateRaw("select * from jabatan order by kode asc")->toArray();
-		// cetak_r($content, 1);
 
 		$data['title_menu'] = 'KPI Karyawan - Setting';
 		$data['view'] 		= $this->load->view('hris/kpi_karyawan/v_setting_kpi', $content, true);
@@ -899,94 +898,10 @@ class KpiKaryawan extends Public_Controller
 
 	public function loadChartsPeriode()
 	{
-		$data_periode = $this->chartsByIndex($_POST) ?? [];
-
-		if (empty($data_periode)) {
-			echo "<div>Tidak ada data</div>";
-			return;
-		}
-
-		$header = '';
-		foreach ($data_periode as $kpi) {
-			$header .= "<th style='white-space:nowrap; padding:10px;'>{$kpi['nama_kpi']}</th>";
-		}
-
-		$map = [];
-
-		foreach ($data_periode as $kpi) {
-			$kpi_id = $kpi['kpi_id'] ?? $kpi['nama_kpi'];
-
-			foreach ($kpi['data_penilaian'] as $dp) {
-
-				$nama = trim($dp['nama'] ?? '-');
-				$nilai = $dp['nilai'] ?? 0;
-
-				$map[$nama][$kpi_id] = $nilai;
-			}
-		}
-
-		$karyawanList = array_keys($map);
-
-		$rows = '';
-
-		foreach ($karyawanList as $nama_karyawan) {
-
-			$rows .= "<tr>";
-			$rows .= "<td style='white-space:nowrap; padding:10px;'>{$nama_karyawan}</td>";
-
-			foreach ($data_periode as $kpi) {
-
-				$kpi_id = $kpi['kpi_id'] ?? $kpi['nama_kpi'];
-
-				$nilai = $map[$nama_karyawan][$kpi_id] ?? 0;
-
-				if ($nilai >= 80) {
-					$color = "#2ecc71";
-				} elseif ($nilai >= 60) {
-					$color = "#f1c40f";
-				} else {
-					$color = "#e74c3c";
-				}
-
-				$rows .= "
-					<td style='text-align:center; padding:10px;''>
-						<span style='
-							display:inline-block;
-							padding:4px 8px;
-							border-radius:4px;
-							background:{$color};
-							color:#fff;
-							font-size:12px;
-							white-space:nowrap;
-						'>
-							{$nilai}
-						</span>
-					</td>
-				";
-			}
-
-			$rows .= "</tr>";
-		}
-	
-		$html = "
-		<div style='overflow:auto;'>
-			<table border='1' cellpadding='8' cellspacing='0' style='border-collapse:collapse; width:100%; font-family:Arial; font-size:13px;'>
-
-				<thead style='background:#f4f4f4;'>
-					<tr>
-						<th style='white-space:nowrap; text-align:center;'>Nama Karyawan</th>
-						{$header}
-					</tr>
-				</thead>
-
-				<tbody>
-					{$rows}
-				</tbody>
-
-			</table>
-		</div>";
-
-		echo $html;
+		$content['data_periode'] = $this->chartsByIndex($_POST) ?? [];
+		// cetak_r($content, 1);
+		
+		echo $this->load->view('hris/kpi_karyawan/v_load_chart_periode', $content, true);
 	}
 
 	public function chartsByIndex($data)

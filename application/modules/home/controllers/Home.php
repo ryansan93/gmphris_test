@@ -25,8 +25,8 @@ class Home extends Public_Controller
 
 		$content['day_off'] 			= $this->dayOff() ?? [];
 		// cetak_r($content, 1);
-		$content['karyawan_aktif']		= $this->getKaryawanAktif();
-		$content['karyawan_nonaktif']	= $this->getKaryawanNonAktif();
+		$content['karyawan_tetap']		= $this->getKaryawanTetap();
+		$content['karyawan_kontrak']	= $this->getKaryawanKontrak();
 		
 		$content['formDashboardDirut'] = null;
 		if ( hakAksesKhusus('dashboard_dirut') ) {
@@ -619,20 +619,40 @@ class Home extends Public_Controller
         return $data;
 	}
 
-	public function getKaryawanNonAktif()
+	// public function getKaryawanNonAktif()
+	// {
+
+	// 	$m_conf     = new \Model\Storage\Conf();
+    //     $sql        = " SELECT DISTINCT k1.nik, k1.nama, k1.jabatan
+	// 					FROM karyawan k1
+	// 					WHERE k1.status = 0
+	// 					AND NOT EXISTS (
+	// 						SELECT 1
+	// 						FROM karyawan k2
+	// 						WHERE k2.nik = k1.nik
+	// 						AND k2.status = 1
+	// 					) ";
+    //     $d_conf     = $m_conf->hydrateRaw( $sql );
+    //     $data       = null;
+
+    //     if ( $d_conf->count() > 0 ) {
+    //         $data = $d_conf->toArray();
+    //     }
+
+    //     return $data;
+	// }
+
+	public function getKaryawanKontrak()
 	{
 
 		$m_conf     = new \Model\Storage\Conf();
-        $sql        = " SELECT DISTINCT k1.nik, k1.nama, k1.jabatan
-						FROM karyawan k1
-						WHERE k1.status = 0
-						AND NOT EXISTS (
-							SELECT 1
-							FROM karyawan k2
-							WHERE k2.nik = k1.nik
-							AND k2.status = 1
-						) ";
-        $d_conf     = $m_conf->hydrateRaw( $sql );
+
+		$sql = " select * from hris_data_kandidat hdk 
+				inner join hris_status_kandidat hsk on hdk.status_kandidat = hsk.id 
+				where hdk.nik is not null and hdk.status_kandidat != 11 -- Karyawan tetap ";
+
+		$d_conf     = $m_conf->hydrateRaw( $sql );
+
         $data       = null;
 
         if ( $d_conf->count() > 0 ) {
@@ -640,6 +660,169 @@ class Home extends Public_Controller
         }
 
         return $data;
+	}
+
+
+	public function getKaryawanTetap()
+	{
+		$m_conf     = new \Model\Storage\Conf();
+
+		$sql = " SELECT 
+				k.id,
+				k.level,
+				k.nik,
+				k.nama,
+				ISNULL(j.nama, j_temp.nama) AS nama_jabatan,
+				k.marketing,
+				k.kordinator,
+				k.status,
+				k.tgl_berlaku,
+				k_now.status AS status_aktif,
+				atasan.nama AS nama_atasan,
+
+				ISNULL(
+
+					STUFF((
+						SELECT ', ' + 
+							CASE 
+								WHEN khu2.kode_unit = 'All' THEN 'All'
+								ELSE w2.nama
+							END
+						FROM karyawan_history_unit khu2
+						LEFT JOIN wilayah w2 
+							ON CAST(w2.id AS VARCHAR) = khu2.kode_unit
+						WHERE khu2.id = kh.id
+						FOR XML PATH(''), TYPE
+					).value('.', 'NVARCHAR(MAX)'), 1, 2, ''),
+
+					STUFF((
+						SELECT ', ' + 
+							CASE 
+								WHEN uk.unit = 'All' THEN 'All'
+								ELSE w4.nama
+							END
+						FROM unit_karyawan uk
+						LEFT JOIN wilayah w4
+							ON CAST(w4.id AS VARCHAR) = uk.unit
+						WHERE uk.id_karyawan = k.id
+						FOR XML PATH(''), TYPE
+					).value('.', 'NVARCHAR(MAX)'), 1, 2, '')
+
+				) AS nama_unit,
+				
+				ISNULL(
+
+					STUFF((
+						SELECT ', ' + 
+							CASE 
+								WHEN khw2.kode_wilayah = 'All' THEN 'All'
+								ELSE w3.nama
+							END
+						FROM karyawan_history_wilayah khw2
+						LEFT JOIN wilayah w3 
+							ON CAST(w3.id AS VARCHAR) = khw2.kode_wilayah
+						WHERE khw2.id = kh.id
+						FOR XML PATH(''), TYPE
+					).value('.', 'NVARCHAR(MAX)'), 1, 2, ''),
+
+					STUFF((
+						SELECT ', ' + 
+							CASE 
+								WHEN wk.wilayah = 'All' THEN 'All'
+								ELSE w5.nama
+							END
+						FROM wilayah_karyawan wk
+						LEFT JOIN wilayah w5
+							ON CAST(w5.id AS VARCHAR) = wk.wilayah
+						WHERE wk.id_karyawan = k.id
+						FOR XML PATH(''), TYPE
+					).value('.', 'NVARCHAR(MAX)'), 1, 2, '')
+
+				) AS nama_wilayah,
+
+				kh.tgl_mulai,
+				kh.tgl_selesai
+
+			FROM (
+				SELECT DISTINCT nik
+				FROM karyawan
+				WHERE status = 1
+			) src
+
+			OUTER APPLY (
+			SELECT TOP 1 *
+			FROM karyawan k1
+			WHERE k1.nik = src.nik
+			ORDER BY
+				CASE
+					WHEN k1.status = 1
+						AND k1.tgl_berlaku IS NOT NULL
+						AND k1.tgl_berlaku <= GETDATE()
+					THEN 0
+
+					WHEN k1.status = 1
+						AND k1.tgl_berlaku IS NULL
+					THEN 1
+
+					WHEN k1.status = 0
+						AND k1.tgl_berlaku IS NOT NULL
+						AND k1.tgl_berlaku <= GETDATE()
+					THEN 2
+
+					ELSE 3
+				END,
+
+				k1.tgl_berlaku DESC,
+				k1.id DESC
+			) k
+
+			OUTER APPLY (
+				SELECT TOP 1
+					kh2.*
+				FROM karyawan_history kh2
+				WHERE kh2.nik = k.nik
+				ORDER BY
+					CASE 
+						WHEN kh2.tgl_mulai <= GETDATE() THEN 0
+						WHEN kh2.tgl_selesai IS NOT NULL THEN 1
+						ELSE 2
+					END,
+
+					CASE 
+						WHEN kh2.tgl_mulai <= GETDATE()
+						THEN kh2.tgl_mulai
+					END DESC,
+
+					CASE 
+						WHEN kh2.tgl_selesai IS NOT NULL
+						THEN kh2.tgl_selesai
+					END DESC
+			) kh
+
+			LEFT JOIN jabatan j ON kh.jabatan = j.kode
+			LEFT JOIN jabatan j_temp ON k.jabatan = j_temp.kode
+			LEFT JOIN karyawan atasan ON k.atasan_nik = atasan.nik and atasan.status = 1
+			LEFT JOIN karyawan k_now on k.nik = k_now.nik AND k_now.status = 1
+			WHERE k.id IS NOT NULL
+			AND k.nik NOT IN (
+			    SELECT hdk.nik
+			    FROM hris_data_kandidat hdk
+			    WHERE hdk.nik IS NOT NULL
+			      AND hdk.status_kandidat <> 11
+			)
+						
+			ORDER BY k.level ASC, ISNULL(j.nama, j_temp.nama) ASC  ";
+
+		$d_conf     = $m_conf->hydrateRaw( $sql );
+
+        $data       = null;
+
+        if ( $d_conf->count() > 0 ) {
+            $data = $d_conf->toArray();
+        }
+
+        return $data;
+
 	}
 
 	

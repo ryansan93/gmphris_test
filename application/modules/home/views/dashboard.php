@@ -17,6 +17,7 @@
 .dashboard-card:hover{
     transform: translateY(-3px);
     box-shadow: 0 6px 18px rgba(0,0,0,.12);
+	cursor: pointer;
 }
 
 .dashboard-card .card-body{
@@ -133,11 +134,11 @@
 		
 		<div class="dashboard-wrapper">
     
-			<div class="card dashboard-card">
+			<div class="card dashboard-card" onclick="window.location.href='parameter/Karyawan'">
 				<div class="card-body d-flex justify-content-between align-items-center">
 					<div>
 						<div class="title">Total Karyawan</div>
-						<div class="value"><?php echo count($karyawan_aktif) + count($karyawan_nonaktif) ?></div>
+						<div class="value"><?php echo count($karyawan_tetap) + count($karyawan_kontrak) ?></div>
 					</div>
 
 					<div class="icon-box bg-primary-soft">
@@ -146,11 +147,11 @@
 				</div>
 			</div>
 
-			<div class="card dashboard-card">
+			<div class="card dashboard-card" onclick="window.location.href='parameter/Karyawan?getdata=1'">
 				<div class="card-body d-flex justify-content-between align-items-center">
 					<div>
-						<div class="title">Karyawan Aktif</div>
-						<div class="value"><?php echo count($karyawan_aktif) ?></div>
+						<div class="title">Karyawan Tetap</div>
+						<div class="value"><?php echo count($karyawan_tetap) ?></div>
 					</div>
 
 					<div class="icon-box" style="background-color:#BFFFB0;" style="position:relative;">
@@ -160,11 +161,11 @@
 				</div>
 			</div>
 
-			<div class="card dashboard-card">
+			<div class="card dashboard-card" onclick="window.location.href='parameter/Karyawan?getdata=2'">
 				<div class="card-body d-flex justify-content-between align-items-center">
 					<div>
-						<div class="title">Karyawan Non Aktif</div>
-						<div class="value"><?php echo count($karyawan_nonaktif) ?></div>
+						<div class="title">Karyawan Training</div>
+						<div class="value"><?php echo count($karyawan_kontrak) ?></div>
 					</div>
 
 				

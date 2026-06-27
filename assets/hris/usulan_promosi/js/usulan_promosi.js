@@ -325,6 +325,17 @@ let up ={
             return false;
         }
 
+        let level_pengusul = $(".pengusul").find("option:selected").attr("level");
+        let jabatan_tujuan = $(".jabatan_tujuan").find("option:selected").attr("level");
+
+        if ( level_pengusul == jabatan_tujuan ){
+            if (!params.atasan_baru) {
+                toastr.warning("Atasan baru wajib diisi");
+                $(".atasan_baru").focus();
+                return false;
+            }
+        }
+
         $.ajax({
             url : 'hris/UsulanPromosi/save',
             data : params,
@@ -516,7 +527,7 @@ let up ={
         let kode = $(elm).attr("kode"); 
 
         let tgl_berlaku = await up.config_tgl_berlaku(kode);
-        // console.log(tgl_berlaku);  
+        console.log(tgl_berlaku);  
 
         let text = val == STATUS.ACK ? 'Acknowledge' 
                 : val == STATUS.APPROVE ? 'Approve' 
@@ -726,6 +737,12 @@ let up ={
 
     set_atasan_baru: () => {
 
+        function ucwords(str) {
+            return str
+                .toLowerCase()
+                .replace(/\b\w/g, c => c.toUpperCase());
+        }
+
         let params = {
             level   : $(".jabatan_tujuan").find("option:selected").attr("level"),
             wilayah : $('.perwakilan_tujuan').val(),
@@ -751,7 +768,7 @@ let up ={
                 hideLoading();
                 let option = '<option disabled selected>-- Pilih Atasan Baru --</option>';
                 $.each(data, function(i, v){
-                    option += `<option value="${v.nik}">${v.nama} - ${v.nama_jabatan} </option>`;
+                    option += `<option value="${v.nik}">${ucwords(v.nama)} - ${v.nama_jabatan} </option>`;
                 });
 
                 $(".atasan_baru").html(option);
@@ -759,6 +776,21 @@ let up ={
             },
         });
     },
+
+
+    config_atasan_setara: () => {
+        let level_pengusul = $(".pengusul").find("option:selected").attr("level");
+        let jabatan_tujuan = $(".jabatan_tujuan").find("option:selected").attr("level");
+
+        // console.log(level_pengusul , jabatan_tujuan)
+
+        if( level_pengusul == jabatan_tujuan){
+            $(".new_atasan").css("display", "flex");
+        } else {
+            $(".new_atasan").css("display", "none");
+        }
+
+    }
 };
 
 

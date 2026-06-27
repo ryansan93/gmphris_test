@@ -42,9 +42,9 @@
 
                 <span style="font-size:10px">
                     <?php if ($nilai_average['persentase'] !== null) { ?>
-                        <b style="color: <?= $nilai_average['naik'] ? '#22C55E' : '#EF4444' ?>;">
-                            <i class="fa <?= $nilai_average['naik'] ? 'fa-long-arrow-up' : 'fa-long-arrow-down' ?>" aria-hidden="true"></i>
-                            <?= number_format(abs($nilai_average['persentase']), 2) ?>%
+                        <b style="color: <?php echo $nilai_average['naik'] ? '#22C55E' : '#EF4444' ?>;">
+                            <i class="fa <?php echo $nilai_average['naik'] ? 'fa-long-arrow-up' : 'fa-long-arrow-down' ?>" aria-hidden="true"></i>
+                            <?php echo number_format(abs($nilai_average['persentase']), 2) ?>%
                         </b>
                         dari periode lalu
                     <?php } else { ?>

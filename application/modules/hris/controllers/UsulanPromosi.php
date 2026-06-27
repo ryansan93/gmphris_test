@@ -777,8 +777,15 @@ class UsulanPromosi extends Public_Controller {
                         $newId                          = $m_karyawan->getNextIdentity();
                         $m_karyawan_new->id             = $newId;
                         $m_karyawan_new->status         = 1;
-                        $m_karyawan_new->atasan_nik     = $data_mutasi['atasan_mutasi'] ?? null;
-                        $m_karyawan_new->atasan         = $this->get_id_karyawan_by_nik($data_mutasi['atasan_mutasi'] ?? null);
+                    
+                        if (!empty($data_mutasi['atasan_mutasi'])) {
+                            $m_karyawan_new->atasan_nik = $data_mutasi['atasan_mutasi'];
+                            $m_karyawan_new->atasan     = $this->get_id_karyawan_by_nik($data_mutasi['atasan_mutasi']);
+                        } else {
+                            $m_karyawan_new->atasan_nik = $newData['atasan_nik'];
+                            $m_karyawan_new->atasan     = $newData['atasan'];
+                        }
+
                         $m_karyawan_new->jabatan        = $data_mutasi['jabatan_tujuan'];
                         $m_karyawan_new->level          = $level;
                         $m_karyawan_new->tgl_berlaku    = $params['tgl_berlaku'] ?? null;
@@ -1212,11 +1219,11 @@ class UsulanPromosi extends Public_Controller {
             INNER JOIN jabatan j on k.jabatan = j.kode 
             WHERE k.status = 1
                 AND k.level < ".$level."
-                AND wk.wilayah IN (".$wil.") 
+                AND wk.wilayah IN (".$wil.", 'all') 
                 and k.nik != '".$nik."'
                 order by j.nama, k.nama asc ";
 
-            //  cetak_r($sql, 1);
+            //  cetak_r($sql, 1);Z
 
             $d_conf = $m_conf->hydrateRaw($sql);
             $data = [];

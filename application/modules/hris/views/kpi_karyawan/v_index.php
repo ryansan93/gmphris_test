@@ -227,11 +227,13 @@
                     <option value="12">>Desember</option>
                 </select>
     
-                <select class="select2 jabatan-chart" onchange="kpi.loadChartsPeriode(this, event)">
+                <select class="select2 jabatan-chart">
                     <option disabled selected>Pilih Jabatan</option>
                     <option value="penimbang" >Penimbang</option>
                     <option value="ppl" >PPL</option>
                 </select>
+
+                <button class="btn btn-secondary" onclick="kpi.loadChartsPeriode(this, event)">Filter</button>
             </div>
             
             <div id="periodeChart" style="margin-top:10px;"></div>

@@ -6,9 +6,14 @@ var karyawan = {
 	get_list : function () {
 		var dContent = $('tbody');
 
+		const params = new URLSearchParams(window.location.search);
+		const key = params.get('getdata');
+
 		$.ajax({
             url : 'parameter/Karyawan/get_list',
-            data : {},
+            data : {
+				key : key,
+			},
             type : 'GET',
             dataType : 'HTML',
             beforeSend : function(){ App.showLoaderInContent(dContent); },

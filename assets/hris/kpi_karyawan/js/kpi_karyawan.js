@@ -7,6 +7,8 @@ let kpi = {
 
     loadCharts: (elm, e) => {
 
+        e.preventDefault();
+
         let opt = $(elm).find("option:selected");
 
         let rawLabel = opt.attr('label');  
@@ -34,6 +36,15 @@ let kpi = {
                     backgroundColor: 'rgba(37, 99, 235, 0.2)',
                     tension: 0.3,
                     fill: true
+                },
+                {
+                    label: 'Target KPI',
+                    data: Array(label.length).fill(80),
+                    borderColor: '#ef4444',
+                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
                 }]
             }
         });
@@ -965,7 +976,6 @@ let kpi = {
 
                 hideLoading();
 
-                // buat key gabungan: periode|jabatan
                 let used = data.map(item => `${item.periode}|${item.jabatan_id}`);
 
                 console.log('used KPI:', used);
@@ -974,7 +984,6 @@ let kpi = {
 
                     let periode = $(this).val();
 
-                    // ambil jabatan dari select lain (misalnya select jabatan)
                     let jabatan = $('.jabatan').val();
 
                     let key = `${periode}|${jabatan}`;
@@ -987,7 +996,33 @@ let kpi = {
                 $('.periode').trigger('change');
             }
         });
-    }
+    },
+
+
+    detail_chart_periode: (elm, e) => {
+        let detail = $(elm).closest("tr").find(".detail").html();
+
+        let index = $(elm).attr("index");
+
+        if (!detail || detail.trim() === '') {
+            detail = '<p class="text-muted">Tidak ada data.</p>';
+        }
+
+        bootbox.dialog({
+            title: index,
+            message: detail,
+            size: 'large',
+            buttons: {
+                tutup: {
+                    label: '<i class="fa fa-close"></i> Tutup',
+                    className: 'btn btn-secondary',
+                    callback: function() {
+                        bootbox.hideAll();
+                    }
+                },
+            }
+        });
+    },
 }
 
 $(document).ready(function() {
