@@ -175,9 +175,10 @@ let hf ={
     edit: (elm, e) => {
 
         let params = {
-            kode_kategori : $(elm).attr("kode_kategori"),
+            kode_kategori : $(elm).attr("kode_kategori"),    
         }
         
+
         $.ajax({
             url : 'hris/HrisKategori/edit_data',
             data : params,
@@ -208,9 +209,9 @@ let hf ={
                                 let data_params = {
                                     kode_kategori : modal.find(".kode_kategori").attr("kode"),
                                     nama_kategori : modal.find(".nama_kategori").val(),
+                                    durasi :  modal.find(".durasi").val(),
                                 }
 
-                                // console.log(data_params)
                                 hf.update(data_params);
                             }
                         },

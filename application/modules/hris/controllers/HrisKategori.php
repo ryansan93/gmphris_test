@@ -133,6 +133,7 @@ class HrisKategori extends Public_Controller {
 
             $m_kategori->where('kode_kategori', $kode_kategori)->update([
                 'nama_kategori' => $params['nama_kategori'],
+                'duration'      => $params['durasi'],
             ]);
 
             $deskripsi_log = 'di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];

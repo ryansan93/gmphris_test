@@ -7,6 +7,9 @@
                     <label style="width:10%;">Label</label>
                     <input type="text" value="<?php echo $kategori['nama_kategori'] ?>" class="form form-control nama_kategori" style="width:40%;">
                     <div style="display:none" class="kode_kategori"  kode="<?php echo $kategori['kode_kategori'] ?>"></div>
+
+                    <label style="width:10%;">Durasi</label>
+                    <input type="number" class="form form-control durasi" value="<?php echo $kategori['duration'] ?>" placeholder="Bulan" style="width:10%;">
             </div>
         </div>
 
