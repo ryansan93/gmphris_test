@@ -42,16 +42,20 @@
 
                     <?php
                         $status_map = [
-                            1 => 'Draft',
-                            2 => 'Acknowledge',
-                            3 => 'Approved',
-                            4 => 'Reject HRD',
-                            5 => 'Reject CEO'
+                            1 => '<div style="display:flex; flex-direction:row; justify-content:flex-start; gap:5px;"><span>🟡</span> <span>Draft</span></div>',
+                            2 => '<div style="display:flex; flex-direction:row; justify-content:flex-start; gap:5px;"><span>🔵</span> <span>Acknowledge</span></div>',
+                            3 => '<div style="display:flex; flex-direction:row; justify-content:flex-start; gap:5px;"><span>🟢</span> <span>Approved</span></div>',
+                            4 => '<div style="display:flex; flex-direction:row; justify-content:flex-start; gap:5px;"><span>🔴</span> <span>Reject HRD</span></div>',
+                            5 => '<div style="display:flex; flex-direction:row; justify-content:flex-start; gap:5px;"><span>🔴</span> <span>Reject CEO</span></div>',
                         ];
                     ?>
 
 
-                    <td class="text-center"><?php echo $status_map[$l['status']] ?? '-' ?></td>
+                    <td class="text-center" style="white-space:nowrap">
+                        <div style="border: 1px solid grey; border-radius:10px; padding:5px;">
+                            <?php echo $status_map[$l['status']] ?? '-' ?>
+                        </div>
+                    </td>
                     <td class="text-center" style="white-space:nowrap;">
                         <?php 
                             $key = "secretkey";
