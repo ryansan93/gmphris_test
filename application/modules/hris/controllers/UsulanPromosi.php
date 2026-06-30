@@ -1198,43 +1198,63 @@ class UsulanPromosi extends Public_Controller {
 
     public function set_atasan_baru()
     {
-        $m_conf     = new \Model\Storage\Conf();
-        $level      = $_POST['level'] ?? null;
-        $wilayah    = $_POST['wilayah'] ?? [];
-        $nik        = $_POST['karyawan'] ?? [];
+        $m_conf  = new \Model\Storage\Conf();
 
-        // cetak_r($_POST, 1);
+        $level   = $_POST['level'] ?? null;
+        $wilayah = $_POST['wilayah'] ?? [];
+        $unit    = $_POST['unit'] ?? [];
+        $nik     = $_POST['karyawan'] ?? '';
 
         if (empty($wilayah) || !is_array($wilayah)) {
             echo json_encode([]);
             return;
         }
+
         $wil = "'" . implode("','", $wilayah) . "'";
 
-        if (!empty($level)) {
-            $sql = " SELECT k.id, k.nik, k.nama, j.nama as nama_jabatan,  wk.wilayah 
-            FROM karyawan k
-            INNER JOIN wilayah_karyawan wk 
-                ON k.id = wk.id_karyawan
-            INNER JOIN jabatan j on k.jabatan = j.kode 
-            WHERE k.status = 1
-                AND k.level < ".$level."
-                AND wk.wilayah IN (".$wil.", 'all') 
-                and k.nik != '".$nik."'
-                order by j.nama, k.nama asc ";
+        $whereUnit = "";
+        if (!empty($unit) && is_array($unit)) {
+            $un = "'" . implode("','", $unit) . "'";
+            $whereUnit = " AND uk.unit IN ($un, 'all')";
+        }
 
-            //  cetak_r($sql, 1);Z
+        if (!empty($level)) {
+
+            $sql = "
+                SELECT
+                    k.id,
+                    k.nik,
+                    k.nama,
+                    j.nama AS nama_jabatan,
+                    wk.wilayah
+                FROM karyawan k
+                INNER JOIN wilayah_karyawan wk
+                    ON k.id = wk.id_karyawan
+                INNER JOIN jabatan j
+                    ON k.jabatan = j.kode
+                INNER JOIN unit_karyawan uk
+                    ON k.id = uk.id_karyawan
+                WHERE k.status = 1
+                    AND k.level < $level
+                    AND wk.wilayah IN ($wil, 'all')
+                    $whereUnit
+                    AND k.nik != '$nik'
+                ORDER BY j.nama, k.nama ASC
+            ";
 
             $d_conf = $m_conf->hydrateRaw($sql);
+
             $data = [];
             if ($d_conf->count() > 0) {
                 $data = $d_conf->toArray();
             }
+
             echo json_encode($data);
         } else {
-            echo json_encode(['message' => 'Level tidak ditemukan']);
+            echo json_encode([
+                'message' => 'Level tidak ditemukan'
+            ]);
         }
-        
     }
 
 

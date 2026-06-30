@@ -156,7 +156,7 @@
 
 					<div class="icon-box" style="background-color:#BFFFB0;" style="position:relative;">
 						<i style="color:#3D8F2C;"  class="fa fa-user"></i>
-						<i style="color:#3D8F2C; position:absolute; font-size:10px; margin-top:-17px;  margin-left:17px;" class="fa fa-check" aria-hidden="true"></i>
+						<i style="color:#3D8F2C; position:absolute; font-size:10px; margin-top:-17px;  margin-left:20px;" class="fa fa-briefcase" aria-hidden="true"></i>
 					</div>
 				</div>
 			</div>
@@ -169,9 +169,9 @@
 					</div>
 
 				
-					<div class="icon-box" style="background-color:#FFA08F;" style="position:relative;">
-						<i style="color:#8F2E1F;" class="fa fa-user"></i>
-						<i style="color:#8F2E1F; position:absolute; font-size:10px; margin-top:-17px; margin-left:17px;" class="fa fa-close" aria-hidden="true"></i>
+					<div class="icon-box" style="background-color: #f9f8b2;" style="position:relative;">
+						<i style="color:#969308;" class="fa fa-user"></i>
+						<i style="color:#969308; position:absolute; font-size:10px; margin-top:-17px; margin-left:20px;" class="fa fa-book" aria-hidden="true"></i>
 					</div>
 					
 				</div>
@@ -192,4 +192,5 @@
 				Tidak ada notifikasi.
 			</div>
 		</fieldset>
+	</div>
 </div>

@@ -246,54 +246,62 @@ let kpi = {
             detail : detail,
         };
 
-        bootbox.confirm({
-            title: '<i class="glyphicon glyphicon-question-sign"></i> Konfirmasi',
-            message: 'Apakah Anda yakin ingin menyimpan penilaian KPI ini?',
-            buttons: {
-                confirm: {
-                    label: 'Ya',
-                    className: 'btn-primary'
-                },
-                cancel: {
-                    label: 'Batal',
-                    className: 'btn-default'
-                }
-            },
-            callback: function(result) {
+        let config_tr = $(".list_bobot tbody .tr_loop").length;
+        
+        if (config_tr >= 1){
 
-                if (!result) {
-                    return;
-                }
-
-                $.ajax({
-                    url : 'hris/KpiKaryawan/save',
-                    data : params,
-                    type : 'POST',
-                    dataType : 'json',
-                    beforeSend : function(){
-                        showLoading();
+            bootbox.confirm({
+                title: '<i class="glyphicon glyphicon-question-sign"></i> Konfirmasi',
+                message: 'Apakah Anda yakin ingin menyimpan penilaian KPI ini?',
+                buttons: {
+                    confirm: {
+                        label: 'Ya',
+                        className: 'btn-primary'
                     },
-                    success : function(data){
-                        hideLoading();
-
-                        if(data.status == 1){
-                            toastr.success(data.message);
-
-                            setTimeout(function(){
-                                window.location.href = 'hris/KpiKaryawan';
-                            }, 1000);
-                        } else {
-                            toastr.error(data.message);
-                        }
-                    },
-                    error : function() {
-                        hideLoading();
-                        toastr.error('Terjadi kesalahan sistem.');
+                    cancel: {
+                        label: 'Batal',
+                        className: 'btn-default'
                     }
-                });
+                },
+                callback: function(result) {
 
-            }
-        });
+                    if (!result) {
+                        return;
+                    }
+
+                    $.ajax({
+                        url : 'hris/KpiKaryawan/save',
+                        data : params,
+                        type : 'POST',
+                        dataType : 'json',
+                        beforeSend : function(){
+                            showLoading();
+                        },
+                        success : function(data){
+                            hideLoading();
+
+                            if(data.status == 1){
+                                toastr.success(data.message);
+
+                                setTimeout(function(){
+                                    window.location.href = 'hris/KpiKaryawan';
+                                }, 1000);
+                            } else {
+                                toastr.error(data.message);
+                            }
+                        },
+                        error : function() {
+                            hideLoading();
+                            toastr.error('Terjadi kesalahan sistem.');
+                        }
+                    });
+
+                }
+            });
+
+        } else {
+            toastr.info("Bobot periode tersebut tidak tersedia")
+        }
     },
 
     random_value:() => {

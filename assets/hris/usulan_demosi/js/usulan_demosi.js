@@ -741,6 +741,7 @@ let up ={
             level   : $(".jabatan_tujuan").find("option:selected").attr("level"),
             wilayah : $('.perwakilan_tujuan').val(),
             karyawan : $(".karyawan").val(),
+            unit : $(".unit_tujuan").val(),
         };
 
         if (!params.level || !params.wilayah) {
@@ -796,9 +797,14 @@ $(document).ready(function() {
     $('.perwakilan_tujuan').on('change', function (e) {
         up.set_unit_by_wilayah(this, e);
 
-        up.set_atasan_baru();
+        // up.set_atasan_baru();
     });
     up.set_unit_by_wilayah();
+
+    $('.unit_tujuan').on('change', function (e) {
+        up.set_atasan_baru();
+    });
+
 
     
     
