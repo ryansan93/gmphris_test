@@ -279,7 +279,11 @@ let mj ={
                 });
 
                 dialog.on('shown.bs.modal', function () {
-                    $(".select2").select2();
+                    let modal = $(this);
+
+                    modal.find(".select2").select2({
+                        dropdownParent: modal
+                    });
                 });
                
             },
