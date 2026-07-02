@@ -6,7 +6,7 @@ var home = {
 	startUp: function () {
 		window.onload = function () {
 			// home.getDataPanjualanDanHarga();
-			home.getDataPlasmaMerah();
+			// home.getDataPlasmaMerah();
 
 			if ( $('.notifContain').length > 0 ) {
 				home.getDataNotifikasi();

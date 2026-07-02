@@ -108,7 +108,7 @@ class MasterJabatan extends Public_Controller {
 
                 $id            = $m_jabatan->id;
                 $deskripsi_log = 'di-submit oleh ' . $this->userdata['detail_user']['nama_detuser'];
-                Modules::run('base/event/save', $m_jabatan, $deskripsi_log, null, $kode, $m_jabatan);
+                Modules::run('base/event/save', $m_jabatan, $deskripsi_log, null, $id, $m_jabatan);
             }
 
             $this->result['status'] = 1;

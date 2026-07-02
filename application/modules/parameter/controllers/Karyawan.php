@@ -103,6 +103,147 @@ class Karyawan extends Public_Controller
 	{
 		$m_conf = new \Model\Storage\Conf();
 
+		// $sql = " SELECT 
+		// 		k.id,
+		// 		k.level,
+		// 		k.nik,
+		// 		k.nama,
+		// 		ISNULL(j.nama, j_temp.nama) AS nama_jabatan,
+		// 		k.marketing,
+		// 		k.kordinator,
+		// 		k.status,
+		// 		k.tgl_berlaku,
+		// 		k_now.status AS status_aktif,
+		// 		atasan.nama AS nama_atasan,
+
+		// 		ISNULL(
+
+		// 			STUFF((
+		// 				SELECT ', ' + 
+		// 					CASE 
+		// 						WHEN khu2.kode_unit = 'All' THEN 'All'
+		// 						ELSE w2.nama
+		// 					END
+		// 				FROM karyawan_history_unit khu2
+		// 				LEFT JOIN wilayah w2 
+		// 					ON CAST(w2.id AS VARCHAR) = khu2.kode_unit
+		// 				WHERE khu2.id = kh.id
+		// 				FOR XML PATH(''), TYPE
+		// 			).value('.', 'NVARCHAR(MAX)'), 1, 2, ''),
+
+		// 			STUFF((
+		// 				SELECT ', ' + 
+		// 					CASE 
+		// 						WHEN uk.unit = 'All' THEN 'All'
+		// 						ELSE w4.nama
+		// 					END
+		// 				FROM unit_karyawan uk
+		// 				LEFT JOIN wilayah w4
+		// 					ON CAST(w4.id AS VARCHAR) = uk.unit
+		// 				WHERE uk.id_karyawan = k.id
+		// 				FOR XML PATH(''), TYPE
+		// 			).value('.', 'NVARCHAR(MAX)'), 1, 2, '')
+
+		// 		) AS nama_unit,
+				
+		// 		ISNULL(
+
+		// 			STUFF((
+		// 				SELECT ', ' + 
+		// 					CASE 
+		// 						WHEN khw2.kode_wilayah = 'All' THEN 'All'
+		// 						ELSE w3.nama
+		// 					END
+		// 				FROM karyawan_history_wilayah khw2
+		// 				LEFT JOIN wilayah w3 
+		// 					ON CAST(w3.id AS VARCHAR) = khw2.kode_wilayah
+		// 				WHERE khw2.id = kh.id
+		// 				FOR XML PATH(''), TYPE
+		// 			).value('.', 'NVARCHAR(MAX)'), 1, 2, ''),
+
+		// 			STUFF((
+		// 				SELECT ', ' + 
+		// 					CASE 
+		// 						WHEN wk.wilayah = 'All' THEN 'All'
+		// 						ELSE w5.nama
+		// 					END
+		// 				FROM wilayah_karyawan wk
+		// 				LEFT JOIN wilayah w5
+		// 					ON CAST(w5.id AS VARCHAR) = wk.wilayah
+		// 				WHERE wk.id_karyawan = k.id
+		// 				FOR XML PATH(''), TYPE
+		// 			).value('.', 'NVARCHAR(MAX)'), 1, 2, '')
+
+		// 		) AS nama_wilayah,
+
+		// 		kh.tgl_mulai,
+		// 		kh.tgl_selesai
+
+		// 	FROM (
+		// 		SELECT DISTINCT nik
+		// 		FROM karyawan
+		// 		WHERE status = 1
+		// 	) src
+
+		// 	OUTER APPLY (
+		// 	SELECT TOP 1 *
+		// 	FROM karyawan k1
+		// 	WHERE k1.nik = src.nik
+		// 	ORDER BY
+		// 		CASE
+		// 			WHEN k1.status = 1
+		// 				AND k1.tgl_berlaku IS NOT NULL
+		// 				AND k1.tgl_berlaku <= GETDATE()
+		// 			THEN 0
+
+		// 			WHEN k1.status = 1
+		// 				AND k1.tgl_berlaku IS NULL
+		// 			THEN 1
+
+		// 			WHEN k1.status = 0
+		// 				AND k1.tgl_berlaku IS NOT NULL
+		// 				AND k1.tgl_berlaku <= GETDATE()
+		// 			THEN 2
+
+		// 			ELSE 3
+		// 		END,
+
+		// 		k1.tgl_berlaku DESC,
+		// 		k1.id DESC
+		// 	) k
+
+		// 	OUTER APPLY (
+		// 		SELECT TOP 1
+		// 			kh2.*
+		// 		FROM karyawan_history kh2
+		// 		WHERE kh2.nik = k.nik
+		// 		ORDER BY
+		// 			CASE 
+		// 				WHEN kh2.tgl_mulai <= GETDATE() THEN 0
+		// 				WHEN kh2.tgl_selesai IS NOT NULL THEN 1
+		// 				ELSE 2
+		// 			END,
+
+		// 			CASE 
+		// 				WHEN kh2.tgl_mulai <= GETDATE()
+		// 				THEN kh2.tgl_mulai
+		// 			END DESC,
+
+		// 			CASE 
+		// 				WHEN kh2.tgl_selesai IS NOT NULL
+		// 				THEN kh2.tgl_selesai
+		// 			END DESC
+		// 	) kh
+
+		// 	LEFT JOIN jabatan j ON kh.jabatan = j.kode
+		// 	LEFT JOIN jabatan j_temp ON k.jabatan = j_temp.kode
+		// 	LEFT JOIN karyawan atasan ON k.atasan_nik = atasan.nik and atasan.status = 1
+		// 	LEFT JOIN karyawan k_now on k.nik = k_now.nik AND k_now.status = 1
+		// 	WHERE k.id IS NOT NULL
+		// 	ORDER BY k.level ASC, ISNULL(j.nama, j_temp.nama) ASC  
+		// ";
+
+
 		$sql = " SELECT 
 				k.id,
 				k.level,
@@ -217,30 +358,25 @@ class Karyawan extends Public_Controller
 					kh2.*
 				FROM karyawan_history kh2
 				WHERE kh2.nik = k.nik
+				AND CONVERT(date, kh2.tgl_mulai) <= CONVERT(date, GETDATE())
 				ORDER BY
-					CASE 
-						WHEN kh2.tgl_mulai <= GETDATE() THEN 0
-						WHEN kh2.tgl_selesai IS NOT NULL THEN 1
-						ELSE 2
-					END,
-
-					CASE 
-						WHEN kh2.tgl_mulai <= GETDATE()
-						THEN kh2.tgl_mulai
-					END DESC,
-
-					CASE 
-						WHEN kh2.tgl_selesai IS NOT NULL
-						THEN kh2.tgl_selesai
-					END DESC
+					kh2.tgl_mulai DESC,
+					kh2.id DESC
 			) kh
 
 			LEFT JOIN jabatan j ON kh.jabatan = j.kode
 			LEFT JOIN jabatan j_temp ON k.jabatan = j_temp.kode
 			LEFT JOIN karyawan atasan ON k.atasan_nik = atasan.nik and atasan.status = 1
-			LEFT JOIN karyawan k_now on k.nik = k_now.nik AND k_now.status = 1
+			LEFT JOIN karyawan k_now ON k.nik = k_now.nik AND k_now.status = 1
+					AND (
+							k_now.tgl_berlaku IS NULL
+							OR k_now.tgl_berlaku <= GETDATE()
+					)
 			WHERE k.id IS NOT NULL
-			ORDER BY k.level ASC, ISNULL(j.nama, j_temp.nama) ASC  ";
+			ORDER BY k.level ASC, ISNULL(j.nama, j_temp.nama) ASC  
+		";
+
+		
 
 		// $cetak_r($params, 1);
 

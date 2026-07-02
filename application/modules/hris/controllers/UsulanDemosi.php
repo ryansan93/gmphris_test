@@ -474,7 +474,19 @@ class UsulanDemosi extends Public_Controller {
         
         $result = array_values($filtered); 
 
-        $wilayah_pengusul    = $this->get_wilayah_pengusul($result[0]['id_pengusul']);
+        // $wilayah_pengusul    = $this->get_wilayah_pengusul($result[0]['id_pengusul']);
+
+        if ($result[0]['perwakilan_tujuan'] != 'all'){
+            $wilayah_pengusul    = $this->get_wilayah_pengusul($result[0]['id_pengusul']);
+        } else {
+            $wilayah_pengusul    = [
+                [
+                    'nama' => 'All',
+                    'kode' => 'All'
+                ]
+            ];
+        }
+
         $content['wil_pengusul'] = implode(', ', array_column($wilayah_pengusul, 'nama'));
         // cetak_r($content, 1);
 

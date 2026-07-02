@@ -11,12 +11,12 @@
             <input type="text" class="form form-control nama_jabatan" value="<?php echo $jabatan['nama'] ?>">
         </div>
 
-        <div style="display:flex; flex-direction:column;">
+        <div style="display:flex; flex-direction:column; width:10%;">
             <label>Level</label>
             <input type="number" class="form form-control level" value="<?php echo $jabatan['level'] ?>">
         </div>
 
-        <div style="display:flex; flex-direction:column; width:20%;">
+        <div style="display:flex; flex-direction:column; width:18%;">
             <label>Kode Document</label>
             <input type="text" class="form form-control kode_dokumen" style="text-transform: uppercase;" value="<?php echo $jabatan['kode_dokumen'] ?>">
         </div>

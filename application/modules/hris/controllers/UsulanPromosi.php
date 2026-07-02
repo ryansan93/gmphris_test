@@ -474,7 +474,18 @@ class UsulanPromosi extends Public_Controller {
         
         $result = array_values($filtered); 
 
-        $wilayah_pengusul    = $this->get_wilayah_pengusul($result[0]['id_pengusul']);
+        // $wilayah_pengusul    = $this->get_wilayah_pengusul($result[0]['id_pengusul']);
+        if ($result[0]['perwakilan_tujuan'] != 'all'){
+            $wilayah_pengusul    = $this->get_wilayah_pengusul($result[0]['id_pengusul']);
+        } else {
+            $wilayah_pengusul    = [
+                [
+                    'nama' => 'All',
+                    'kode' => 'All'
+                ]
+            ];
+        }
+        
         $content['wil_pengusul'] = implode(', ', array_column($wilayah_pengusul, 'nama'));
         // cetak_r($content, 1);
 
@@ -1222,8 +1233,8 @@ class UsulanPromosi extends Public_Controller {
 
             $sql = "
                 SELECT
+                    distinct(k.nik) as nik,
                     k.id,
-                    k.nik,
                     k.nama,
                     j.nama AS nama_jabatan,
                     wk.wilayah
@@ -1241,6 +1252,9 @@ class UsulanPromosi extends Public_Controller {
                     AND k.nik != '$nik'
                 ORDER BY j.nama, k.nama ASC
             ";
+
+            // cetak_r($sql, 1);
+
 
             $d_conf = $m_conf->hydrateRaw($sql);
 
