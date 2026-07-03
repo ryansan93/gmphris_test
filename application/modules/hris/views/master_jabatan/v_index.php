@@ -53,22 +53,22 @@
                             
                                 <div style="display:flex; flex-direction:column; width:20%;">
                                     <label>Kode</label>
-                                    <input type="text" class="form form-control kode_jabatan">
+                                    <input type="text" placeholder="Kode Jabatan" class="form form-control kode_jabatan">
                                 </div>
 
                                 <div style="display:flex; flex-direction:column; width:20%;">
                                     <label>Nama Jabatan</label>
-                                    <input type="text" class="form form-control nama_jabatan">
+                                    <input type="text" placeholder="Nama Jabatan" class="form form-control nama_jabatan">
                                 </div>
 
                                 <div style="display:flex; flex-direction:column; width:20%;">
                                     <label>Level</label>
-                                    <input type="number" class="form form-control level">
+                                    <input type="number" placeholder="Level" class="form form-control level">
                                 </div>
 
                                 <div style="display:flex; flex-direction:column; width:20%;">
                                     <label>Kode Document</label>
-                                    <input type="text" class="form form-control kode_dokumen" style="text-transform: uppercase;">
+                                    <input type="text" placeholder="Kode Document" class="form form-control kode_dokumen" style="text-transform: uppercase;">
                                 </div>
 
                                 <div style="display:flex; flex-direction:column; width:30%;">

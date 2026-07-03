@@ -875,8 +875,14 @@ let kpi = {
     },
 
     getKpiPeriode: () => {
+
+        let params = {
+            jabatan: $(".jabatan").val()
+        };
+
         $.ajax({
             url: 'hris/KpiKaryawan/getKpiPeriode',
+            data: params,
             type: 'POST',
             dataType: 'json',
             beforeSend: function() {
@@ -888,11 +894,13 @@ let kpi = {
                 let option = '<option value="">Pilih KPI</option>';
 
                 $.each(data, function(i, v) {
-                    option += `
-                        <option value="${v.id}">
-                            ${v.nama_template} - Periode ${v.periode}
-                        </option>
-                    `;
+                    if (v.jabatan_id == params.jabatan) {
+                        option += `
+                            <option value="${v.id}">
+                                ${v.nama_template} - Periode ${v.periode}
+                            </option>
+                        `;
+                    }
                 });
 
                 bootbox.dialog({
@@ -973,6 +981,7 @@ let kpi = {
     },
 
     periodeOutstanding: () => {
+
         $.ajax({
             url: 'hris/KpiKaryawan/getKpiPeriode',
             type: 'POST',
@@ -1004,10 +1013,12 @@ let kpi = {
                 $('.periode').trigger('change');
             }
         });
+
     },
 
 
     detail_chart_periode: (elm, e) => {
+
         let detail = $(elm).closest("tr").find(".detail").html();
 
         let index = $(elm).attr("index");
@@ -1030,7 +1041,29 @@ let kpi = {
                 },
             }
         });
+
     },
+
+    ranking_by_periode: (elm, e) => {
+
+        let params = {
+            periode : $(elm).val(),
+        }
+
+        $.ajax({
+            url : 'hris/KpiKaryawan/ranking_by_periode',
+            data : params,
+            type : 'POST',
+            dataType : 'html',
+            beforeSend : function(){
+                showLoading();
+            },
+            success : function(resp){
+                hideLoading();  
+                    $(".list_ranking_kpi").find("tbody").html(resp);
+            }
+        });
+    }
 }
 
 $(document).ready(function() {

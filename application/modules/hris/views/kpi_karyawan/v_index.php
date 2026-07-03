@@ -124,7 +124,7 @@
                     <span style="font-size:12px; color: #63E04C; font-weight:bold;">Ranking KPI</span>
                     <span style="font-size:12px; color: #1F2937;">Lihat ranking KPI karyawan berdasarkan periode</span>
 
-                    <button style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
+                    <button  onclick="window.location.href='hris/KpiKaryawan/rankingKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
                         Buka →
                     </button>
                 </div>

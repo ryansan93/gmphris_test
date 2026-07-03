@@ -15,20 +15,20 @@ class KpiKaryawan extends Public_Controller
 	{
 		$akses = hakAkses($this->url);
 		if ( $akses['a_view'] == 1 ) {
+
 			$this->add_external_js(array(
 				'assets/select2/js/select2.min.js',
 				"assets/toastr/js/toastr.js",
                 "assets/toastr/js/toastr.min.js",
 				'assets/hris/kpi_karyawan/js/kpi_karyawan.js'
 			));
+
 			$this->add_external_css(array(
 				'assets/select2/css/select2.min.css',
 				"assets/toastr/css/toastr.css",
                 "assets/toastr/css/toastr.min.css",
 				'assets/hris/kpi_karyawan/css/kpi_karyawan.css'
 			));
-
-			
 			
 			$data 				= $this->includes;
 			$content['charts']	= $this->getDataCharts();
@@ -969,4 +969,113 @@ class KpiKaryawan extends Public_Controller
 
 		return $result;
 	}
+
+
+	public function rankingKpi()
+	{
+		$this->add_external_js(array(
+			'assets/select2/js/select2.min.js',
+			"assets/toastr/js/toastr.js",
+			"assets/toastr/js/toastr.min.js",
+			'assets/hris/kpi_karyawan/js/kpi_karyawan.js'
+		));
+		$this->add_external_css(array(
+			'assets/select2/css/select2.min.css',
+			"assets/toastr/css/toastr.css",
+			"assets/toastr/css/toastr.min.css",
+			'assets/hris/kpi_karyawan/css/kpi_karyawan.css'
+		));
+
+		$m_karyawan 			= new \Model\Storage\Karyawan_model();
+		$d_karyawan 			= $m_karyawan->select(
+									'karyawan.*',
+									'jabatan.nama as nama_jabatan'
+								)->join('jabatan', 'jabatan.kode', '=', 'karyawan.jabatan')
+								->where('karyawan.status', 1)
+								->orderBy('karyawan.level', 'asc')
+								->get();
+
+		$data_karyawan  		= $d_karyawan->toArray();
+
+		$data 					= $this->includes;
+		// $content['akses'] 		= $akses;
+		$content['karyawan']	= $data_karyawan;
+
+		// cetak_r($content, 1);
+
+		$data['title_menu'] = 'KPI Karyawan -  Ranking';
+		$data['view'] 		= $this->load->view('hris/kpi_karyawan/v_ranking_kpi', $content, true);
+
+		$this->load->view($this->template, $data);
+	}
+
+	public function ranking_by_periode()
+	{
+		$params = $_POST;
+
+		
+		$content['data_ranking'] = $this->getRankingByPeriode($params);
+		// cetak_r($content, 1);
+
+		echo $this->load->view('hris/kpi_karyawan/v_load_ranking', $content, true);
+	}
+
+
+	public function getRankingByPeriode($data)
+	{
+		$bulan = $data['periode']; 
+		$tahun = date('Y');
+
+		// $tgl_awal  = date('Y-m-01', strtotime("$tahun-$bulan-01"));
+		// $tgl_akhir = date('Y-m-t', strtotime("$tahun-$bulan-01"));
+
+		$m_conf = new \Model\Storage\Conf();
+
+		// $sql = " SELECT
+		// 			hkp.nik,
+		// 			k.nama,
+		// 			j.nama AS nama_jabatan,
+		// 			hkp.total_nilai
+		// 		FROM hris_kpi_penilaian hkp
+		// 		INNER JOIN karyawan k ON hkp.nik = k.nik AND k.status = 1
+		// 		INNER JOIN jabatan j ON j.kode = k.jabatan
+		// 		WHERE hkp.tanggal_mulai <= '".$tgl_awal . "'
+		// 		AND hkp.tanggal_selesai >= '".$tgl_akhir . "'
+		// 		AND hkp.status = 'APPROVED'
+		// 		ORDER BY hkp.total_nilai DESC";
+
+		
+		$sql = " SELECT top 12 
+					k.nama, 
+					k.nik, 
+					hkp.total_nilai as score, 
+					MONTH(hkp.tanggal_mulai) AS periode, 
+					j.nama as nama_jabatan  
+				from hris_kpi_penilaian hkp 
+				inner join karyawan k on hkp.nik = k.nik and k.status = 1
+				inner join jabatan j on hkp.jabatan  =j.nama 
+				where MONTH(hkp.tanggal_mulai) = '".$data['periode']."'
+				order by hkp.total_nilai desc ";
+				
+
+				
+
+		$d_conf = $m_conf->hydrateRaw($sql);
+
+		$data 	= [];
+		if ($d_conf->count() > 0) {
+			$data = $d_conf->toArray();
+		}
+
+		$temp = [];
+		foreach ($data as $key => $val) {
+			$temp[$val['nama_jabatan']][] = $val;
+		}
+
+		// cetak_r($temp, 1);
+
+		return $temp;
+	}
+
+	
 }
