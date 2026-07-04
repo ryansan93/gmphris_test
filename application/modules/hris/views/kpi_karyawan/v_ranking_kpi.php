@@ -41,9 +41,9 @@
         <table class="table table-bordered list_ranking_kpi" style="width:100%;">
             <thead>
                 <tr>
-                    <th class="text-center">Nama Penilaian</th>
+                    <th class="text-center">NIK</th>
+                    <th class="text-center">Nama Karyawan</th>
                     <th class="text-center">Score</th>
-                    <th class="text-center">Nilai</th>
                 </tr>
             </thead>
             <tbody>

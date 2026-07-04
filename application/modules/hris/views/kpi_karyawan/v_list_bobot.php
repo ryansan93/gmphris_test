@@ -14,7 +14,7 @@ function formatPersen($nilai)
     <?php foreach ($bobot as $b) { ?>
         <?php $bobot_total += $b['bobot']; ?>
 
-        <tr class="tr_loop" id_kpi="<?= $b['id']; ?>">
+        <tr class="tr_loop" kode_index="<?= $b['kode_index']; ?>">
             <td class="text-center" style="width:100px;"><?= $no++; ?></td>
             <td><?= $b['nama_kpi']; ?></td>
             <td class="text-center"><?php echo formatPersen($b['bobot']); ?></td>

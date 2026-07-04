@@ -32,7 +32,7 @@ class KpiKaryawan extends Public_Controller
 			
 			$data 				= $this->includes;
 			$content['charts']	= $this->getDataCharts();
-			// cetak_r($data, 1);
+			
 
 			$content['akses'] 	= $akses;
 			$data['title_menu'] = 'KPI Karyawan';
@@ -258,7 +258,7 @@ class KpiKaryawan extends Public_Controller
             foreach ($params['detail'] as $v_det) {
                 $m_detail 					= new \Model\Storage\HrisKpiPenilaianDetail_model();
                 $m_detail->penilaian_id    	= $id_header;
-                $m_detail->kpi_id        	= $v_det['id_kpi'];
+                $m_detail->kode_index       = $v_det['kode_index'];
                 $m_detail->nilai      		= $v_det['nilai'];
                 $m_detail->skor  			= $v_det['score'];
                 $m_detail->catatan	 		= $v_det['keterangan'] ?? null;
@@ -409,7 +409,7 @@ class KpiKaryawan extends Public_Controller
 		$m_conf = new \Model\Storage\Conf();
 
 		$sql = " select hkpd.*, hkmd.nama_kpi, hkmd.bobot  from hris_kpi_penilaian_detail hkpd 
-				inner join hris_kpi_master_detail hkmd on hkpd.kpi_id = hkmd.id 
+				inner join hris_kpi_master_detail hkmd on hkpd.kode_index = hkmd.kode_index 
 				where hkpd.penilaian_id = $id ";
 
 				// cetak_r($sql, 1);
@@ -498,6 +498,9 @@ class KpiKaryawan extends Public_Controller
 		$params = $_POST;
 
 		// cetak_r($params, 1);
+		$bulan 		= $params['header']['periode'];
+		$tahun 		= date('y');
+		$key_index 	= 1;
 
 		try {
 
@@ -521,6 +524,7 @@ class KpiKaryawan extends Public_Controller
 			foreach ($params['detail'] as $v_det) {
 				$m_detail 					= new \Model\Storage\HrisKpiMasterDetail_model();
 				$m_detail->id_header    	= $id_header;
+				$m_detail->kode_index    	= 'KPI/'. $bulan . '/'. $tahun . '/' . $key_index++;
 				$m_detail->nama_kpi        	= $v_det['index_kpi'];
 				$m_detail->bobot      		= $v_det['bobot'];
 				$m_detail->keterangan	    = $v_det['keterangan'] ?? null;
@@ -583,6 +587,7 @@ class KpiKaryawan extends Public_Controller
 
 		// cetak_r($params, 1);
 
+
 		try {
 
 			$total_bobot = 0;
@@ -617,6 +622,7 @@ class KpiKaryawan extends Public_Controller
 				$m_detail->id_header    	= $id_header;
 				$m_detail->nama_kpi        	= $v_det['index_kpi'];
 				$m_detail->bobot      		= $v_det['bobot'];
+				$m_detail->kode_index    	= $v_det['kode_index'];
 				$m_detail->keterangan	    = $v_det['keterangan'] ?? null;
 				$m_detail->save();
 			}
@@ -776,6 +782,7 @@ class KpiKaryawan extends Public_Controller
 			}
 			
 			$d_header->status = $params['val'] == 1 ? 'APPROVED' : 'REJECTED';
+			$d_header->approval_by = $_SESSION['detail_user']['nama_detuser'];
 			$d_header->save();
 
 			$this->result['status'] = 1;
@@ -912,7 +919,7 @@ class KpiKaryawan extends Public_Controller
 			select 
 				hkmh.nama_template,
 				hkmh.jabatan_id,
-				hkmd.id as kpi_id,
+				hkmd.kode_index,
 				hkmd.nama_kpi,
 				hkmd.bobot
 			from hris_kpi_master_header hkmh
@@ -927,21 +934,24 @@ class KpiKaryawan extends Public_Controller
 		$d_index = $m_conf->hydrateRaw($sql_index);
 		$data_index = $d_index->count() > 0 ? $d_index->toArray() : [];
 
-		$kpi_ids = [];
+		$kode_indexs = [];
 		foreach ($data_index as $row) {
-			$kpi_ids[] = $row['kpi_id'];
+			$kode_indexs[] = $row['kode_index'];
 		}
-		$kpi_id = implode(',', $kpi_ids);
+		$kode_index = "'" . implode("','", $kode_indexs) . "'";
 
 		$result = [];
 
-		if (!empty($kpi_id)){
+		if (!empty($kode_index)){
 
-			$sql_penilaian = " select k.nama, hkp.nik, hkp.jabatan, hkpd.kpi_id, hkpd.nilai, hkpd.skor 
+			$sql_penilaian = " select k.nama, hkp.nik, hkp.jabatan, hkpd.kode_index, hkpd.nilai, hkpd.skor 
 			from hris_kpi_penilaian hkp
 			inner join hris_kpi_penilaian_detail hkpd on hkp.id = hkpd.penilaian_id 
 			inner join karyawan k on hkp.nik = k.nik and k.status = 1
-			where hkpd.kpi_id in (" . $kpi_id . ")";
+			where hkpd.kode_index in (" . $kode_index . ")";
+
+			// cetak_r($sql_penilaian, 1);
+
 	
 			$d_penilaian = $m_conf->hydrateRaw($sql_penilaian);
 			$data_penilaian = $d_penilaian->count() > 0 ? $d_penilaian->toArray() : [];
@@ -949,17 +959,17 @@ class KpiKaryawan extends Public_Controller
 			$grouped_penilaian = [];
 	
 			foreach ($data_penilaian as $p) {
-				$grouped_penilaian[$p['kpi_id']][] = $p;
+				$grouped_penilaian[$p['kode_index']][] = $p;
 			}
 	
 			foreach ($data_index as $i) {
-				$kpi_id = $i['kpi_id'];
+				$kode_index = $i['kode_index'];
 	
-				$result[$kpi_id] = [
-					'kpi_id' => $kpi_id,
+				$result[$kode_index] = [
+					'kode_index' => $kode_index,
 					'nama_kpi' => $i['nama_kpi'],
 					'bobot' => $i['bobot'],
-					'data_penilaian' => $grouped_penilaian[$kpi_id] ?? []
+					'data_penilaian' => $grouped_penilaian[$kode_index] ?? []
 				];
 			}
 		}
@@ -986,20 +996,10 @@ class KpiKaryawan extends Public_Controller
 			'assets/hris/kpi_karyawan/css/kpi_karyawan.css'
 		));
 
-		$m_karyawan 			= new \Model\Storage\Karyawan_model();
-		$d_karyawan 			= $m_karyawan->select(
-									'karyawan.*',
-									'jabatan.nama as nama_jabatan'
-								)->join('jabatan', 'jabatan.kode', '=', 'karyawan.jabatan')
-								->where('karyawan.status', 1)
-								->orderBy('karyawan.level', 'asc')
-								->get();
-
-		$data_karyawan  		= $d_karyawan->toArray();
 
 		$data 					= $this->includes;
 		// $content['akses'] 		= $akses;
-		$content['karyawan']	= $data_karyawan;
+		$content['karyawan']	= [];
 
 		// cetak_r($content, 1);
 
@@ -1026,38 +1026,32 @@ class KpiKaryawan extends Public_Controller
 		$bulan = $data['periode']; 
 		$tahun = date('Y');
 
-		// $tgl_awal  = date('Y-m-01', strtotime("$tahun-$bulan-01"));
-		// $tgl_akhir = date('Y-m-t', strtotime("$tahun-$bulan-01"));
-
 		$m_conf = new \Model\Storage\Conf();
-
-		// $sql = " SELECT
-		// 			hkp.nik,
-		// 			k.nama,
-		// 			j.nama AS nama_jabatan,
-		// 			hkp.total_nilai
-		// 		FROM hris_kpi_penilaian hkp
-		// 		INNER JOIN karyawan k ON hkp.nik = k.nik AND k.status = 1
-		// 		INNER JOIN jabatan j ON j.kode = k.jabatan
-		// 		WHERE hkp.tanggal_mulai <= '".$tgl_awal . "'
-		// 		AND hkp.tanggal_selesai >= '".$tgl_akhir . "'
-		// 		AND hkp.status = 'APPROVED'
-		// 		ORDER BY hkp.total_nilai DESC";
-
 		
-		$sql = " SELECT top 12 
-					k.nama, 
-					k.nik, 
-					hkp.total_nilai as score, 
-					MONTH(hkp.tanggal_mulai) AS periode, 
-					j.nama as nama_jabatan  
-				from hris_kpi_penilaian hkp 
-				inner join karyawan k on hkp.nik = k.nik and k.status = 1
-				inner join jabatan j on hkp.jabatan  =j.nama 
-				where MONTH(hkp.tanggal_mulai) = '".$data['periode']."'
-				order by hkp.total_nilai desc ";
-				
-
+		$sql = "
+			SELECT *
+			FROM (
+				SELECT
+					k.nama,
+					k.nik,
+					hkp.total_nilai AS score,
+					MONTH(hkp.tanggal_mulai) AS periode,
+					j.nama AS nama_jabatan,
+					ROW_NUMBER() OVER (
+						PARTITION BY j.nama
+						ORDER BY hkp.total_nilai DESC
+					) AS urut
+				FROM hris_kpi_penilaian hkp
+				INNER JOIN karyawan k
+					ON hkp.nik = k.nik
+					AND k.status = 1
+				INNER JOIN jabatan j
+					ON hkp.jabatan = j.nama
+				WHERE MONTH(hkp.tanggal_mulai) = '".$data['periode']."'
+			) x
+			WHERE urut <= 3
+			ORDER BY nama_jabatan, score DESC
+		";
 				
 
 		$d_conf = $m_conf->hydrateRaw($sql);
@@ -1068,7 +1062,7 @@ class KpiKaryawan extends Public_Controller
 		}
 
 		$temp = [];
-		foreach ($data as $key => $val) {
+		foreach ($data as $val) {
 			$temp[$val['nama_jabatan']][] = $val;
 		}
 
@@ -1076,6 +1070,43 @@ class KpiKaryawan extends Public_Controller
 
 		return $temp;
 	}
+
+	public function getRankingByPeriodeDetail()
+	{
+		$params = $_POST;
+
+		$content['data_ranking'] 	= $this->getDataRankingDetail($params);
+		$content['data_header']		= $params;
+		// cetak_r($content, 1);
+
+
+		echo $this->load->view('hris/kpi_karyawan/v_load_ranking_detail', $content, true);
+	}
+
+	public function getDataRankingDetail($data)
+	{
+		$bulan = $data['bulan']; 
+		$nik = $data['nik']; 
+
+		$m_conf = new \Model\Storage\Conf();
+
+		$sql = " SELECT hkmd.nama_kpi, hkmd.bobot, hkpd.nilai, hkpd.skor from hris_kpi_penilaian_detail hkpd 
+			inner join hris_kpi_master_detail hkmd on hkpd.kpi_id  = hkmd.id 
+			inner join hris_kpi_penilaian hkp on hkp.id = hkpd.penilaian_id 
+			where hkp.nik = '".$nik."' and MONTH(hkp.tanggal_mulai) = '".$bulan."' ";
+
+		$d_conf = $m_conf->hydrateRaw($sql);
+
+		$data 	= [];
+		if ($d_conf->count() > 0) {
+			$data = $d_conf->toArray();
+		}
+
+		return $data;
+	}
+
+
+
 
 	
 }

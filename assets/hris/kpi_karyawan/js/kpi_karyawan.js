@@ -225,8 +225,8 @@ let kpi = {
             }
 
             let temp = {
-                id_kpi     : $(this).attr("id_kpi"),
-                kode_kpi   : $(this).find("td:eq(0)").html().trim(),
+                kode_index : $(this).attr("kode_index"),
+                // kode_kpi   : $(this).find("td:eq(0)").html().trim(),
                 nama_kpi   : $(this).find("td:eq(1)").html().trim(),
                 nilai      : nilai,
                 score      : $(this).find("td:eq(4) input").val(),
@@ -637,6 +637,7 @@ let kpi = {
 
         $("#setting_edit").find(".row-input").each(function(){
             let temp = {
+                kode_index : $(this).attr("kode_index"),
                 index_kpi : $(this).find(".nama_kpi").val(),
                 keterangan : $(this).find(".keterangan_detail").val(),
                 bobot : $(this).find(".bobot").val(),
@@ -1061,6 +1062,49 @@ let kpi = {
             success : function(resp){
                 hideLoading();  
                     $(".list_ranking_kpi").find("tbody").html(resp);
+            }
+        });
+    },
+
+
+    view_detail_nilai: (elm, e) => {
+
+        e.preventDefault();
+
+        let params = {
+            nik : $(elm).attr("nik"),
+            bulan : $(".bulan").val(),
+            total_score : $(elm).attr("total_score"),
+            nama_karyawan  : $(elm).closest("tr").find("td:eq(01)").html(),
+        }
+
+        $.ajax({
+            url : 'hris/KpiKaryawan/getRankingByPeriodeDetail',
+            data : params,
+            type : 'POST',
+            dataType : 'html',
+            beforeSend : function(){
+                showLoading();
+            },
+            success : function(resp){
+                hideLoading();
+                bootbox.dialog({
+                    title: '<b>Detail Nilai KPI</b>',
+                    message: resp,
+                    size: 'large',
+                    backdrop: true,
+                    onEscape: true,
+                    buttons: {
+                        close: {
+                            label: 'Tutup',
+                            className: 'btn-secondary'
+                        }
+                    }
+                });
+            },
+            error : function() {
+                hideLoading();
+                toastr.error('Terjadi kesalahan sistem.');
             }
         });
     }

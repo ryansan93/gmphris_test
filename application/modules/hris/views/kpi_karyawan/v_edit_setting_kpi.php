@@ -26,11 +26,10 @@
             <b>Input Data Bobot</b>
         </legend>
     
-    
         <div class="detail-input" style="display:flex; flex-direction:column; gap:10px;">
     
             <?php foreach($detail_data as $detail){ ?>
-                <div class="row-input" style="display:flex; flex-direction:row; gap:10px;">
+                <div class="row-input" style="display:flex; flex-direction:row; gap:10px;" kode_index="<?php echo $detail['kode_index'] ?>">
                     <input class="form form-control nama_kpi" type="text" placeholder="Masukan nama KPI" style="width:40%" value="<?php echo $detail['nama_kpi'] ?>">
                     <input class="form form-control keterangan_detail" type="text" placeholder="Masukan keterangan" value="<?php echo $detail['keterangan'] ?>">
                     <input class="form form-control bobot" oninput="kpi.config_bobot(this, event)" value="<?php echo intval($detail['bobot']) ?>" type="number" style="width:15%" placeholder="Masukan bobot">
