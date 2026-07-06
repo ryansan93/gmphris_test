@@ -140,10 +140,10 @@ class KpiKaryawan extends Public_Controller
 
 	public function getDataBobot($params)
 	{
-		$m_conf = new \Model\Storage\Conf();
+		$m_conf 	= new \Model\Storage\Conf();
 
 		$jabatan_id = trim($params['jabatan']);
-		$periode = trim($params['bulan']);
+		$periode 	= trim($params['bulan']);
 
 		$sql = " SELECT hkmd.* FROM hris_kpi_master_header hkmh
 		inner join hris_kpi_master_detail hkmd on hkmh.id = hkmd.id_header  and hkmh.periode = '".$periode."'
@@ -153,12 +153,11 @@ class KpiKaryawan extends Public_Controller
 
 		// cetak_r($sql, 1);
 
-		$d_conf = $m_conf->hydrateRaw($sql);
-
+		$d_conf 	= $m_conf->hydrateRaw($sql);
 		$data       = null;
 
         if ( $d_conf->count() > 0 ) {
-            $data = $d_conf->toArray();
+            $data 	= $d_conf->toArray();
         }
 
 		return $data;
@@ -172,8 +171,7 @@ class KpiKaryawan extends Public_Controller
 
 		// cetak_r($params, 1);
 
-		$sql = "
-			SELECT nik
+		$sql = " SELECT nik
 			FROM hris_kpi_penilaian
 			WHERE tanggal_mulai = '".$params['startdate']."'
 			AND tanggal_selesai = '".$params['enddate']."'
@@ -493,14 +491,36 @@ class KpiKaryawan extends Public_Controller
 		return $data;
 	}
 
+	public function getKodeDocJabatan($kode)
+	{
+		$m_conf = new \Model\Storage\Conf();
+
+		$sql = " select kode_dokumen from jabatan where kode = '".$kode."' ";
+
+				// cetak_r($sql, 1);
+
+		$d_conf = $m_conf->hydrateRaw($sql);
+
+		$data = [];
+
+		if ($d_conf->count() > 0) {
+			$data = $d_conf->toArray();
+		}
+
+		return $data[0];
+	}
+
+
 	public function saveSetting()
 	{
 		$params = $_POST;
 
-		// cetak_r($params, 1);
-		$bulan 		= $params['header']['periode'];
-		$tahun 		= date('y');
-		$key_index 	= 1;
+		$kd_doc_jabatan = $this->getKodeDocJabatan($params['header']['jabatan']);
+		// cetak_r($kd_doc_jabatan, 1);
+
+		$bulan 			= $params['header']['periode'];
+		$tahun 			= date('y');
+		$key_index 		= 1;
 
 		try {
 
@@ -524,7 +544,7 @@ class KpiKaryawan extends Public_Controller
 			foreach ($params['detail'] as $v_det) {
 				$m_detail 					= new \Model\Storage\HrisKpiMasterDetail_model();
 				$m_detail->id_header    	= $id_header;
-				$m_detail->kode_index    	= 'KPI/'. $bulan . '/'. $tahun . '/' . $key_index++;
+				$m_detail->kode_index    	= 'KPI/'. $kd_doc_jabatan['kode_dokumen'] .'/'. $bulan . '/'. $tahun . '/' . $key_index++;
 				$m_detail->nama_kpi        	= $v_det['index_kpi'];
 				$m_detail->bobot      		= $v_det['bobot'];
 				$m_detail->keterangan	    = $v_det['keterangan'] ?? null;
@@ -927,6 +947,7 @@ class KpiKaryawan extends Public_Controller
 				on hkmh.id = hkmd.id_header
 			where hkmh.periode = '".$data['bulan']."'
 			and hkmh.jabatan_id = '".$data['jabatan']."'
+			and hkmh.status = 'ACTIVE'
 		";
 
 		// cetak_r($sql_index, 1);
@@ -948,7 +969,7 @@ class KpiKaryawan extends Public_Controller
 			from hris_kpi_penilaian hkp
 			inner join hris_kpi_penilaian_detail hkpd on hkp.id = hkpd.penilaian_id 
 			inner join karyawan k on hkp.nik = k.nik and k.status = 1
-			where hkpd.kode_index in (" . $kode_index . ")";
+			where hkpd.kode_index in (" . $kode_index . ") and hkp.status = 'APPROVED' ";
 
 			// cetak_r($sql_penilaian, 1);
 
@@ -1012,7 +1033,6 @@ class KpiKaryawan extends Public_Controller
 	public function ranking_by_periode()
 	{
 		$params = $_POST;
-
 		
 		$content['data_ranking'] = $this->getRankingByPeriode($params);
 		// cetak_r($content, 1);
@@ -1035,6 +1055,7 @@ class KpiKaryawan extends Public_Controller
 					k.nama,
 					k.nik,
 					hkp.total_nilai AS score,
+					hkp.approval_by,
 					MONTH(hkp.tanggal_mulai) AS periode,
 					j.nama AS nama_jabatan,
 					ROW_NUMBER() OVER (
@@ -1052,6 +1073,8 @@ class KpiKaryawan extends Public_Controller
 			WHERE urut <= 3
 			ORDER BY nama_jabatan, score DESC
 		";
+
+		// cetak_r($sql, 1);
 				
 
 		$d_conf = $m_conf->hydrateRaw($sql);
@@ -1079,19 +1102,18 @@ class KpiKaryawan extends Public_Controller
 		$content['data_header']		= $params;
 		// cetak_r($content, 1);
 
-
 		echo $this->load->view('hris/kpi_karyawan/v_load_ranking_detail', $content, true);
 	}
 
 	public function getDataRankingDetail($data)
 	{
-		$bulan = $data['bulan']; 
-		$nik = $data['nik']; 
+		$bulan 	= $data['bulan']; 
+		$nik 	= $data['nik']; 
 
 		$m_conf = new \Model\Storage\Conf();
 
 		$sql = " SELECT hkmd.nama_kpi, hkmd.bobot, hkpd.nilai, hkpd.skor from hris_kpi_penilaian_detail hkpd 
-			inner join hris_kpi_master_detail hkmd on hkpd.kpi_id  = hkmd.id 
+			inner join hris_kpi_master_detail hkmd on hkpd.kode_index  = hkmd.kode_index 
 			inner join hris_kpi_penilaian hkp on hkp.id = hkpd.penilaian_id 
 			where hkp.nik = '".$nik."' and MONTH(hkp.tanggal_mulai) = '".$bulan."' ";
 
@@ -1105,8 +1127,4 @@ class KpiKaryawan extends Public_Controller
 		return $data;
 	}
 
-
-
-
-	
 }
