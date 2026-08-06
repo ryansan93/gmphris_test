@@ -11,6 +11,21 @@
     .btn-custom:hover{
         background-color: orange; 
     }
+
+    .btn-xls {
+        width:100%; 
+        flex:1; color: #03477e; 
+        border:1px solid #03477e; 
+        border-radius:6px; 
+        padding:6px 12px; 
+        background-color:#9FD3FC;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .btn-xls:hover {
+        background-color: #416d8e;
+        color : #ffffff;
+    }
 </style>
 <div id="setting_kpi">
 
@@ -38,9 +53,20 @@
                 </legend>
 
                 <div class="col-xs-12 no-padding notifContain">
-
                     <input type="text" class="form form-control" placeholder="Masukan kata kunci" oninput="kpi.filter_setting_kpi(this,event)">
+                    <div style="display:flex;  gap:4px; margin-top:10px;">
+                        <button onclick="kpi.downloadTemplateSetting(this, event)" class="btn-xls">
+                            <i class="fa fa-download" aria-hidden="true"></i> Download Template
+                        </button>
+                        <button onclick="kpi.importXlsKpiSetting(this, event)" class="btn-xls">
+                            <i class="fa fa-upload" aria-hidden="true"></i> Import Xls
+                        </button>
+                    </div>
                 </div>
+                      
+                
+                
+                    
             </fieldset>
 
             <fieldset style="margin-bottom:15px;">
@@ -59,12 +85,12 @@
                 </div>
             </fieldset>
 
-            <div style="display:flex; justify-content:flex-end; align-items:center; gap:10px;">
+            <!-- <div style="display:flex; justify-content:flex-end; align-items:center; gap:10px;">
                 <button class="btn btn-default"
                     onclick="window.location.href='hris/KpiKaryawan'">
                     Kembali
                 </button>
-            </div>
+            </div> -->
 
         </div>
 
@@ -81,9 +107,9 @@
                 <select class="select2 jabatan" onchange="kpi.periodeOutstanding(this, event);">
                     <option disabled selected> Pilih Jabatan</option>
                     <?php foreach($jabatan as $j){ ?>
-                        <?php if($j['kode'] == 'ppl' || $j['kode'] == 'penimbang'){ ?>
+                        <!-- < ?php if($j['kode'] == 'ppl' || $j['kode'] == 'penimbang'){ ?> -->
                             <option value="<?php echo $j['kode'] ?>"><?php echo $j['nama'] ?></option>
-                        <?php } ?>
+                        <!-- < ?php } ?> -->
                     <?php } ?>
                 </select>
             </div>
@@ -121,7 +147,6 @@
 
 
                 <div class="detail-input" style="display:flex; flex-direction:column; gap:10px;">
-
                     <div class="row-input" style="display:flex; flex-direction:row; gap:10px;">
                         <input class="form form-control nama_kpi" type="text" placeholder="Masukan nama KPI">
                         <input class="form form-control keterangan_detail" type="text" placeholder="Masukan keterangan">
@@ -132,7 +157,9 @@
                 </div>
             </fieldset>
             <br>
-            <button class=" pull-right btn btn-primary save-setting" onclick="kpi.save_setting(this, event)">Simpan</button>
+   
+            <!-- <button class=" pull-right btn btn-default" onclick="window.location.href='hris/KpiKaryawan'">Kembali</button> -->
+            <button class=" pull-right btn btn-primary save-setting" style="margin-right:10px;" onclick="kpi.save_setting(this, event)">Simpan</button>
             <br><br>
 
         </div>

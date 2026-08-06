@@ -19,9 +19,51 @@ class HrisKpiPenilaian_model extends Conf{
 					CASE
 						WHEN MONTH(hkp.tanggal_mulai) = MONTH(hkp.tanggal_selesai)
 							AND YEAR(hkp.tanggal_mulai) = YEAR(hkp.tanggal_selesai)
-						THEN DATENAME(MONTH, hkp.tanggal_mulai)
-						ELSE DATENAME(MONTH, hkp.tanggal_mulai) + ' - ' +
-							DATENAME(MONTH, hkp.tanggal_selesai)
+						THEN 
+							CASE MONTH(hkp.tanggal_mulai)
+								WHEN 1 THEN 'Januari'
+								WHEN 2 THEN 'Februari'
+								WHEN 3 THEN 'Maret'
+								WHEN 4 THEN 'April'
+								WHEN 5 THEN 'Mei'
+								WHEN 6 THEN 'Juni'
+								WHEN 7 THEN 'Juli'
+								WHEN 8 THEN 'Agustus'
+								WHEN 9 THEN 'September'
+								WHEN 10 THEN 'Oktober'
+								WHEN 11 THEN 'November'
+								WHEN 12 THEN 'Desember'
+							END
+						ELSE
+							CASE MONTH(hkp.tanggal_mulai)
+								WHEN 1 THEN 'Januari'
+								WHEN 2 THEN 'Februari'
+								WHEN 3 THEN 'Maret'
+								WHEN 4 THEN 'April'
+								WHEN 5 THEN 'Mei'
+								WHEN 6 THEN 'Juni'
+								WHEN 7 THEN 'Juli'
+								WHEN 8 THEN 'Agustus'
+								WHEN 9 THEN 'September'
+								WHEN 10 THEN 'Oktober'
+								WHEN 11 THEN 'November'
+								WHEN 12 THEN 'Desember'
+							END
+							+ ' - ' +
+							CASE MONTH(hkp.tanggal_selesai)
+								WHEN 1 THEN 'Januari'
+								WHEN 2 THEN 'Februari'
+								WHEN 3 THEN 'Maret'
+								WHEN 4 THEN 'April'
+								WHEN 5 THEN 'Mei'
+								WHEN 6 THEN 'Juni'
+								WHEN 7 THEN 'Juli'
+								WHEN 8 THEN 'Agustus'
+								WHEN 9 THEN 'September'
+								WHEN 10 THEN 'Oktober'
+								WHEN 11 THEN 'November'
+								WHEN 12 THEN 'Desember'
+							END
 					END AS periode,
 					k.nama AS nama_karyawan,
 					j.nama AS nama_jabatan

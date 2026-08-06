@@ -1,3 +1,5 @@
+let option_karyawan = [];
+
 let kpi = {
     
     setting_up: () => {
@@ -129,7 +131,7 @@ let kpi = {
 
             kpi.config_data_penilaian(format(firstDay), format(lastDay), penilai);
         } else {
-            toastr.info("Periode masih kosong")
+            // toastr.info("Periode masih kosong")
         }
 
         kpi.loadDataBobot();
@@ -143,6 +145,9 @@ let kpi = {
             enddate : enddate,
             penilai : penilai,
         }
+
+        // console.log(params);
+        // return false;
 
         $.ajax({
             url : 'hris/KpiKaryawan/configDataPenilaian',
@@ -199,17 +204,21 @@ let kpi = {
 
         let header = {
             nik         : $(".karyawan").val(),
+            penilai     : $(".penilai").val(),
             jabatan     : $(".karyawan").find("option:selected").attr("jabatan"),
             total_score : $(".list_bobot").find(".total_score").val(),
             tgl_mulai   : $(".tgl_mulai").val(),
             tgl_selesai : $(".tgl_selesai").val(),
         };
 
-   
-
         let detail = [];
         let valid = true;
         let pesan = '';
+
+        if (!header.nik){
+            valid = false;
+            pesan = 'Karyawan belum dipilih';
+        }
 
         $(".list_bobot tbody .tr_loop").each(function(index){
 
@@ -284,7 +293,7 @@ let kpi = {
                                 toastr.success(data.message);
 
                                 setTimeout(function(){
-                                    window.location.href = 'hris/KpiKaryawan';
+                                    window.location.href = 'hris/KpiKaryawan/penilaianKpi';
                                 }, 1000);
                             } else {
                                 toastr.error(data.message);
@@ -397,6 +406,94 @@ let kpi = {
 
     },
 
+
+    load_data_penilaian: () => {
+
+        $.ajax({
+            url : 'hris/KpiKaryawan/loadPenilaianKpi',
+            dataType : 'html',
+            beforeSend : function(){ 
+                showLoading(); 
+            },
+            success : function(html){
+                hideLoading(); 
+
+                $(".list_data_penilaian_kpi").html(html);
+            },
+        });
+
+    },
+
+    edit_penilaian : (elm ,e ) =>{
+
+        let params = {
+            id_penilaian : $(elm).attr('id_penilaian'),
+            nik : $(elm).attr('nik'),
+        }
+
+        $.ajax({
+            url : 'hris/KpiKaryawan/edit_penilaian',
+            data : params,
+            type : 'POST',
+            dataType : 'html',
+            beforeSend : function(){ 
+                showLoading(); 
+            },
+            success : function(html){
+                hideLoading();
+
+                let dialog = bootbox.dialog({
+                    title: '<b>Edit Penilaian KPI</b>',
+                    message: html,
+                    size: 'large',
+                    backdrop: true,
+                    onEscape: true,
+                    buttons: {
+                        close: {
+                            label: 'Tutup',
+                            className: 'btn-secondary'
+                        },
+                        save: {
+                            label: 'Simpan',
+                            className: 'btn-primary btn-save-edit',
+                            callback: function (){
+                                kpi.exec_edit_penilaian();
+                                return false;
+                            }
+                        }
+                    }
+                });
+                dialog.on('shown.bs.modal', function () {
+                    dialog.find('.editselect2').select2({
+                        width: '100%',
+                        dropdownParent: dialog.find('.modal-content')
+                    });
+
+                    
+                    $(".penilai").trigger("change");
+                    setTimeout(function(){
+                        $(".karyawan").val(params.nik).trigger("change");
+                    }, 300)
+
+                    $("#edit_penilaian .karyawan").on("select2:opening", function () {
+                        $("#edit_penilaian .penilai").select2("close");
+                    });
+
+                    $("#edit_penilaian .penilai").on("select2:opening", function () {
+                        $("#edit_penilaian .karyawan").select2("close");
+                    });
+                });
+                
+                dialog.on('hidden.bs.modal', function () {
+                   
+                    kpi.setting_up();
+
+                });
+            },
+        });
+
+    },
+
     add_row_setting: (elm, e) => {
         e.preventDefault();
 
@@ -422,27 +519,60 @@ let kpi = {
     config_bobot: (elm, e) => {
         let totalBobot = 0;
 
-        $(".bobot").each(function () {
-            totalBobot += parseFloat($(this).val()) || 0;
-        });
+        let import_xls = $(".kpi-area");
 
-        if (totalBobot > 100) {
-            let nilaiSaatIni = parseFloat($(elm).val()) || 0;
-            let sisaBobot = 100 - (totalBobot - nilaiSaatIni);
+        if(import_xls.length){
+            $(".kpi-area").find(".bobot").each(function () {
+                totalBobot += parseFloat($(this).val()) || 0;
+            });
+    
+            // console.log(totalBobot)
+    
+            if (totalBobot > 100) {
+                let nilaiSaatIni = parseFloat($(elm).val()) || 0;
+                let sisaBobot = 100 - (totalBobot - nilaiSaatIni);
+    
+                $(elm).val(sisaBobot > 0 ? sisaBobot : 0);
+    
+                toastr.warning("Total bobot tidak boleh lebih dari 100%");
+            }
+    
+            totalBobot = 0;
+            $(".kpi-area").find(".bobot").each(function () {
+                totalBobot += parseFloat($(this).val()) || 0;
+            });
+    
+            $(".add-row").prop("disabled", totalBobot >= 100);
+    
+            return true;
+        } else {
 
-            $(elm).val(sisaBobot > 0 ? sisaBobot : 0);
+            $(".bobot").each(function () {
+                totalBobot += parseFloat($(this).val()) || 0;
+            });
+    
+            // console.log(totalBobot)
+    
+            if (totalBobot > 100) {
+                let nilaiSaatIni = parseFloat($(elm).val()) || 0;
+                let sisaBobot = 100 - (totalBobot - nilaiSaatIni);
+    
+                $(elm).val(sisaBobot > 0 ? sisaBobot : 0);
+    
+                toastr.warning("Total bobot tidak boleh lebih dari 100%");
+            }
+    
+            totalBobot = 0;
+            $(".bobot").each(function () {
+                totalBobot += parseFloat($(this).val()) || 0;
+            });
+    
+            $(".add-row").prop("disabled", totalBobot >= 100);
+    
+            return true;
 
-            toastr.warning("Total bobot tidak boleh lebih dari 100%");
         }
 
-        totalBobot = 0;
-        $(".bobot").each(function () {
-            totalBobot += parseFloat($(this).val()) || 0;
-        });
-
-        $(".add-row").prop("disabled", totalBobot >= 100);
-
-        return true;
     },
 
     save_setting : () => {
@@ -450,7 +580,9 @@ let kpi = {
         let header = {
             nama : $("#setting_kpi").find(".nama").val(),
             jabatan : $("#setting_kpi").find(".jabatan").val(),
+            jabatan_nama : $("#setting_kpi").find(".jabatan").find("option:selected").text(),
             periode : $("#setting_kpi").find(".periode").val(),
+            periode_nama : $("#setting_kpi").find(".periode").find("option:selected").text(),
             keterangan : $("#setting_kpi").find(".keterangan").val(),
         };
 
@@ -465,7 +597,7 @@ let kpi = {
         }
 
         if (!header.periode) {
-            toastr.error('Periode harus dipilih.');
+            toastr.error('Periode '+ header.periode_nama + ' untuk jabatan ' + header.jabatan_nama +' sudah di setting');
             return;
         }
 
@@ -553,7 +685,7 @@ let kpi = {
                             toastr.success(data.message);
 
                             setTimeout(function(){
-                                window.location.href = 'hris/KpiKaryawan';
+                                window.location.href = 'hris/KpiKaryawan/settingKpi';
                             }, 1000);
                         } else {
                             toastr.error(data.message);
@@ -768,9 +900,11 @@ let kpi = {
                         if(data.status == 1){
                             toastr.success(data.message);
 
-                            setTimeout(function(){
-                                window.location.href = 'hris/KpiKaryawan';
-                            }, 1000);
+                            // setTimeout(function(){
+                                // window.location.href = 'hris/KpiKaryawan/';
+                            // }, 1000);
+
+                            kpi.load_data_setting();
                         } else {
                             toastr.error(data.message);
                         }
@@ -855,8 +989,11 @@ let kpi = {
     filter_report_by_periode: (elm, e) =>{
 
         let params = {
-            bulan : $(elm).val(),
+            bulan : $(".bulan").val() || null,
+            unit    : $(".unit").val() || null,
+            jabatan : $(".jabatan").val() || null,
         }
+
 
         $.ajax({
             url : 'hris/KpiKaryawan/filterLaporanKpi',
@@ -869,7 +1006,6 @@ let kpi = {
             success : function(html){
                 hideLoading(); 
 
-                
                 $(".tbl-laporan-kpi").html(html);
             },
         });
@@ -1029,7 +1165,7 @@ let kpi = {
         }
 
         bootbox.dialog({
-            title: index,
+            title: 'Nama KPI : ' + index,
             message: detail,
             size: 'large',
             buttons: {
@@ -1048,7 +1184,9 @@ let kpi = {
     ranking_by_periode: (elm, e) => {
 
         let params = {
-            periode : $(elm).val(),
+            periode : $(".bulan").val() || null,
+            unit    : $(".unit").val() || null,
+            jabatan : $(".jabatan").val() || null,
         }
 
         $.ajax({
@@ -1075,7 +1213,7 @@ let kpi = {
             nik : $(elm).attr("nik"),
             bulan : $(".bulan").val(),
             total_score : $(elm).attr("total_score"),
-            nama_karyawan  : $(elm).closest("tr").find("td:eq(01)").html(),
+            nama_karyawan  : $(elm).closest("tr").find("td:eq(03)").html(),
         }
 
         $.ajax({
@@ -1107,14 +1245,1291 @@ let kpi = {
                 toastr.error('Terjadi kesalahan sistem.');
             }
         });
-    }
+    },
+
+
+    cetakLaporanPdf: (elm, e) => {
+
+        if (e) {
+            e.preventDefault();
+        }
+
+        let params = {
+            bulan: $(".bulan").val(),
+        };
+
+        window.open(
+            'hris/KpiKaryawan/cetakLaporanPdf?bulan=' + encodeURIComponent(params.bulan),
+            '_blank'
+        );
+
+    },
+
+    importXlsPenilaian : (elm, e) =>{
+        
+        $.ajax({
+            url : 'hris/KpiKaryawan/loadViewExportPenilaian',
+            type : 'POST',
+            dataType : 'html',
+            beforeSend : function(){
+                showLoading();
+            },
+            success : function(resp){
+
+                let dialog = bootbox.dialog({
+                    title: 'Import Penilaian by Excel',
+                    message: resp,
+                    size: 'large',
+                    buttons: {
+                        tutup: {
+                            label: '<i class="fa fa-close"></i> Tutup',
+                            className: 'btn btn-secondary',
+                            callback: function() {
+                                bootbox.hideAll();
+                            }
+                        },
+                        simpan: {
+                            label: '<i class="fa fa-save"></i> Simpan',
+                            className: 'btn-save-import btn btn-primary',
+                            callback: function() {
+                                bootbox.hideAll();
+
+                                kpi.exec_save_import();
+                            }
+                        },
+                    }
+                })
+
+                dialog.on('shown.bs.modal', function () {
+                    $('body').css('overflow', 'hidden');
+
+
+                    $(this).css('overflow-y', 'scroll');
+
+                    $(".btn-save-import").prop("disabled", true);
+                });
+
+                dialog.on('hidden.bs.modal', function () {
+                    $('body').css('overflow', '');
+                    $('.select2').select2()
+                });
+
+
+
+            },
+            error : function() {
+                hideLoading();
+                toastr.error('Terjadi kesalahan sistem.');
+            }
+        });
+
+    },
+
+
+    exec_import_excel_penilaian: (elm, e) => {
+
+        e.preventDefault();
+
+        
+
+        const uploader = $('<input type="file" accept=".xls,.xlsx">');
+        uploader.trigger("click");
+
+        uploader.on("change", function () {
+
+            $(".kpi-area").html(`
+                <div class="d-flex justify-content-center align-items-center py-3">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                        <span class="visually-hidden"></span>
+                    </div>
+                    <span style="font-size:10px; margin-left:5px;">Memuat data...</span>
+                </div>
+            `);
+
+            const file = this.files[0];
+
+            if (!file) return;
+
+            const ext = file.name.split(".").pop().toUpperCase();
+
+            if (!["XLS", "XLSX"].includes(ext)) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal",
+                    text: 'Import hanya boleh format ".xls" atau ".xlsx"'
+                });
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                const data = new Uint8Array(event.target.result);
+
+                const workbook = XLSX.read(data, {
+                    type: "array"
+                });
+
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+
+                const rows = XLSX.utils.sheet_to_json(worksheet, {
+                    header: 1
+                });
+
+                const data_rows = rows.slice(2).filter(row => row.length > 0);
+
+
+                const data_mapping = data_rows.map(row => ({
+                    nik: row[0],
+                    kode: row[1],
+                    nilai: row[4],
+                    keterangan: row[5]
+                }));
+
+                // console.log(data_mapping);
+
+                
+                const nikKosong = data_mapping.find(item => !item.nik);
+                if (nikKosong) {
+                    toastr.info("Masih ada NIK yang kosong pada file Excel.");
+                    return;
+                }
+
+
+                let params = [];
+                let valid = true;
+
+                const totalBobot = data_mapping.reduce((total, item) => {
+                    return total + Number(item.bobot);
+                }, 0);
+
+                if (totalBobot > 100) {
+                    toastr.info(`Total bobot tidak boleh lebih dari 100%. Saat ini: ${totalBobot}%`);
+                    return;
+                }
+
+                // console.log(totalBobot);
+
+
+                const dataTidakValid = data_mapping.find(item =>
+                    item.nilai === "" ||
+                    item.nilai === null ||
+                    item.nilai === undefined ||
+                    Number(item.nilai) > 100
+                );
+
+                if (dataTidakValid) {
+                    toastr.info("Nilai tidak boleh kosong dan tidak boleh lebih dari 100.");
+                    return;
+                }
+
+                params = data_mapping.map(item => ({
+                    nik: item.nik,
+                    kode: item.kode,
+                    nilai: item.nilai,
+                    keterangan: item.keterangan
+                }));
+
+                if (!valid) {
+                    toastr.info("Masih ada nilai yang kosong!");
+                    return;
+                } else {
+
+                    $.ajax({
+                        url: 'hris/KpiKaryawan/exec_data_penilaian',
+                        type: 'POST',
+                        data: JSON.stringify(params),
+                        contentType: 'application/json',
+                        processData: false,
+                        dataType: 'html',
+                        beforeSend: function () {
+                            showLoading();
+                        },
+                        success: function (resp) {
+                            hideLoading();
+                          
+                            $(".kpi-area").html(resp)
+
+                            $(".select2").select2();
+                            
+                            let bulan   = $(".kpi-area").find('.bulan').val();
+                            let penilai = $(".kpi-area").find('.penilai').val() ?? null;
+                            // console.log(bulan)
+                            if (bulan) {
+                                toastr.success('Import berhasil');
+                                
+                                let tahun = new Date().getFullYear();
+
+                                let firstDay = new Date(tahun, bulan - 1, 1);
+                                let lastDay = new Date(tahun, bulan, 0);
+
+                                let format = (d) => {
+                                    let year = d.getFullYear();
+                                    let month = String(d.getMonth() + 1).padStart(2, '0');
+                                    let day = String(d.getDate()).padStart(2, '0');
+                                    return `${year}-${month}-${day}`;
+                                };
+
+                                $('.tgl_mulai').val(format(firstDay));
+                                $('.tgl_selesai').val(format(lastDay));
+
+                            }
+
+                            let trloop = $(".tr_loop").length;
+
+                            if (trloop > 0 ){
+                                $(".btn-save-import").prop("disabled", false);
+                            }
+
+
+                            $('.select2').select2({
+                                width: '100%',
+                                dropdownParent: $(".bootbox"),
+                            });
+
+                        },
+                        error: function () {
+                            hideLoading();
+                            toastr.error('Terjadi kesalahan sistem.');
+                        }
+                    });
+                }
+
+               
+
+            };
+
+            reader.readAsArrayBuffer(file);
+
+        });
+
+    },
+
+    exec_save_import: () => {
+
+        let header = {
+            nik         : $(".kpi-area").find(".karyawan").find("option:selected").attr("nik_karyawan"),
+            jabatan     : $(".kpi-area").find(".nama-jabatan").attr("kode_jabatan"),
+            penilai     : $(".kpi-area").find(".penilai").val(),
+            total_score : $(".kpi-area").find(".table").find(".total_score").val(),
+            tgl_mulai   : $(".kpi-area").find(".tgl_mulai").val(),
+            tgl_selesai : $(".kpi-area").find(".tgl_selesai").val(),
+        };
+
+        // console.log(header);
+        // return false;
+
+        let detail = [];
+        let valid = true;
+        let pesan = '';
+
+        $(".kpi-area .table tbody .tr_loop").each(function(index){
+
+            let nilai = $(this).find("td:eq(3) input").val();
+
+            if ($.trim(nilai) == '') {
+                valid = false;
+
+                let nama_kpi = $(this).find("td:eq(1)").text().trim();
+
+                pesan = 'Nilai KPI "' + nama_kpi + '" belum diisi.';
+                return false;
+            }
+
+            let temp = {
+                kode_index : $(this).attr("kode_index"),
+                // kode_kpi   : $(this).find("td:eq(0)").html().trim(),
+                nama_kpi   : $(this).find("td:eq(1)").html().trim(),
+                nilai      : nilai,
+                score      : $(this).find("td:eq(4) input").val(),
+                keterangan : $(this).find("td:eq(5) textarea").val(),
+            };
+
+            detail.push(temp);
+        });
+
+        if (!valid) {
+            toastr.error(pesan);
+            return;
+        }
+
+        let params = {
+            header : header,
+            detail : detail,
+        };
+
+        // console.log(params);
+        // return false;
+
+        let config_tr = $(".kpi-area .table tbody .tr_loop").length;
+        
+        if (config_tr >= 1){
+
+            bootbox.confirm({
+                title: '<i class="glyphicon glyphicon-question-sign"></i> Konfirmasi',
+                message: 'Apakah Anda yakin ingin menyimpan penilaian KPI ini?',
+                buttons: {
+                    confirm: {
+                        label: 'Ya',
+                        className: 'btn-primary'
+                    },
+                    cancel: {
+                        label: 'Batal',
+                        className: 'btn-default'
+                    }
+                },
+                callback: function(result) {
+
+                    if (!result) {
+                        return;
+                    }
+
+                    $.ajax({
+                        url : 'hris/KpiKaryawan/save',
+                        data : params,
+                        type : 'POST',
+                        dataType : 'json',
+                        beforeSend : function(){
+                            showLoading();
+                        },
+                        success : function(data){
+                            hideLoading();
+
+                            if(data.status == 1){
+                                toastr.success(data.message);
+
+                                setTimeout(function(){
+                                    // window.location.href = 'hris/KpiKaryawan/PenilaianKpi';
+                                    kpi.load_data_penilaian();
+
+                                    $('a[data-tab="list_data"]').trigger('click');
+                                }, 1000);
+                            } else {
+                                toastr.error(data.message);
+                            }
+                        },
+                        error : function() {
+                            hideLoading();
+                            toastr.error('Terjadi kesalahan sistem.');
+                        }
+                    });
+
+                }
+            });
+
+        } else {
+            toastr.info("Bobot periode tersebut tidak tersedia")
+        }
+    },
+
+
+    downloadTemplatePenilaian: (elm, e) => {
+
+         $.ajax({
+            url: 'hris/KpiKaryawan/downloadTemplatePenilaian',
+            type: 'POST',
+            dataType: 'html',
+            beforeSend: function () {
+                showLoading();
+            },
+            success: function (resp) {
+                hideLoading();
+
+                let dialog = bootbox.dialog({
+                    title: 'Download Template Penilaian',
+                    message: resp,
+                    size: 'medium',
+                    buttons: {
+                        tutup: {
+                            label: '<i class="fa fa-close"></i> Tutup',
+                            className: 'btn btn-secondary',
+                            callback: function() {
+                                bootbox.hideAll();
+                            }
+                        },
+                        download: {
+                            label: '<i class="fa fa-download"></i> Download',
+                            className: 'btn-save-import btn btn-primary',
+                            callback: function() {
+                                
+
+                                let params = {
+                                    periode : dialog.find(".periode").val(),
+                                    jabatan : dialog.find(".jabatan").val(),
+                                    karyawan : dialog.find(".karyawan").val(),
+                                }
+
+                                if (!params.periode) {
+                                    toastr.warning("Silakan pilih periode.");
+                                    dialog.find(".periode").focus();
+                                    return;
+                                }
+
+                                if (!params.jabatan) {
+                                    toastr.warning("Silakan pilih jabatan.");
+                                    dialog.find(".jabatan").focus();
+                                    return;
+                                }
+
+
+                                kpi.execDownloadTemplatePenilaian(params);
+                            }
+                        },
+                    }
+                })
+
+                dialog.on('shown.bs.modal', function () {
+                    $(this).find('.select2').select2({
+                        width: '100%',
+                        dropdownParent: dialog
+                    });
+                });
+                
+            },
+            error: function () {
+                hideLoading();
+                toastr.error('Terjadi kesalahan sistem.');
+            }
+        });
+
+    },
+
+    downloadTemplateSetting: (elm, e) => {
+
+         $.ajax({
+            url: 'hris/KpiKaryawan/downloadTemplateSetting',
+            type: 'POST',
+            dataType: 'html',
+            beforeSend: function () {
+                showLoading();
+            },
+            success: function (resp) {
+                hideLoading();
+
+                let dialog = bootbox.dialog({
+                    title: 'Download Template Setting',
+                    message: resp,
+                    size: 'medium',
+                    buttons: {
+                        tutup: {
+                            label: '<i class="fa fa-close"></i> Tutup',
+                            className: 'btn btn-secondary',
+                            callback: function() {
+                                bootbox.hideAll();
+                            }
+                        },
+                        download: {
+                            label: '<i class="fa fa-download"></i> Download',
+                            className: 'btn-save-import btn btn-primary',
+                            callback: function() {
+                                
+
+                                let params = {
+                                    periode : dialog.find(".periode").val(),
+                                    jabatan : dialog.find(".jabatan").val(),
+                                }
+
+                                if (!params.periode) {
+                                    toastr.warning("Silakan pilih periode.");
+                                    dialog.find(".periode").focus();
+                                    return;
+                                }
+
+                                if (!params.jabatan) {
+                                    toastr.warning("Silakan pilih jabatan.");
+                                    dialog.find(".jabatan").focus();
+                                    return;
+                                }
+
+
+                                kpi.execDownloadTemplateSetting(params);
+                            }
+                        },
+                    }
+                })
+
+                dialog.on('shown.bs.modal', function () {
+                    $(this).find('.select2').select2({
+                        width: '100%',
+                        dropdownParent: dialog
+                    });
+                });
+                
+            },
+            error: function () {
+                hideLoading();
+                toastr.error('Terjadi kesalahan sistem.');
+            }
+        });
+
+    },
+
+    selectImportKaryawan: (elm, e) => {
+
+        let params = {
+            nik: $(elm).val(),
+            jabatan: $(elm).find("option:selected").attr("jabatan"),
+        };
+
+        let $jabatan = $("#filter_import").find(".jabatan");
+
+        const exist = $jabatan.find(`option[value="${params.jabatan}"]`).length > 0;
+
+        if (exist) {
+            $jabatan.val(params.jabatan).prop("disabled", true).trigger("change");
+            $(".btn-save-import").prop("disabled", false);
+        } else {
+            $jabatan.prop("selectedIndex", 0).prop("disabled", true).trigger("change");
+            $(".btn-save-import").prop("disabled", true);
+        }
+
+        $.ajax({
+            url: 'hris/KpiKaryawan/configDataPeriodeImport',
+            data: params,
+            type: 'POST',
+            dataType: 'json',
+            success: function(data) {
+
+               const $periode = $(".periode");
+
+                if (!$periode.data("default-options")) {
+                    $periode.data("default-options", $periode.html());
+                }
+
+                $periode.html($periode.data("default-options"));
+
+                const bulanAda = new Set();
+
+                Object.values(data).forEach(items => {
+                    items.forEach(item => {
+                        const bulan = new Date(item.tanggal_mulai).getMonth() + 1;
+                        bulanAda.add(bulan);
+                    });
+                });
+
+                if (bulanAda.size === 0) {
+                    $periode.prop("selectedIndex", 0).trigger("change");
+                    return;
+                }
+
+                $periode.find("option").each(function () {
+                    const value = parseInt($(this).val());
+
+                    if (bulanAda.has(value)) {
+                        $(this).remove();
+                    }
+                });
+
+                $periode.prop("selectedIndex", 0).trigger("change");
+
+            }
+        });
+    },
+
+    execDownloadTemplatePenilaian: (params) => {
+        bootbox.hideAll();
+
+        
+        $.ajax({
+            url: 'hris/KpiKaryawan/checkDataTemplatePenilaian',
+            type: 'GET',
+            data: params,
+            dataType: 'json',
+            success: function(res) {
+                if (res.status) {
+                    window.location.href = 'hris/KpiKaryawan/execDownloadTemplatePenilaian?' + $.param(params);
+                } else {
+                    toastr.info(res.message);
+                }
+            }
+        });
+        
+        // window.location.href = 'hris/KpiKaryawan/execDownloadTemplate?periode=' + encodeURIComponent(params.periode) + '&jabatan=' + encodeURIComponent(params.jabatan);
+    },
+
+    execDownloadTemplateSetting: (params) => {
+        bootbox.hideAll();
+
+        // console.log(params);
+        // return false;
+
+        
+        // $.ajax({
+        //     url: 'hris/KpiKaryawan/checkDataTemplateSetting',
+        //     type: 'GET',
+        //     data: params,
+        //     dataType: 'json',
+        //     success: function(res) {
+        //         if (res.status) {
+                    window.location.href = 'hris/KpiKaryawan/execDownloadTemplateSetting?' + $.param(params);
+        //         } else {
+        //             toastr.info(res.message);
+        //         }
+        //     }
+        // });
+        
+        // window.location.href = 'hris/KpiKaryawan/execDownloadTemplate?periode=' + encodeURIComponent(params.periode) + '&jabatan=' + encodeURIComponent(params.jabatan);
+    },
+
+
+
+    importXlsKpiSetting : () => {
+
+        $.ajax({
+            url : 'hris/KpiKaryawan/loadViewExportSettingKpi',
+            type : 'POST',
+            dataType : 'html',
+            beforeSend : function(){
+                showLoading();
+            },
+            success : function(resp){
+
+                let dialog = bootbox.dialog({
+                    title: 'Import Setting KPI by Excel',
+                    message: resp,
+                    size: 'large',
+                    buttons: {
+                        tutup: {
+                            label: '<i class="fa fa-close"></i> Tutup',
+                            className: 'btn btn-secondary',
+                            callback: function() {
+                                bootbox.hideAll();
+                            }
+                        },
+                        simpan: {
+                            label: '<i class="fa fa-save"></i> Simpan',
+                            className: 'btn-save-import btn btn-primary',
+                            callback: function() {
+                                bootbox.hideAll();
+                                
+                                kpi.save_import_excel_setting();
+
+                                
+                            }
+                        },
+                    }
+                })
+
+                dialog.on('shown.bs.modal', function () {
+
+                    $(this).find('.select2').select2({
+                        width: '100%',
+                        dropdownParent: dialog
+                    });
+
+                    $('body').css('overflow', 'hidden');
+                });
+
+                dialog.on('hidden.bs.modal', function () {
+                    $('body').css('overflow', '');
+                });
+
+                dialog.on('shown.bs.modal', function () {
+                    $(this).css('overflow-y', 'scroll');
+
+                    $(".btn-save-import").prop("disabled", true)
+                });
+
+            },
+            error : function() {
+                hideLoading();
+                toastr.error('Terjadi kesalahan sistem.');
+            }
+        });
+
+    },
+
+    exec_import_excel_setting: (elm, e) => {
+
+        e.preventDefault();
+
+        const uploader = $('<input type="file" accept=".xls,.xlsx">');
+        uploader.trigger("click");
+
+        uploader.on("change", function () {
+
+            const file = this.files[0];
+
+            if (!file) return;
+
+            const ext = file.name.split(".").pop().toUpperCase();
+
+            if (!["XLS", "XLSX"].includes(ext)) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal",
+                    text: 'Import hanya boleh format ".xls" atau ".xlsx"'
+                });
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                const data = new Uint8Array(event.target.result);
+
+                const workbook = XLSX.read(data, {
+                    type: "array"
+                });
+
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+
+                const rows = XLSX.utils.sheet_to_json(worksheet, {
+                    header: 1
+                });
+
+                // console.log(rows);
+                // const header = [
+                //     worksheet["A1"]?.v,
+                //     worksheet["A3"]?.v,
+                //     worksheet["B3"]?.v,
+                //     worksheet["C3"]?.v
+                // ];
+                // console.log(header);
+
+                const header = {
+                    nama_template: 'KPI ' + worksheet["A8"]?.v + ' Periode ' + worksheet["B8"]?.v,
+                    jabatan: worksheet["A8"]?.v,
+                    periode: worksheet["B8"]?.v,
+                    keterangan: worksheet["C8"]?.v
+                };
+
+                const detail = rows.slice(10)
+                    .filter(row => row[0]) 
+                    .map(row => ({
+                        nama_kpi: row[0],
+                        bobot: row[1],
+                        keterangan: row[2]
+                    }));
+
+                
+
+                const totalBobot = detail.reduce((total, item) => {
+                    return total + Number(item.bobot);
+                }, 0);
+
+                if (totalBobot > 100) {
+                    toastr.info(`Total bobot tidak boleh lebih dari 100%. Total saat ini: ${totalBobot}%`);
+                    return;
+                }
+                        
+
+
+                const bulan = {
+                    JANUARI: "1",
+                    FEBRUARI: "2",
+                    MARET: "3",
+                    APRIL: "4",
+                    MEI: "5",
+                    JUNI: "6",
+                    JULI: "7",
+                    AGUSTUS: "8",
+                    SEPTEMBER: "9",
+                    OKTOBER: "10",
+                    NOVEMBER: "11",
+                    DESEMBER: "12"
+                };
+
+                if(detail.length > 0){
+
+                    $.ajax({
+                        url : 'hris/KpiKaryawan/checkDataSetting',
+                        data : {
+                            periode : bulan[header.periode],
+                            jabatan : header.jabatan
+                        },
+                        type : 'POST',
+                        dataType : 'json',
+                        beforeSend : function(){
+                            showLoading();
+                        },
+                        success : function(data){
+                            hideLoading();
+    
+                            if(data.status == 0){
+    
+                                $(".kpi-area").find(".nama").val(header.nama_template);
+                                $(".kpi-area").find(".jabatan").val((header.jabatan || "").toLowerCase()).trigger("change");
+                                $(".kpi-area").find(".periode").val(bulan[(header.periode || "").toUpperCase()]).trigger("change");
+                                $(".kpi-area").find(".keterangan").val(header.keterangan);
+    
+                                let loop = [];
+    
+                                // Header
+                                loop.push(`
+                                    <div class="row mb-2 fw-bold">
+                                        <div class="col-5">Nama KPI</div>
+                                        <div class="col-5">Keterangan</div>
+                                        <div class="col-2">Bobot (%)</div>
+                                    </div>
+                                `);
+    
+                                detail.forEach(function(item) {
+                                    loop.push(`
+                                        <div class="row mb-3 align-items-center row-input">
+                                            <div class="col-5">
+                                                <input class="form-control nama_kpi" type="text" value="${item.nama_kpi}">
+                                            </div>
+    
+                                            <div class="col-5">
+                                                <input class="form-control keterangan_detail" type="text" value="${item.keterangan ?? ''}">
+                                            </div>
+    
+                                            <div class="col-2">
+                                                <input class="form-control bobot text-right" type="number" value="${item.bobot}" oninput="kpi.config_bobot(this, event)">
+                                            </div>
+                                        </div>
+                                    `);
+                                });
+    
+                                $(".detail-input-import").html(loop.join(""));
+    
+                                toastr.success("Import berhasil");
+                                $(".btn-save-import").prop("disabled", false);
+
+                               
+                            } else {
+                                toastr.error(data.message);
+                                $(".btn-save-import").prop("disabled", true);
+                            }
+                        },
+                        error : function() {
+                            hideLoading();
+                            toastr.error('Terjadi kesalahan sistem.');
+                        }
+                    });
+                } else {
+                    toastr.info("KPI Kosong")
+                }
+
+
+            };
+
+            reader.readAsArrayBuffer(file);
+
+        });
+
+    },
+
+    save_import_excel_setting: () =>{
+
+        let header = {
+            nama : $(".kpi-area").find(".nama").val(),
+            jabatan : $(".kpi-area").find(".jabatan").val(),
+            periode : $(".kpi-area").find(".periode").val(),
+            keterangan : $(".kpi-area").find(".keterangan").val(),
+        };
+
+        if (!header.nama) {
+            toastr.error('Nama template harus diisi.');
+            return;
+        }
+
+        if (!header.jabatan) {
+            toastr.error('Jabatan harus dipilih.');
+            return;
+        }
+
+        if (!header.periode) {
+            toastr.error('Periode harus dipilih.');
+            return;
+        }
+
+        let detail = [];
+        let totalBobot = 0;
+        let valid = true;
+
+        $(".kpi-area .row-input").each(function(index){
+
+            let namaKpi = $(this).find(".nama_kpi").val();
+            let keterangan = $(this).find(".keterangan_detail").val();
+            let bobot = parseFloat($(this).find(".bobot").val()) || 0;
+
+            if (!namaKpi) {
+                toastr.error(`Nama KPI pada baris ${index + 1} harus diisi.`);
+                valid = false;
+                return false;
+            }
+
+            if (bobot <= 0) {
+                toastr.error(`Bobot pada baris ${index + 1} harus lebih dari 0.`);
+                valid = false;
+                return false;
+            }
+
+            totalBobot += bobot;
+
+            detail.push({
+                index_kpi : namaKpi,
+                keterangan : keterangan,
+                bobot : bobot
+            });
+        });
+
+        if (!valid) {
+            return;
+        }
+
+        if (detail.length === 0) {
+            toastr.error('Minimal harus ada 1 KPI.');
+            return;
+        }
+
+        if (totalBobot !== 100) {
+            toastr.error(`Total bobot harus 100%. Saat ini ${totalBobot}%.`);
+            return;
+        }
+
+        let params = {
+            header : header,
+            detail : detail,
+        };
+
+        // console.log(params);
+        // return false;
+
+        bootbox.confirm({
+            title: '<i class="glyphicon glyphicon-question-sign"></i> Konfirmasi',
+            message: 'Apakah Anda yakin ingin menyimpan Setting KPI ini?',
+            buttons: {
+                confirm: {
+                    label: 'Ya',
+                    className: 'btn-primary'
+                },
+                cancel: {
+                    label: 'Batal',
+                    className: 'btn-default'
+                }
+            },
+            callback: function(result) {
+
+                if (!result) {
+                    return;
+                }
+
+                $.ajax({
+                    url : 'hris/KpiKaryawan/saveSetting',
+                    data : params,
+                    type : 'POST',
+                    dataType : 'json',
+                    beforeSend : function(){
+                        showLoading();
+                    },
+                    success : function(data){
+                        hideLoading();
+
+                        if(data.status == 1){
+                            toastr.success(data.message);
+
+                            setTimeout(function(){
+                                window.location.href = 'hris/KpiKaryawan/settingKpi';
+                            }, 1000);
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                    error : function() {
+                        hideLoading();
+                        toastr.error('Terjadi kesalahan sistem.');
+                    }
+                });
+            }
+        });
+    },
+
+    edit_get_karyawan_by_penilai: (elm, e) => {
+
+        let params = {
+            penilai : $(elm).val(),
+            jabatan : $("#edit_penilaian").attr("jabatan_real"),
+        }
+
+        $.ajax({
+            url : 'hris/KpiKaryawan/configGetKaryawanByPenilai',
+            data : params,
+            type : 'POST',
+            dataType : 'html',
+            beforeSend : function(){ 
+                showLoading(); 
+            },
+            success: function(data){
+                hideLoading();
+
+                $(".select-edit-karyawan").html(data);
+
+                $('.karyawan').select2();
+                $('.penilai').select2();
+
+
+                if ($(".karyawan").find("option").length <= 2) {
+                    $(".btn-save-edit").prop("disabled", true);
+                    $("#table_edit_penilaian").hide();
+
+                    toastr.info("Tidak ada karyawan untuk penilai dan jabatan tersebut.");
+                } else {
+                    $(".btn-save-edit").prop("disabled", false);
+                    $("#table_edit_penilaian").show();
+                }
+
+                $(".bootbox").css({
+                    "overflow-y": "auto",
+                    "overflow-x": "hidden"
+                });
+                
+            },
+        });
+
+    },
+
+    exec_edit_penilaian: () =>{
+
+        let header = {
+            id_data     : $("#edit_penilaian").attr("id_data"),
+            nik         : $("#edit_penilaian").find(".karyawan").val(),
+            penilai     : $("#edit_penilaian").find(".penilai").val(),
+            jabatan     : $("#edit_penilaian").find(".karyawan").find("option:selected").attr("jabatan"),
+            total_score : $("#edit_penilaian").find("#table_edit_penilaian").find(".total_score").val(),
+            bulan       : $("#edit_penilaian").find(".bulan").val(),
+        };
+
+        if (!header.nik) {
+            toastr.info("Karyawan belum dipilih.");
+            $("#edit_penilaian").find(".karyawan").select2("open");
+            return;
+        }
+   
+
+        let detail = [];
+        let valid = true;
+        let pesan = '';
+
+        $("#table_edit_penilaian tbody .tr_loop").each(function(index){
+
+            let nilai = $(this).find("td:eq(3) input").val();
+
+            if ($.trim(nilai) == '') {
+                valid = false;
+
+                let nama_kpi = $(this).find("td:eq(1)").text().trim();
+
+                pesan = 'Nilai KPI "' + nama_kpi + '" belum diisi.';
+                return false;
+            }
+
+            let temp = {
+                kode_index : $(this).attr("kode_index"),
+                // kode_kpi   : $(this).find("td:eq(0)").html().trim(),
+                nama_kpi   : $(this).find("td:eq(1)").html().trim(),
+                nilai      : nilai,
+                score      : $(this).find("td:eq(4) input").val(),
+                keterangan : $(this).find("td:eq(5) textarea").val(),
+            };
+
+            detail.push(temp);
+        });
+
+        if (!valid) {
+            toastr.error(pesan);
+            return;
+        }
+
+        let params = {
+            header : header,
+            detail : detail,
+        };
+
+        // console.log(params);
+        // return false;
+
+        let config_tr = $("#table_edit_penilaian tbody .tr_loop").length;
+        
+        if (config_tr >= 1){
+
+            bootbox.confirm({
+                title: '<i class="glyphicon glyphicon-question-sign"></i> Konfirmasi',
+                message: 'Apakah Anda yakin ingin menyimpan penilaian KPI ini?',
+                buttons: {
+                    confirm: {
+                        label: 'Ya',
+                        className: 'btn-primary'
+                    },
+                    cancel: {
+                        label: 'Batal',
+                        className: 'btn-default'
+                    }
+                },
+                callback: function(result) {
+
+                    if (!result) {
+                        return;
+                    }
+
+                    $.ajax({
+                        url : 'hris/KpiKaryawan/exec_edit_penilaian',
+                        data : params,
+                        type : 'POST',
+                        dataType : 'json',
+                        beforeSend : function(){
+                            showLoading();
+                        },
+                        success : function(data){
+                            hideLoading();
+
+                            if(data.status == 1){
+                                toastr.success(data.message);
+                                $(".bootbox").modal("hide");
+
+                                setTimeout(function(){
+                                    // window.location.href = 'hris/KpiKaryawan/penilaianKpi';
+                                    penilaian.loadDataBobot();
+                                }, 1000);
+                            } else {
+                                toastr.error(data.message);
+                            }
+                        },
+                        error : function() {
+                            hideLoading();
+                            toastr.error('Terjadi kesalahan sistem.');
+                        }
+                    });
+
+                }
+            });
+
+        } else {
+            toastr.info("Bobot periode tersebut tidak tersedia")
+        }
+
+    },
+
+    delete_penilaian: (elm, e) => {
+
+        let params = {
+            id_data : $(elm).attr("id_penilaian"),
+        }
+
+        bootbox.confirm({
+            title: "Konfirmasi",
+            message: "Yakin ingin menghapus data penilaian KPI ini?",
+            buttons: {
+                confirm: {
+                    label: "Ya",
+                    className: "btn-danger"
+                },
+                cancel: {
+                    label: "Batal",
+                    className: "btn-secondary"
+                }
+            },
+            callback: function (result) {
+
+                if (result) {
+
+                    $.ajax({
+                        url: 'hris/KpiKaryawan/delete_penilaian',
+                        type: 'POST',
+                        dataType: 'JSON',
+                        data: params,
+                        beforeSend: function () {
+                            showLoading();
+                        },
+                        success: function (data) {
+
+                            hideLoading();
+
+                            bootbox.alert(data.message, function () {
+                                if (data.status == 1) {
+                                //    window.location.reload();
+
+                                kpi.load_data_penilaian();
+                                }
+                            });
+
+                        },
+                        error: function (xhr) {
+
+                            hideLoading();
+
+                            bootbox.alert('Terjadi kesalahan pada server.');
+
+                            console.log(xhr.responseText);
+                        }
+                    });
+
+                }
+
+            }
+        });
+
+    },
+
+
+    edit_checkKaryawanPeriode: (elm, e) => {
+
+        let params = {
+            bulan           : $("#edit_penilaian").find(".bulan").val(),
+            bulan_lama      : $("#edit_penilaian").attr("periode_lama"),      
+            nik_lama        : $("#edit_penilaian").attr("nik_lama"),
+            jabatan         : $("#edit_penilaian").attr("jabatan_real"),
+            nik_karyawan    : $("#edit_penilaian").find(".karyawan").val(),
+        }
+
+        // console.log(params)
+        if (params.nik_lama != params.nik_karyawan || params.bulan_lama != params.bulan){
+            
+            $.ajax({
+                url: 'hris/KpiKaryawan/edit_checkKaryawanPeriode',
+                type: 'POST',
+                dataType: 'JSON',
+                data: params,
+                beforeSend: function () {
+                    showLoading();
+                },
+                success: function (data) {
+    
+                    hideLoading();
+
+                    if ( data.status == 0 ){
+                        toastr.info(data.message)
+                        $(".btn-save-edit").prop("disabled", true);
+                        $("#table_edit_penilaian").css("display", "none");
+                    } else {
+                        $("#table_edit_penilaian").css("display", "block");
+                        $(".btn-save-edit").prop("disabled", false);
+                    }
+    
+                },
+                error: function (xhr) {
+    
+                    hideLoading();
+    
+                    bootbox.alert('Terjadi kesalahan pada server.');
+    
+                    console.log(xhr.responseText);
+                }
+            });
+
+        }  else {
+            $(".btn-save-edit").prop("disabled", false);
+            $("#table_edit_penilaian").css("display", "block");
+        }
+
+        
+
+    },
 }
 
 $(document).ready(function() {
 
     kpi.setting_up();
 
-    kpi.load_data_approval();
+    if ($("#approval_kpi").length){
+        kpi.load_data_approval();
+    }
 
     if ($("#setting_kpi").length) {
         kpi.load_data_setting();
@@ -1124,4 +2539,19 @@ $(document).ready(function() {
         kpi.get_data_periode();
     }
 
+    if ($("#laporan_kpi").length) {
+        $(".bulan").trigger("change");
+    }
+
+    if ($("#penilaian_id").length) {
+        $(".bulan").trigger("change");
+        kpi.load_data_penilaian();
+        kpi.setting_up();
+    }
+
+    if( $("#edit_penilaian").length ){
+        $(".penilai").trigger("change");
+        // console.log(123)
+    }
 });
+

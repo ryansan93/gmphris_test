@@ -14,7 +14,7 @@
            
             <?php foreach($list as $l){?>
                 <tr class="data-row" id_data="<?php echo $l['id'] ?>" style="<?php echo !empty($l['selected']) ? 'background-color: #FFF9D6;' : '' ?>">
-                    <td class="text-left"><?php echo $l['nama'] ?></td>
+                    <td class="text-left"><?php echo ucwords(strtolower($l['nama'])) ?></td>
                     <td class="text-center"><?php echo $l['nama_kategori'] ?></td>
                     <td class="text-center"><?php echo $l['keterangan'] ?></td>
                     <td class="text-center"><?php echo tglIndonesia($l['tgl_berlaku'], "-" , " ") ?></td>

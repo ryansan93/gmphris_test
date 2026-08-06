@@ -30,7 +30,7 @@
     }
 </style>
 <script src="assets/chart/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix"></script>
+<script src="assets/chart/chartjs-chart-matrix.js"></script>
 
 
 <fieldset style="margin-bottom: 15px;">
@@ -69,30 +69,50 @@
 
 <div style="display:flex; flex-direction:row; justify-content:space-between; gap:10px; flex-wrap:wrap;">
 
-    <div style="display:flex; flex-wrap:wrap; gap:10px;">
-
+    <div style="display:flex; flex-wrap:wrap; gap:10px; ">
+   
+        <?php if (isset($akses_child['hris/KpiKaryawan/penilaianKpi']) && $akses_child['hris/KpiKaryawan/penilaianKpi']['a_view'] == 1) { ?>
         <!-- Penilaian KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
-            <div style="display:flex; gap:10px; height:100%;">
-                <div>
-                    <div style="width:50px; display:flex; padding:10px; border-radius:50%; background:#3B82F6; justify-content:center; align-items:center;">
-                        <i class="fa fa-pencil-square-o" style="font-size:30px; color:white;"></i>
+            <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:170px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
+                <div style="display:flex; gap:10px; height:100%;">
+                    <div>
+                        <div style="width:50px; display:flex; padding:10px; border-radius:50%; background:#3B82F6; justify-content:center; align-items:center;">
+                            <i class="fa fa-pencil-square-o" style="font-size:30px; color:white;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; flex:1;">
+                        <span style="font-size:12px; color:#3B82F6; font-weight:bold;">Penilaian KPI</span>
+                        <span style="font-size:12px; color:#1F2937;">Input dan kelola penilaian KPI Karyawan</span>
+
+                        <div style="display:flex; flex-direction:column; gap:4px; margin-top:auto;">
+
+                            <button onclick="kpi.downloadTemplatePenilaian(this, event)"style="width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
+                                Download Template
+                            </button>
+
+                            <div style="display:flex; gap:4px;">
+                                <button class="btn-penilaian" onclick="window.location.href='hris/KpiKaryawan/penilaianKpi'" style="flex:1; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
+                                    Buka
+                                </button>
+
+                                <button onclick="kpi.importXlsPenilaian(this, event)" style="flex:1; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
+                                    Import
+                                </button>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
-
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <span style="font-size:12px; color:#3B82F6; font-weight:bold;">Penilaian KPI</span>
-                    <span style="font-size:12px; color:#1F2937;">Input dan kelola penilaian KPI Karyawan</span>
-
-                    <button class="btn-penilaian" onclick="window.location.href='hris/KpiKaryawan/penilaianKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
-                        Buka →
-                    </button>
-                </div>
             </div>
-        </div>
 
+        <?php } ?>
+ 
+
+        <?php if (isset($akses_child['hris/KpiKaryawan/approvalKpi']) && $akses_child['hris/KpiKaryawan/approvalKpi']['a_view'] == 1) { ?>
         <!-- Approval KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
+        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:170px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
             <div style="display:flex; gap:10px; height:100%;">
                 <div>
                     <div style="width:50px; display:flex; padding:10px; border-radius:50%; background:#FFB859; justify-content:center; align-items:center;">
@@ -105,14 +125,16 @@
                     <span style="font-size:12px; color:#1F2937;">Review dan approval penilaian KPI</span>
 
                     <button onclick="window.location.href='hris/KpiKaryawan/approvalKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
-                        Buka →
+                        Buka
                     </button>
                 </div>
             </div>
         </div>
+        <?php } ?>
 
+        <?php if (isset($akses_child['hris/KpiKaryawan/rankingKpi']) && $akses_child['hris/KpiKaryawan/rankingKpi']['a_view'] == 1) { ?>
         <!-- Ranking KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
+        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:170px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
             <div style="display:flex; gap:10px; height:100%;">
                 <div>
                     <div style="width:50px; display:flex; padding:10px; border-radius:50%; background: #63E04C; justify-content:center; align-items:center;">
@@ -125,14 +147,16 @@
                     <span style="font-size:12px; color: #1F2937;">Lihat ranking KPI karyawan berdasarkan periode</span>
 
                     <button  onclick="window.location.href='hris/KpiKaryawan/rankingKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
-                        Buka →
+                        Buka
                     </button>
                 </div>
             </div>
         </div>
+        <?php } ?>
 
+        <?php if (isset($akses_child['hris/KpiKaryawan/settingKpi']) && $akses_child['hris/KpiKaryawan/settingKpi']['a_view'] == 1) { ?>        
         <!-- Target KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
+        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:170px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
             <div style="display:flex; gap:10px; height:100%;">
                 <div>
                     <div style="position:relative; width:50px; height:50px; border-radius:50%; background: #808080; display:flex; justify-content:center; align-items:center;">
@@ -145,15 +169,31 @@
                     <span style="font-size:12px; color: #a5a5a5; font-weight:bold;">Setting KPI</span>
                     <span style="font-size:12px; color: #1F2937;">Kelola target KPI per jabatan dan posisi</span>
 
-                    <button onclick="window.location.href='hris/KpiKaryawan/settingKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
-                        Buka →
-                    </button>
+                    <div style="display:flex; flex-direction:column; gap:4px; margin-top:auto;">
+                        <button onclick="kpi.downloadTemplateSetting(this, event)"style="width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
+                            Download Template
+                        </button>
+
+                        <div style="display:flex; gap:4px;">
+                            <button onclick="window.location.href='hris/KpiKaryawan/settingKpi'" style="margin-top:auto; width:100%; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
+                                Buka
+                            </button>
+
+                            <button onclick="kpi.importXlsKpiSetting(this, event)" style="flex:1; border:1px solid #D1D5DB; border-radius:6px; padding:6px 12px; background:white;">
+                                Import
+                            </button>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
+        <?php } ?>
 
+        
+        <?php if (isset($akses_child['hris/KpiKaryawan/laporanKpi']) && $akses_child['hris/KpiKaryawan/laporanKpi']['a_view'] == 1) { ?>
         <!-- Laporan KPI -->
-        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:150px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
+        <div style="flex:1 1 calc(20% - 8px); min-width:200px; height:170px; border:1px solid #D6E8FC; background:white; padding:12px; border-radius:12px;">
             <div style="display:flex; gap:10px; height:100%;">
                 <div>
                     <div style="width:50px; display:flex; padding:10px; border-radius:50%; background: #8B5CF6; justify-content:center; align-items:center;">
@@ -171,6 +211,8 @@
                 </div>
             </div>
         </div>
+        <?php } ?>
+
 
     </div>
    
@@ -229,8 +271,13 @@
     
                 <select class="select2 jabatan-chart">
                     <option disabled selected>Pilih Jabatan</option>
-                    <option value="penimbang" >Penimbang</option>
-                    <option value="ppl" >PPL</option>
+                    <?php $uniqueJabatan = array_unique(array_column($jabatan, 'jabatan_id')); ?>
+                    <?php foreach ($jabatan as $j) { ?>
+                        <?php if (in_array($j['jabatan_id'], $uniqueJabatan)) { ?> 
+                            <option value="<?php echo $j['jabatan_id'] ?>"> <?php echo $j['nama_jabatan'] ?></option>
+                            <?php unset($uniqueJabatan[array_search($j['jabatan_id'], $uniqueJabatan)]); ?>
+                        <?php } ?>
+                    <?php } ?>
                 </select>
 
                 <button class="btn btn-secondary" onclick="kpi.loadChartsPeriode(this, event)">Filter</button>

@@ -662,7 +662,7 @@ class Connection implements ConnectionInterface {
 	{
 		$message = $e->getPrevious()->getMessage();
 
-		return str_contains($message, [
+		return \Illuminate\Support\Str::contains($message, [
 			'server has gone away',
 			'no connection to the server',
 			'Lost connection',

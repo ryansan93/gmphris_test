@@ -15,6 +15,8 @@ var home = {
 			if ( $('.dashboard_dirut').length > 0 ) {
 				home.getDataSummaryPanenDanDoc();
 			}
+
+			$(".select2").select2();
 		};
 	}, // end - startUp
 
@@ -229,6 +231,106 @@ var home = {
 		    }
 		});
 	}, // end - chart
+
+
+	// KPI
+
+	loadCharts: (elm, e) => {
+
+        e.preventDefault();
+
+        let opt = $(elm).find("option:selected");
+
+        let rawLabel = opt.attr('label');  
+        let rawNilai = opt.attr('nilai');    
+
+        if (!rawLabel || !rawNilai) return;
+
+        let label = rawLabel.split(',').map(v => v.replace(/['"]/g, '').trim());
+        let nilai = rawNilai.split(',').map(v => parseFloat(v.trim()));
+
+        const ctx = document.getElementById('kpiChart');
+
+        if (window.kpiChartInstance) {
+            window.kpiChartInstance.destroy();
+        }
+
+        window.kpiChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: label,
+                datasets: [{
+                    label: 'Total Nilai KPI - ' + opt.val(),
+                    data: nilai,
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: 'Target KPI',
+                    data: Array(label.length).fill(80),
+                    borderColor: '#ef4444',
+                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
+                }]
+            }
+        });
+    },
+
+    loadChartsPeriode: (elm, e) => {
+        let params = {
+            bulan : $(".periode-chart").val(),
+            jabatan : $(".jabatan-chart").val(),
+        }
+
+        $.ajax({
+            url : 'home/Home/loadChartsPeriode',
+            data : params,
+            type : 'POST',
+            dataType : 'html',
+            beforeSend : function(){ 
+                showLoading(); 
+            },
+            success : function(html){
+                hideLoading();
+                $("#periodeChart").html(html);
+            },
+        });
+      
+        
+    },
+	// END KPI
+
+
+	detail_chart_periode: (elm, e) => {
+
+        let detail = $(elm).closest("tr").find(".detail").html();
+
+        let index = $(elm).attr("index");
+
+        if (!detail || detail.trim() === '') {
+            detail = '<p class="text-muted">Tidak ada data.</p>';
+        }
+
+        bootbox.dialog({
+            title: 'Nama KPI : ' + index,
+            message: detail,
+            size: 'large',
+            buttons: {
+                tutup: {
+                    label: '<i class="fa fa-close"></i> Tutup',
+                    className: 'btn btn-secondary',
+                    callback: function() {
+                        bootbox.hideAll();
+                    }
+                },
+            }
+        });
+
+    },
 };
 
 home.startUp();

@@ -3,9 +3,10 @@
         <table class="table table-bordered">
             <thead> 
                 <tr> 
-                    <th class="text-center">KPI</th>
+                    <th class="text-center">Nama KPI</th>
                     <th class="text-center">Bobot</th>
                     <th class="text-center">Nilai</th>
+                    <th class="text-center">Keterangan</th>
                     <th class="text-center">Score</th>
                 </tr>
             </thead>
@@ -17,6 +18,7 @@
                         <td><?php echo $b['nama_kpi'] ?></td>
                         <td class="text-center"><?php echo number_format($b['bobot'], 0); ?>%</td>
                         <td class="text-right"><?php echo $b['nilai'] ?></td>
+                        <td class="text-left"><?php echo $b['catatan'] ?></td>
                         <td class="text-right"><?php echo $b['skor'] ?></td>
                     </tr>
                 <?php } ?>
@@ -24,7 +26,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="3" class="text-center">
+                    <th colspan="4" class="text-center">
                         Total Score
                     </th>
                     <th class="text-right"><?php echo number_format($total_score, 2); ?></th>

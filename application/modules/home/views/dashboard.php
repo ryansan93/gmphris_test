@@ -1,104 +1,137 @@
+
+<script src="assets/chart/chart.js"></script>
+<script src="assets/chart/chartjs-chart-matrix.js"></script>
+
 <style>
-.dashboard-wrapper{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-}
+	.dashboard-wrapper{
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 15px;
+	}
 
-.dashboard-card{
-    border: none;
-    border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 2px 10px rgba(0,0,0,.08);
-    transition: all .3s ease;
-    width: 100%;
-}
+	.dashboard-card{
+		border: none;
+		border-radius: 12px;
+		background: #fff;
+		box-shadow: 0 2px 10px rgba(0,0,0,.08);
+		transition: all .3s ease;
+		width: 100%;
+	}
 
-.dashboard-card:hover{
-    transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(0,0,0,.12);
-	cursor: pointer;
-}
+	.dashboard-card:hover{
+		transform: translateY(-3px);
+		box-shadow: 0 6px 18px rgba(0,0,0,.12);
+		cursor: pointer;
+	}
 
-.dashboard-card .card-body{
-    padding: 15px;
-}
+	.dashboard-card .card-body{
+		padding: 15px;
+	}
 
-.dashboard-card .title{
-    font-size: 12px;
-    color: #6c757d;
-    margin-bottom: 5px;
-	margin-left: -0px;
-    font-weight: 500;
-}
+	.dashboard-card .title{
+		font-size: 12px;
+		color: #6c757d;
+		margin-bottom: 5px;
+		margin-left: -0px;
+		font-weight: 500;
+	}
 
-.dashboard-card .value{
-    font-size: 24px;
-    font-weight: 700;
-    color: #212529;
-    line-height: 1;
-}
+	.dashboard-card .value{
+		font-size: 24px;
+		font-weight: 700;
+		color: #212529;
+		line-height: 1;
+	}
 
-.dashboard-card .icon-box{
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+	.dashboard-card .icon-box{
+		width: 50px;
+		height: 50px;
+		border-radius: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
-.dashboard-card .icon-box i{
-    font-size: 20px;
-}
+	.dashboard-card .icon-box i{
+		font-size: 20px;
+	}
 
-/* Variasi warna */
-.bg-primary-soft{
-    background: rgba(13,110,253,.12);
-}
+	/* Variasi warna */
+	.bg-primary-soft{
+		background: rgba(13,110,253,.12);
+	}
 
-.bg-success-soft{
-    background: rgba(25,135,84,.12);
-}
+	.bg-success-soft{
+		background: rgba(25,135,84,.12);
+	}
 
-.bg-warning-soft{
-    background: rgba(255,193,7,.15);
-}
+	.bg-warning-soft{
+		background: rgba(255,193,7,.15);
+	}
 
-.bg-info-soft{
-    background: rgba(13,202,240,.15);
-}
+	.bg-info-soft{
+		background: rgba(13,202,240,.15);
+	}
 
-.bg-danger-soft{
-    background: rgba(220,53,69,.12);
-}
+	.bg-danger-soft{
+		background: rgba(220,53,69,.12);
+	}
 
-/* Tablet */
-@media(max-width:992px){
-    .dashboard-wrapper{
-        grid-template-columns: repeat(2, 1fr);
+	/* Tablet */
+	@media(max-width:992px){
+		.dashboard-wrapper{
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	/* Mobile */
+	@media(max-width:768px){
+		.dashboard-wrapper{
+			grid-template-columns: 1fr;
+		}
+
+		.dashboard-card .value{
+			font-size:20px;
+		}
+
+		.dashboard-card .icon-box{
+			width:42px;
+			height:42px;
+		}
+
+		.dashboard-card .icon-box i{
+			font-size:18px;
+		}
+	}
+
+	.charts-area {
+        width: 50%;
     }
-}
 
-/* Mobile */
-@media(max-width:768px){
-    .dashboard-wrapper{
-        grid-template-columns: 1fr;
+    #kpiChrats{
+        width : 100%; 
+        height : 30%;
     }
 
-    .dashboard-card .value{
-        font-size:20px;
+    .grafik-area{
+        display:flex; 
+        flex-direction:row;
+        gap:10px;
     }
 
-    .dashboard-card .icon-box{
-        width:42px;
-        height:42px;
-    }
+    @media (max-width: 900px) {
+        .charts-area {
+            width: 100%;
+        }
 
-    .dashboard-card .icon-box i{
-        font-size:18px;
+        #kpiChrats{
+            height : 50%;
+        }
+
+        .grafik-area{
+            flex-direction:column;
+        }
     }
-}
 </style>
 
 <div class="row content-panel detailed">
@@ -108,7 +141,7 @@
 
 		<br>
 	
-		<?php
+		<!-- < ?php
 			$selisih_hari = 0;
 
 			if (!empty($day_off) && isset($day_off['date'])) {
@@ -118,16 +151,16 @@
 			}
 		?>
 
-		<?php if (!empty($day_off) && $selisih_hari > 0) { ?>
+		< ?php if (!empty($day_off) && $selisih_hari > 0) { ?>
 			<div style="display: inline-block; border-left:5px solid #28a745; border-radius:0 5px 5px 0; background:#D1FFB8; padding:8px 12px; color:#155724;">
 				<i class="fa fa-bell"></i>
-				<?= $day_off['name']; ?>
+				< ?= $day_off['name']; ?>
 				<small>
-					(<?= tglIndonesia($day_off['date'], "-", " "); ?>)
-					• <?= $selisih_hari; ?> hari lagi
+					(< ?= tglIndonesia($day_off['date'], "-", " "); ?>)
+					• < ?= $selisih_hari; ?> hari lagi
 				</small>
 			</div>
-		<?php } ?>
+		< ?php } ?> -->
 
 		<br>
 		<br>
@@ -138,7 +171,12 @@
 				<div class="card-body d-flex justify-content-between align-items-center">
 					<div>
 						<div class="title">Total Karyawan</div>
-						<div class="value"><?php echo count($karyawan_tetap) + count($karyawan_kontrak) ?></div>
+						<div class="value">
+							<?php echo 
+								(is_countable($karyawan_tetap) ? count($karyawan_tetap) : $karyawan_tetap) +
+								(is_countable($karyawan_kontrak) ? count($karyawan_kontrak) : $karyawan_kontrak)
+							?>
+						</div>
 					</div>
 
 					<div class="icon-box bg-primary-soft">
@@ -151,7 +189,8 @@
 				<div class="card-body d-flex justify-content-between align-items-center">
 					<div>
 						<div class="title">Karyawan Tetap</div>
-						<div class="value"><?php echo count($karyawan_tetap) ?></div>
+						<div class="value"><?php echo is_countable($karyawan_tetap) ? count($karyawan_tetap) : $karyawan_tetap; ?></div>
+						
 					</div>
 
 					<div class="icon-box" style="background-color:#BFFFB0;" style="position:relative;">
@@ -165,7 +204,9 @@
 				<div class="card-body d-flex justify-content-between align-items-center">
 					<div>
 						<div class="title">Karyawan Training</div>
-						<div class="value"><?php echo count($karyawan_kontrak) ?></div>
+						<div class="value">
+							<?php echo is_countable($karyawan_kontrak) ? count($karyawan_kontrak) : $karyawan_kontrak; ?>
+						</div>
 					</div>
 
 				
@@ -193,4 +234,81 @@
 			</div>
 		</fieldset>
 	</div>
+	
 </div>
+
+<?php 
+	$url_kpi_performance = 'hris/KpiKaryawan/penilaianKpi';
+	$akses_kpi_performance = hakAkses('/'. $url_kpi_performance);
+?>
+
+<?php if ( !empty($akses_kpi_performance['a_view']) && $akses_kpi_performance['a_view'] == 1 ) { ?>
+<!-- KPI -->
+	<div class="grafik-area">
+		<fieldset class="charts-area">
+			<legend style="width:50%;">
+				<div class="col-xs-12 no-padding">
+					<b>Perfomance Karyawan</b>
+				</div>
+			</legend>
+			<div class="col-xs-12 no-padding">
+		
+				<select class="select2" onchange="home.loadCharts(this, event)">
+					<option disabled selected>Pilih Karyawan</option>
+					<?php foreach($charts as $c_index => $c){ ?>
+						<option value="<?php echo $c_index ?>" label="<?php echo $c["label"] ?>" nilai="<?php echo $c["nilai"] ?>" >
+							<?php echo $c_index ?>
+						</option>
+					<?php } ?>
+				</select>
+		
+				<canvas id="kpiChart"></canvas>
+		
+			</div>
+		</fieldset>
+
+		<fieldset class="charts-area">
+			<legend style="width:50%;">
+				<div class="col-xs-12 no-padding">
+					<b>Perfomance / Periode</b>
+				</div>
+			</legend>
+			<div class="col-xs-12 no-padding" style="min-height:100px;">
+		
+				<div style="display:flex; flex-direction:row; gap:10px;">
+					<select class="select2 periode-chart">
+						<option disabled selected>Pilih Periode</option>
+						<option value="1" >Januari</option>
+						<option value="2" >Februari</option>
+						<option value="3" >Maret</option>
+						<option value="4" >April</option>
+						<option value="5" >Mei</option>
+						<option value="6" >Juni</option>
+						<option value="7" >Juli</option>
+						<option value="8" >Agustus</option>
+						<option value="9" >September</option>
+						<option value="10">Oktober</option>
+						<option value="11">November</option>
+						<option value="12">Desember</option>
+					</select>
+		
+					<select class="select2 jabatan-chart">
+						<option disabled selected>Pilih Jabatan</option>
+						<?php $uniqueJabatan = array_unique(array_column($jabatan, 'jabatan_id')); ?>
+						<?php foreach ($jabatan as $j) { ?>
+							<?php if (in_array($j['jabatan_id'], $uniqueJabatan)) { ?> 
+								<option value="<?php echo $j['jabatan_id'] ?>"> <?php echo $j['nama_jabatan'] ?></option>
+								<?php unset($uniqueJabatan[array_search($j['jabatan_id'], $uniqueJabatan)]); ?>
+							<?php } ?>
+						<?php } ?>
+					</select>
+
+					<button class="btn btn-secondary" onclick="home.loadChartsPeriode(this, event)">Filter</button>
+				</div>
+				
+				<div id="periodeChart" style="margin-top:10px;"></div>
+		
+			</div>
+		</fieldset>
+	</div>
+<?php } ?>

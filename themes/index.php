@@ -53,9 +53,9 @@
               </a>
               <ul class="collapse list-unstyled" id="<?php echo $v_fitur['id_header_fitur'] ?>">
                 <?php foreach ($v_fitur['detail'] as $key => $v_mdetail): ?>
-                  <li class="menu">
-                    <a href="<?php echo $v_mdetail['path_detfitur']; ?>" class="list-group-item list-group-item-action bg-light-black menu" data-txt="<?php echo $v_mdetail['nama_detfitur']; ?>"><?php echo $v_mdetail['nama_detfitur']; ?></a>
-                  </li>
+                    <li class="menu">
+                      <a href="<?php echo $v_mdetail['path_detfitur']; ?>" class="list-group-item list-group-item-action bg-light-black menu" data-txt="<?php echo $v_mdetail['nama_detfitur']; ?>"><?php echo $v_mdetail['nama_detfitur']; ?></a>
+                    </li>
                 <?php endforeach ?>
               </ul>
             </li>

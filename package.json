@@ -4,5 +4,51 @@
     "flowbite": "^3.1.2",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.6"
-  }
+  },
+  "name": "gmphris_test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "browserslist": "^4.24.5",
+    "caniuse-lite": "^1.0.30001718",
+    "deepmerge": "^4.3.1",
+    "electron-to-chromium": "^1.5.152",
+    "escalade": "^3.2.0",
+    "estree-walker": "^2.0.2",
+    "flowbite-datepicker": "^1.3.2",
+    "fraction.js": "^4.3.7",
+    "function-bind": "^1.1.2",
+    "hasown": "^2.0.2",
+    "is-core-module": "^2.16.1",
+    "is-module": "^1.0.0",
+    "mini-svg-data-uri": "^1.4.4",
+    "nanoid": "^3.3.11",
+    "node-releases": "^2.0.19",
+    "normalize-range": "^0.1.2",
+    "path-parse": "^1.0.7",
+    "picocolors": "^1.1.1",
+    "picomatch": "^4.0.2",
+    "postcss-value-parser": "^4.2.0",
+    "puppeteer": "^25.3.0",
+    "resolve": "^1.22.10",
+    "source-map-js": "^1.2.1",
+    "supports-preserve-symlinks-flag": "^1.0.0",
+    "update-browserslist-db": "^1.1.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryansan93/gmphris_test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ryansan93/gmphris_test/issues"
+  },
+  "homepage": "https://github.com/ryansan93/gmphris_test#readme"
 }

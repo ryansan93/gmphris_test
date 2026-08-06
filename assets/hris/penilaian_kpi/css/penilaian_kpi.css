@@ -1,0 +1,59 @@
+
+.status-badge {
+    display: inline-block;
+    min-width: 100px;
+    padding: 5px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.status-badge.approved {
+    border: 1px solid #28a745;
+    color: #198754;
+    background-color: #eaf8ee;
+}
+
+.status-badge.draft {
+    border: 1px solid #e6dc4e;
+    color: #8a7d00;
+    background-color: #fffde7;
+}
+
+.status-badge.rejected {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    background-color: #fdeaea;
+}
+
+.btn-xls {
+    width:100%; 
+    flex:1; color: #03477e; 
+    border:1px solid #03477e; 
+    border-radius:6px; 
+    padding:6px 12px; 
+    background-color:#9FD3FC;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-xls:hover {
+    background-color: #416d8e;
+    color : #ffffff;
+}
+
+
+.select2-container .select2-selection--single {
+    height: 34px !important;
+    border: 1px solid #ccc;
+    box-shadow : inset 0 1px 1px rgba(0, 0, 0, .075);
+    padding-top:5px ;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+    line-height: 34px; 
+}
+
+.select2-container .select2-selection--single .select2-selection__arrow {
+    height: 34px;
+}

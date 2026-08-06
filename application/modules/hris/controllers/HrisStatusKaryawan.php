@@ -148,7 +148,8 @@ class HrisStatusKaryawan extends Public_Controller {
         $sql = " select hskb.*, hk.nama_kategori, k.nama  
         from hris_status_karyawan_baru hskb
         inner join hris_kategori hk on hk.kode_kategori = hskb.kategori 
-        inner join karyawan k on hskb.nik = k.nik and k.status = 1 ";
+        inner join karyawan k on hskb.nik = k.nik and k.status = 1 
+        ";
 
         $where = [];
 
