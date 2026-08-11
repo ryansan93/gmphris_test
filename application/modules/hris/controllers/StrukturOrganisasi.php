@@ -115,11 +115,11 @@ class StrukturOrganisasi extends Public_Controller {
                     
                     // ✅ tampilkan SEMUA unit (jika ada lebih dari 1)
                     $unitStr = implode(', ', array_map(function($u) {
-                        return ucwords(strtolower($u));
+                        return $u;
                     }, array_filter($units)));
                     
                     $node = [ 
-                        't'     => ucwords(strtolower($wilayahStr)) ?: '', 
+                        't'     => $wilayahStr ?: '', 
                         'u'     => $unitStr ?: '', 
                         'role'  => $item['nama_jabatan'], 
                         'name'  => ucwords(strtolower($item['nama'])), 

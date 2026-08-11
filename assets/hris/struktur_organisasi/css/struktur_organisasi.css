@@ -152,7 +152,7 @@ legend{
 
 .node {
     position: absolute;
-    width: var(--node-w, 220px);   /* ✅ auto dari JS */
+    width: var(--node-w, 250px);   /* ✅ auto dari JS */
     height: 210px;
     background: #fdfdfe;
     border: 1px solid #9fa0a8;
@@ -173,7 +173,7 @@ legend{
 .box .t {
     font-size: 14px;
     font-weight: 700;
-    letter-spacing: 1.5px;
+    /* letter-spacing: 1.5px; */
     color: #5a5a63;
     /* white-space: nowrap; */
     overflow: hidden;
@@ -181,10 +181,10 @@ legend{
 }
 
 .box .u {
-    margin-top: 9px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.2px;
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    /* letter-spacing: 1.2px; */
     color: #7c7c85;
     /* white-space: nowrap; */
     overflow: hidden;
@@ -192,23 +192,23 @@ legend{
 }
 
 .node .role {
-    font-size: 11px;
+    font-size: 15px;
     font-weight: 700;
-    letter-spacing: 1.2px;
+    /* letter-spacing: 1.2px; */
     color: #6b6b74;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    /* text-overflow: ellipsis; */
 }
 
 .node .name {
     margin-top: 7px;
-    font-size: 12px;
-    letter-spacing: 1.2px;
+    font-size: 20px;
+    /* letter-spacing: 1.2px; */
     color: #6b6b74;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    /* text-overflow: ellipsis; */
 }
 
 /* =========================================================
@@ -355,3 +355,4 @@ legend{
     stroke-width: 2.5 !important;          
     stroke: #a8a9b0 !important;            
 }
+

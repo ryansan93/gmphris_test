@@ -28,7 +28,7 @@ class StrukturOrganisasi_model extends Conf {
                                 SELECT ', ' +
                                     CASE 
                                         WHEN x.is_all = 1 THEN 'All'
-                                        ELSE MAX(x.nama)
+                                        ELSE MAX(x.alias)
                                     END
                                 FROM
                                 (
@@ -39,7 +39,8 @@ class StrukturOrganisasi_model extends Conf {
                                             ELSE 0 
                                         END AS is_all,
                                         w.kode,
-                                        w.nama
+                                        w.nama,
+                                        w.alias
                                     FROM unit_karyawan uk2
                                     LEFT JOIN wilayah w
                                         ON TRY_CAST(uk2.unit AS INT) = w.id
@@ -58,7 +59,7 @@ class StrukturOrganisasi_model extends Conf {
                                 SELECT ', ' +
                                     CASE
                                         WHEN wk2.wilayah = 'all' THEN 'All'
-                                        ELSE w.nama
+                                        ELSE w.alias
                                     END
                                 FROM wilayah_karyawan wk2
                                 LEFT JOIN wilayah w
