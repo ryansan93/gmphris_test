@@ -1,137 +1,25 @@
-.tree.export-pdf li {
-    vertical-align: top !important;
+.select2-container .select2-selection--single {
+    height: 34px !important;
+    border: 1px solid #ccc;
+    box-shadow : inset 0 1px 1px rgba(0, 0, 0, .075);
+    padding-top:5px ;
+    font-size: 12px;
+    padding-left: 3px;
 }
 
-.tree {
-	width: 100%;
-	height: auto;
-	text-align: center;
-	overflow: scroll;
+.select2-container .select2-selection--single .select2-selection__rendered {
+    line-height: 34px; 
 }
 
-.tree > ul {
-    display: inline-block;
-    min-width: max-content; 
-    padding-top: 20px;
-    position: relative;
-    text-align: center;
+.select2-container .select2-selection--single .select2-selection__arrow {
+    height: 34px;
 }
 
-.tree ul {
-	padding-top: 20px;
-	position: relative;
-	transition: .5s;
-}
-.tree li {
-	display: inline-table;
-	text-align: center;
-	list-style-type: none;
-	position: relative;
-	padding: 10px;
-	transition: .5s;
-}
-
-.tree li::before, .tree li::after {
-	content: '';
-	position: absolute;
-	top: 0;
-	right: 50%;
-	border-top: 2px solid #ccc;
-	width: 51%;
-	height: 10px;
-}
-
-.tree li::after {
-	right: auto;
-	left: 50%;
-	border-left: 2px solid #ccc;
-}
-
-.tree li:only-child::after, .tree li:only-child::before {
-	display: none;
-}
-
-.tree .one_child {
-	/* padding-top: 0; */
-	margin-top: 0px;
-	margin-left: -36px;
-	
-}
-
-.tree .one_child,
-.tree .one_child {
-    display:block;
-}
-
-
-.tree .one_child > ul::before {
-    display:block;
-    height:20px;
-}
-
-
-
-.tree li:first-child::before, .tree li:last-child::after {
-	border: 0 none;
-}
-
-.tree li:last-child::before {
-	border-right: 2px solid #ccc !important;
-	border-radius: 0 5px 0 0;
-	-webkit-border-radius: 0 5px 0 0;
-	-moz-border-radius: 0 5px 0 0;
-}
-
-.tree li:first-child::after {
-	border-radius: 5px 0 0 0;
-	-webkit-border-radius: 5px 0 0 0;
-	-moz-border-radius: 5px 0 0 0;
-}
-
-.tree ul ul::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 50%;
-	border-left: 2px solid #ccc;
-	width: 0;
-	height: 20px;
-}
-
-.tree li a {
-	border: 2px solid #ccc;
-	padding: 10px;
-	display: inline-grid;
-	border-radius: 5px;
-	text-decoration-line: none;
-	border-radius: 5px;
-	/* transition: .5s; */
-}
-
-/* .tree li a img {
-	width: 50px;
-	height: 50px;
-	margin-bottom: 10px !important;
-	border-radius: 100px;
-	margin: auto;
-} */
-
-.tree li a span {
-	/* border: 1px solid #ccc; */
-	border-radius: 5px;
-	color: #666;
-	padding: 8px;
-	font-size: 12px;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	font-weight: 500;
-}
-
-/*Hover-Section*/
-.tree li a:hover, .tree li a:hover i, .tree li a:hover span, .tree li a:hover+ul li a {
-	background: #c8e4f8;
-	/* color: #000; */
-	/* border: 1px solid #94a0b4; */
+/* =========================================================
+   FILTER PANEL
+========================================================= */
+legend{
+    width: 50%;
 }
 .filter-panel {
     margin-bottom: 20px;
@@ -177,11 +65,293 @@
     margin-top: 4px;
 }
 
+/* =========================================================
+   AREA STRUKTUR ORGANISASI
+========================================================= */
+.so-fieldset {
+    position: relative;              /* acuan posisi toolbar mengambang */
+}
+
+.so-area {
+    cursor: grab;
+    overflow: auto;
+    background-color: #fdfcfc;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+    height: 60vh;                    /* ✅ viewport scroll responsive */
+    min-height: 350px;
+    max-height: 900px;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+}
+
+.so-area.grabbing {
+    cursor: grabbing;
+}
+
+#wrap {
+    width: max-content;
+    min-width: 100%;
+}
+
+.tree {
+    position: relative;
+    width: max-content;
+    text-align: center;
+    overflow: visible;
+    /* tinggi/lebar diatur inline oleh JS — jangan di-!important */
+}
+
+.tree.export-pdf li {
+    vertical-align: top !important;
+}
+
+#lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* node yang di-hover */
+.tree .node:hover {
+    background: #c8e4f8;
+    border-color: #8fb8d8;
+}
+.tree .node:hover .box {
+    background: #e8f4fc;   /* ✅ box dalam ikut biru */
+    border-color: #8fb8d8;
+}
+
+/* ✅ atasan (rantai sampai root) */
+.tree .node.hl-up {
+    background: #dbeefb;
+    border-color: #a5c9e4;
+}
+.tree .node.hl-up .box {
+    background: #e8f4fc;   /* ✅ box dalam ikut biru */
+    border-color: #a5c9e4;
+}
+
+/* bawahan (anak-cucu) — hapus kalau tidak mau */
+.tree .node.hl-down {
+    background: #eef7fd;
+    border-color: #c2dcee;
+}
+.tree .node.hl-down .box {
+    background: #f5fbfe;   /* ✅ box dalam ikut biru (lebih muda) */
+    border-color: #c2dcee;
+}
+/* =========================================================
+   NODE KARTU  (ukuran WAJIB sama dengan NODE_W/NODE_H di JS)
+========================================================= */
+.node,
+.node * {
+    box-sizing: border-box;          /* ✅ 220x175 termasuk padding+border */
+}
+
+.node {
+    position: absolute;
+    width: var(--node-w, 220px);   /* ✅ auto dari JS */
+    height: 210px;
+    background: #fdfdfe;
+    border: 1px solid #9fa0a8;
+    border-radius: 6px;
+    padding: 16px 14px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.node .box {
+    border: 1px solid #9fa0a8;
+    border-radius: 4px;
+    padding: 12px 6px;
+    margin-bottom: 24px;
+    background: #fff;
+}
+
+.box .t {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #5a5a63;
+    /* white-space: nowrap; */
+    overflow: hidden;
+    /* text-overflow: ellipsis; */
+}
+
+.box .u {
+    margin-top: 9px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #7c7c85;
+    /* white-space: nowrap; */
+    overflow: hidden;
+    /* text-overflow: ellipsis; */
+}
+
+.node .role {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #6b6b74;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.node .name {
+    margin-top: 7px;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    color: #6b6b74;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =========================================================
+   TOOLBAR: ZOOM + PETUNJUK
+========================================================= */
+.toolbar-area {
+    position: absolute;
+    top: 30px;                       /* sesuaikan jika perlu */
+    left: 15px;
+    right: 15px;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;            /* area kosong tembus → drag tree jalan */
+}
+
+.toolbar-area > * {
+    pointer-events: auto;
+}
+
+.zoom-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 10px;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    background-color: #f0efef;
+}
+
+.zoom-area > div {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #b4b4b4;
+    border-radius: 50%;
+    background-color: #c7c7c7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all .2s ease;
+    flex: 0 0 auto;
+}
+
+.zoom-area > div:hover {
+    cursor: pointer;
+    background-color: #636363;
+    color: #fff;
+}
+
+.zoom-area .btn {
+    margin: 0;
+}
+
+.hint-area {
+    max-width: 520px;
+    padding: 8px 14px;
+    border: 1px dashed #d3c98f;
+    border-radius: 10px;
+    background: #fffbe8;
+    font-size: 12px;
+    color: #6b6b74;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET (≤1024px)
+========================================================= */
+@media (max-width: 1024px) {
+    .filter-row { gap: 12px; }
+    .filter-item { min-width: 180px; flex: 1 1 180px; }
+
+    .toolbar-area { top: 50px; gap: 8px; }
+    .hint-area { font-size: 11px; max-width: 420px; }
+
+    .so-area { height: 55vh; }
+}
+
+/* =========================================================
+   RESPONSIVE — MOBILE (≤768px)
+========================================================= */
+@media (max-width: 768px) {
+    .filter-panel { padding: 12px; margin-bottom: 15px; }
+    .filter-row { flex-direction: column; gap: 12px; }
+    .filter-item { min-width: 100%; flex: 1 1 100%; }
+    .filter-actions { min-width: 100%; justify-content: center; }
+    .filter-actions .btn { width: 100%; }
+
+    /* toolbar turun ke aliran normal, tidak menimpa tree */
+    .toolbar-area {
+        position: static;
+        margin: 10px 0;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .zoom-area { justify-content: center; }
+    .hint-area { max-width: 100%; text-align: center; }
+
+    .so-area { height: 50vh; min-height: 300px; }
+
+    /* font node dikecilkan (ukuran kotak TETAP 220x175 agar garis pas) */
+    .box .t { font-size: 12px; letter-spacing: 1px; }
+    .box .u { font-size: 9px; }
+    .node .role { font-size: 10px; }
+    .node .name { font-size: 11px; margin-top: 5px; }
+    .node .box { padding: 10px 5px; margin-bottom: 18px; }
+}
+
+/* =========================================================
+   RESPONSIVE — MOBILE KECIL (≤480px)
+========================================================= */
+@media (max-width: 480px) {
+    .filter-panel { padding: 10px; }
+
+    .zoom-area > div { width: 26px; height: 26px; }
+    .zoom-area .btn { padding: 4px 10px; font-size: 12px; }
+    .hint-area { font-size: 10px; padding: 6px 10px; }
+
+    .so-area { height: 45vh; min-height: 260px; }
+
+    .box .t { font-size: 11px; }
+    .box .u { font-size: 8px; }
+    .node .role { font-size: 9px; }
+    .node .name { font-size: 10px; }
+    .node .box { padding: 8px 4px; margin-bottom: 15px; }
+    .node { padding: 12px 10px; }
+}
 
 
+@media (max-height: 500px) and (orientation: landscape) {
+    .so-area { height: 55vh; min-height: 220px; }
+    .toolbar-area { top: 45px; }
+}
 
+.tree.export-pdf .node {
+    border: 2px solid #7c7d85 !important;  
+}
 
+.tree.export-pdf .node .box {
+    border: 2px solid #9fa0a8 !important;   
+}
 
-
-
-
+.tree.export-pdf #lines path {
+    stroke-width: 2.5 !important;          
+    stroke: #a8a9b0 !important;            
+}

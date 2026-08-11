@@ -1,0 +1,249 @@
+.zoom-area {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+	margin-top: 40px;
+    border-radius: 10px;
+    border: 1px solid #dddddd;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    transition: all 0.2s ease;
+	background-color: #f0efef;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.zoom-area div {
+    border: 1px solid #b4b4b4;
+	background-color: #c7c7c7;
+    border-radius: 50%;
+    padding: 5px;
+    width: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.zoom-area div:hover {
+    cursor: pointer;
+    background-color: #636363;
+	color: white;
+}
+
+.zoom-area div i {
+    margin-top: 3px;
+}
+
+
+.so-area {
+    cursor: grab;
+    overflow: auto;
+    background-color: #fdfcfc;
+    user-select: none;
+}
+
+.so-area.grabbing {
+    cursor: grabbing;
+}
+
+
+.tree.export-pdf li {
+    vertical-align: top !important;
+}
+
+/* .tree {
+	width: 100%;
+	height: auto;
+	text-align: center;
+	overflow: scroll;
+} */
+
+
+.tree {
+    width: max-content;
+    height: auto;
+    text-align: center;
+    overflow: visible;
+}
+
+.tree > ul {
+    display: inline-block;
+    min-width: max-content; 
+    padding-top: 20px;
+    position: relative;
+    text-align: center;
+}
+
+.tree ul {
+	padding-top: 20px;
+	position: relative;
+	transition: .5s;
+}
+.tree li {
+	display: inline-table;
+	text-align: center;
+	list-style-type: none;
+	position: relative;
+	padding: 10px;
+	transition: .5s;
+}
+
+.tree li::before, .tree li::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 50%;
+	border-top: 2px solid #ccc;
+	width: 51%;
+	height: 10px;
+}
+
+.tree li::after {
+	right: auto;
+	left: 50%;
+	border-left: 2px solid #ccc;
+}
+
+.tree li:only-child::after, .tree li:only-child::before {
+	display: none;
+}
+
+.tree .one_child {
+	/* padding-top: 0; */
+	margin-top: 0px;
+	margin-left: -36px;
+	
+}
+
+.tree .one_child,
+.tree .one_child {
+    display:block;
+}
+
+
+.tree .one_child > ul::before {
+    display:block;
+    height:20px;
+}
+
+
+
+.tree li:first-child::before, .tree li:last-child::after {
+	border: 0 none;
+}
+
+.tree li:last-child::before {
+	border-right: 2px solid #ccc !important;
+	border-radius: 0 5px 0 0;
+	-webkit-border-radius: 0 5px 0 0;
+	-moz-border-radius: 0 5px 0 0;
+}
+
+.tree li:first-child::after {
+	border-radius: 5px 0 0 0;
+	-webkit-border-radius: 5px 0 0 0;
+	-moz-border-radius: 5px 0 0 0;
+}
+
+.tree ul ul::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 50%;
+	border-left: 2px solid #ccc;
+	width: 0;
+	height: 20px;
+}
+
+.tree li a {
+	border: 2px solid #ccc;
+	padding: 10px;
+	display: inline-grid;
+	border-radius: 5px;
+	text-decoration-line: none;
+	border-radius: 5px;
+	/* transition: .5s; */
+}
+
+/* .tree li a img {
+	width: 50px;
+	height: 50px;
+	margin-bottom: 10px !important;
+	border-radius: 100px;
+	margin: auto;
+} */
+
+.tree li a span {
+	/* border: 1px solid #ccc; */
+	border-radius: 5px;
+	color: #666;
+	padding: 8px;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 500;
+}
+
+/*Hover-Section*/
+.tree li a:hover, .tree li a:hover i, .tree li a:hover span, .tree li a:hover+ul li a {
+	background: #c8e4f8;
+	/* color: #000; */
+	/* border: 1px solid #94a0b4; */
+}
+.filter-panel {
+    margin-bottom: 20px;
+    border: 1px solid #d9dde3;
+    border-radius: 10px;
+    padding: 18px;
+    background: #fff;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+    flex: 1 1 220px;
+}
+
+.filter-item label {
+    margin-bottom: 8px;
+    color: #4a4a4a;
+    font-weight: 600;
+}
+
+.filter-item .select2 {
+    width: 100% !important;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 150px;
+    flex: 0 0 auto;
+}
+
+.filter-actions .btn {
+    margin-top: 4px;
+}
+
+
+
+
+
+
+
+
+

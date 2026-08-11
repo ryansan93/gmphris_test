@@ -86,11 +86,22 @@ class StrukturOrganisasi_model extends Conf {
                         $filterWilayah[] = "u.nama_wilayah LIKE '%" . $wil . "%'";
                     }
 
+                    $filterWilayah[] = "u.nama_wilayah LIKE '%All%'";
+
                     $sql .= " AND (" . implode(" OR ", $filterWilayah) . ")";
                 }
 
-                if(isset($data['unit']) && $data['unit']){
-                    $sql .= " AND nama_unit like '%" . $data['unit'] . "%' ";
+                // if(isset($data['unit']) && $data['unit']){
+                //     $sql .= " AND nama_unit like '%" . $data['unit'] . "%' OR nama_unit LIKE '%All%'  ";
+                // }
+
+                if (isset($data['unit']) && $data['unit']) {
+                    $unit = addslashes($data['unit']);
+
+                    $sql .= " AND (
+                        u.nama_unit LIKE '%" . $unit . "%'
+                        OR u.nama_unit LIKE '%All%'
+                    )";
                 }
 
                 $sql .= " order by k.level asc";
@@ -98,6 +109,9 @@ class StrukturOrganisasi_model extends Conf {
                 // cetak_r($sql, 1);
 
         $db = $this->hydrateRaw($sql)->toArray();
+
+                // cetak_r($db, 1);
+
 
         return $db;
     }
