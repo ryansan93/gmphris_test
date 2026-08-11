@@ -121,10 +121,11 @@ class StrukturOrganisasi_model extends Conf {
     {
         $sql = "SELECT 
                     w1.kode,
-                    MAX(w1.nama) AS nama_unit
+                    MAX(w1.nama) AS nama_unit,
+                    w1.alias
                 FROM wilayah w1
                 WHERE w1.kode IS NOT NULL
-                GROUP BY w1.kode
+                GROUP BY w1.kode, w1.alias 
                 ORDER BY w1.kode;";
 
         $db = $this->hydrateRaw($sql)->toArray();
@@ -134,7 +135,7 @@ class StrukturOrganisasi_model extends Conf {
 
     public function get_perwakilan()
     {
-        $sql = "select nama as nama_wilayah from wilayah where jenis = 'PW' order by nama asc";
+        $sql = "select nama as nama_wilayah, alias from wilayah where jenis = 'PW' order by nama asc";
 
         $db = $this->hydrateRaw($sql)->toArray();
 

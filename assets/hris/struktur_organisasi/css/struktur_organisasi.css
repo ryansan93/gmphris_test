@@ -153,7 +153,7 @@ legend{
 .node {
     position: absolute;
     width: var(--node-w, 250px);   /* ✅ auto dari JS */
-    height: 210px;
+    height: 220px;
     background: #fdfdfe;
     border: 1px solid #9fa0a8;
     border-radius: 6px;
@@ -204,11 +204,11 @@ legend{
 .node .name {
     margin-top: 7px;
     font-size: 20px;
-    /* letter-spacing: 1.2px; */
     color: #6b6b74;
-    white-space: nowrap;
-    overflow: hidden;
-    /* text-overflow: ellipsis; */
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.2;
 }
 
 /* =========================================================

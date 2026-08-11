@@ -107,14 +107,11 @@ class StrukturOrganisasi extends Public_Controller {
             $branch = []; 
             foreach ($items as $item) { 
                 if ($item['atasan_nik'] == $parentNik) { 
-                    $wilayahs = array_map('trim', explode(',', $item['nama_wilayah'])); 
-                    $units    = array_map('trim', explode(',', $item['nama_unit'])); 
-                    
-                    // ✅ tampilkan SEMUA wilayah (mis: "Jawa Timur 1, Jawa Timur 2")
-                    $wilayahStr = implode(', ', array_filter($wilayahs));
-                    
-                    // ✅ tampilkan SEMUA unit (jika ada lebih dari 1)
-                    $unitStr = implode(', ', array_map(function($u) {
+                    $wilayahs   = array_map('trim', explode(',', $item['nama_wilayah'])); 
+                    $units      = array_map('trim', explode(',', $item['nama_unit'])); 
+                
+                    $wilayahStr = implode(', ', array_filter($wilayahs));            
+                    $unitStr    = implode(', ', array_map(function($u) {
                         return $u;
                     }, array_filter($units)));
                     
