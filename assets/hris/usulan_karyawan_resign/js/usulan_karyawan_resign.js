@@ -223,6 +223,102 @@ let ukr = {
     //     });
     // },
 
+    // save : () => {
+
+    //     let picker_tgl_pengajuan = $('.tgl_pengajuan').data('DateTimePicker');
+    //     let picker_tgl_resign    = $('.tgl_resign').data('DateTimePicker');
+
+    //     let tgl_pengajuan = ''; 
+    //     let tgl_resign    = ''; 
+
+    //     if (picker_tgl_pengajuan && picker_tgl_pengajuan.date() &&
+    //         picker_tgl_resign && picker_tgl_resign.date()) {
+
+    //         tgl_pengajuan = picker_tgl_pengajuan.date().format('YYYY-MM-DD');
+    //         tgl_resign    = picker_tgl_resign.date().format('YYYY-MM-DD');
+
+    //         if (tgl_pengajuan > tgl_resign) {
+    //             toastr.info("Tanggal pengajuan tidak boleh lebih besar dari tanggal resign");
+    //             return false;
+    //         } 
+
+    //     } else {
+    //         toastr.info("Tanggal pengajuan dan tanggal resign belum dipilih");
+    //         return false;
+    //     }
+
+    //     let nik                 = $(".nik").val();
+    //     let tanggal_pengajuan   = tgl_pengajuan;
+    //     let tanggal_resign      = tgl_resign;
+    //     let alasan_resign       = $(".alasan_resign").val();
+    //     let jenis               = $(".jenis").val();
+
+    //     if (!nik || nik.trim() === '') {
+    //         bootbox.alert('NIK wajib diisi');
+    //         return false;
+    //     }
+
+    //     // Validasi attachment khusus RESIGN
+    //     if (jenis === "RESIGN" || jenis === "PENSIUN") {
+    //         if (!ukr.attachment_files || ukr.attachment_files.length === 0) {
+    //             toastr.info("Attachment wajib diupload untuk jenis Resign");
+    //             return false;
+    //         }
+    //     }
+
+    //     let formData = new FormData();
+
+    //     formData.append('nik', nik);
+    //     formData.append('tanggal_pengajuan', tanggal_pengajuan);
+    //     formData.append('tanggal_resign', tanggal_resign);
+    //     formData.append('alasan_resign', alasan_resign);
+    //     formData.append('jenis', jenis);
+
+    //     ukr.attachment_files.forEach(function(file,index){
+    //         if(file){
+    //             formData.append('attachment[]', file);
+    //         }
+    //     });
+
+    //     $.ajax({
+    //         url: 'hris/UsulanKaryawanResign/save',
+    //         type: 'POST',
+    //         data: formData,
+    //         processData:false,
+    //         contentType:false,
+    //         beforeSend:function(){
+    //             showLoading();
+    //         },
+    //         success:function(result){
+                
+
+    //             if(result.status){
+    //                 bootbox.alert({
+    //                     title: "Berhasil",
+    //                     message: result.message,
+    //                     buttons: {
+    //                         ok: {
+    //                             label: "OK",
+    //                             className: "btn-primary"
+    //                         }
+    //                     },
+    //                     callback: function () {
+    //                         hideLoading();
+    //                         window.location.reload();
+    //                     }
+    //                 });
+    //             }else{
+    //                 toastr.error(result.message);
+    //             }
+    //         },
+
+    //         error:function(){
+    //             hideLoading();
+    //             toastr.error('Gagal menyimpan data');
+    //         }
+    //     });
+    // },
+
     save : () => {
 
         let picker_tgl_pengajuan = $('.tgl_pengajuan').data('DateTimePicker');
@@ -253,8 +349,12 @@ let ukr = {
         let alasan_resign       = $(".alasan_resign").val();
         let jenis               = $(".jenis").val();
 
+        if (!nik || nik.trim() === '') {
+            bootbox.alert('NIK wajib diisi');
+            return false;
+        }
 
-        // Validasi attachment khusus RESIGN
+        // Validasi attachment khusus RESIGN / PENSIUN
         if (jenis === "RESIGN" || jenis === "PENSIUN") {
             if (!ukr.attachment_files || ukr.attachment_files.length === 0) {
                 toastr.info("Attachment wajib diupload untuk jenis Resign");
@@ -262,55 +362,79 @@ let ukr = {
             }
         }
 
-        let formData = new FormData();
-
-        formData.append('nik', nik);
-        formData.append('tanggal_pengajuan', tanggal_pengajuan);
-        formData.append('tanggal_resign', tanggal_resign);
-        formData.append('alasan_resign', alasan_resign);
-        formData.append('jenis', jenis);
-
-        ukr.attachment_files.forEach(function(file,index){
-            if(file){
-                formData.append('attachment[]', file);
-            }
-        });
-
-        $.ajax({
-            url: 'hris/UsulanKaryawanResign/save',
-            type: 'POST',
-            data: formData,
-            processData:false,
-            contentType:false,
-            beforeSend:function(){
-                showLoading();
-            },
-            success:function(result){
-                
-
-                if(result.status){
-                    bootbox.alert({
-                        title: "Berhasil",
-                        message: result.message,
-                        buttons: {
-                            ok: {
-                                label: "OK",
-                                className: "btn-primary"
-                            }
-                        },
-                        callback: function () {
-                            hideLoading();
-                            window.location.reload();
-                        }
-                    });
-                }else{
-                    toastr.error(result.message);
+        // Konfirmasi sebelum menyimpan
+        bootbox.confirm({
+            title: "Konfirmasi",
+            message: "Apakah Anda yakin ingin menyimpan pengajuan resign ini?",
+            buttons: {
+                confirm: {
+                    label: "Ya, Simpan",
+                    className: "btn-primary"
+                },
+                cancel: {
+                    label: "Batal",
+                    className: "btn-secondary"
                 }
             },
+            callback: function(result) {
 
-            error:function(){
-                hideLoading();
-                toastr.error('Gagal menyimpan data');
+                if (!result) {
+                    return;
+                }
+
+                let formData = new FormData();
+
+                formData.append('nik', nik);
+                formData.append('tanggal_pengajuan', tanggal_pengajuan);
+                formData.append('tanggal_resign', tanggal_resign);
+                formData.append('alasan_resign', alasan_resign);
+                formData.append('jenis', jenis);
+
+                ukr.attachment_files.forEach(function(file, index){
+                    if(file){
+                        formData.append('attachment[]', file);
+                    }
+                });
+
+                $.ajax({
+                    url: 'hris/UsulanKaryawanResign/save',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+
+                    beforeSend: function(){
+                        showLoading();
+                    },
+
+                    success: function(result){
+
+                        if(result.status){
+                            bootbox.alert({
+                                title: "Berhasil",
+                                message: result.message,
+                                buttons: {
+                                    ok: {
+                                        label: "OK",
+                                        className: "btn-primary"
+                                    }
+                                },
+                                callback: function () {
+                                    hideLoading();
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            hideLoading();
+                            toastr.error(result.message);
+                        }
+                    },
+
+                    error: function(){
+                        hideLoading();
+                        toastr.error('Gagal menyimpan data');
+                    }
+                });
             }
         });
     },
