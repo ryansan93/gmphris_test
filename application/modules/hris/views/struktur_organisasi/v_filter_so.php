@@ -102,15 +102,15 @@
               <div class="role">${n.role}</div>
               <div class="name">${n.name}</div>`;
           el.__nodeData = n;              // tautkan elemen ↔ data
+          n.__el = el;  
           nodeEls.set(n, el);
           treeEl.appendChild(el);
       });
 
-      // ✅ referensi atasan (jalan sekali per render)
       (function setParent(n, p) {
           n.__parent = p || null;
           (n.children || []).forEach(c => setParent(c, n));
-      })(dataObj);   // ✅ pakai dataObj, bukan data
+      })(dataObj);   
 
       // ✅ nyalakan / matikan sorotan
       function paint(n, on) {

@@ -63,8 +63,9 @@
                             <div class="form-group">
                                 <label>Jenis Pengunduran</label>
                                 <select class="select2 jenis">
-                                    <option value="DO">Drop Out (DO)</option>
+                                    <option value="PEMECATAN">Pemecatan</option>
                                     <option value="RESIGN">Resign</option>
+                                    <option value="PENSIUN">Karyawan Pensiun</option>
                                 </select>
                             </div>
                         </div>

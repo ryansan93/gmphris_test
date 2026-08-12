@@ -27,9 +27,10 @@ let report = {
             bulan : $(".bulan").val() ?? null,
             karyawan : $(".karyawan").val() ?? null,
             status : $(".status").val() ?? null,
+            tahun : $(".tahun").val() ?? null,
         }
 
-        console.log(params);
+        // console.log(params);
 
         $.ajax({
             url: 'hris/ReportCutiKaryawan/filter_data',

@@ -112,8 +112,8 @@
                         <td>
                             <select <?php echo $data_karyawan['verification_clearance_date'] != null ? 'disabled' :'' ?> class="form-control" name="data[<?php echo $key; ?>][status]">
                                 <option value="">Pilih</option>
-                                <option  <?php echo $val['status_clearance'] == 'KEMBALI' ? 'selected' : '' ?> value="KEMBALI">Dikembalikan</option>
-                                <option  <?php echo $val['status_clearance'] == 'TIDAK_ADA' ? 'selected' : '' ?> value="TIDAK_ADA">Tidak Ada</option>
+                                <option  <?php echo $val['status_clearance'] == 'DITERIMA' ? 'selected' : '' ?> value="DITERIMA">Diterima</option>
+                                <option  <?php echo $val['status_clearance'] == 'HILANG' ? 'selected' : '' ?> value="HILANG">Hilang</option>
                                 <option  <?php echo $val['status_clearance'] == 'RUSAK' ? 'selected' : '' ?> value="RUSAK">Rusak</option>
                             </select>
                         </td>

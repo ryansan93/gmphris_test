@@ -69,7 +69,7 @@ legend{
    AREA STRUKTUR ORGANISASI
 ========================================================= */
 .so-fieldset {
-    position: relative;              /* acuan posisi toolbar mengambang */
+    position: relative;              
 }
 
 .so-area {
@@ -79,7 +79,7 @@ legend{
     user-select: none;
     -webkit-user-select: none;
     position: relative;
-    height: 60vh;                    /* ✅ viewport scroll responsive */
+    height: 60vh;                   
     min-height: 350px;
     max-height: 900px;
     border: 1px solid #e5e5e5;
@@ -100,6 +100,7 @@ legend{
     width: max-content;
     text-align: center;
     overflow: visible;
+    margin-top: 500px;
     /* tinggi/lebar diatur inline oleh JS — jangan di-!important */
 }
 
@@ -216,7 +217,7 @@ legend{
 ========================================================= */
 .toolbar-area {
     position: absolute;
-    top: 30px;                       /* sesuaikan jika perlu */
+    top: 25px;                       /* sesuaikan jika perlu */
     left: 15px;
     right: 15px;
     z-index: 100;
@@ -237,7 +238,7 @@ legend{
     gap: 10px;
     padding: 5px 10px;
     border: 1px solid #dddddd;
-    border-radius: 10px;
+    border-radius: 5px;
     background-color: #f0efef;
 }
 
@@ -266,9 +267,9 @@ legend{
 
 .hint-area {
     max-width: 520px;
-    padding: 8px 14px;
+    padding: 13px 14px;
     border: 1px dashed #d3c98f;
-    border-radius: 10px;
+    border-radius: 5px;
     background: #fffbe8;
     font-size: 12px;
     color: #6b6b74;
@@ -355,4 +356,18 @@ legend{
     stroke-width: 2.5 !important;          
     stroke: #a8a9b0 !important;            
 }
+
+
+
+
+/* .tree.has-search .node.is-dim   { opacity:.15; filter:grayscale(.6); } */
+.tree.has-search .node.is-match { opacity:1; box-shadow:0 0 0 3px #acbcff; z-index:5; }
+
+.tree.has-search .node.is-active {
+    box-shadow: 0 0 0 4px #5a7bff, 0 8px 22px rgba(0,0,0,.3);
+    z-index: 6;
+}
+.tree.has-search .node.is-active .box { border-color:#acbcff; }
+
+.tree .node { transition:opacity .2s ease, filter .2s ease, box-shadow .2s ease; }
 

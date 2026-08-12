@@ -190,6 +190,7 @@ class ReportCutiKaryawan extends Public_Controller {
             $bulan     = $dataNeed['bulan'] ?? null;
             $karyawan  = $dataNeed['karyawan'] ?? null;
             $status    = $dataNeed['status'] ?? null;
+            $tahun     = $dataNeed['tahun'] ?? null;
 
             if ($jenis) {
                 $where[] = "hpc.jenis_cuti = '" . addslashes($jenis) . "' ";
@@ -201,6 +202,10 @@ class ReportCutiKaryawan extends Public_Controller {
 
             if ($bulan && $bulan !== 'all') {
                 $where[] = "MONTH(hpc.tanggal_mulai) = '" . addslashes($bulan) . "' ";
+            }
+
+            if ($tahun) {
+                $where[] = "YEAR(hpc.tanggal_mulai) = '" . addslashes($tahun) . "' ";
             }
 
             if ($karyawan) {

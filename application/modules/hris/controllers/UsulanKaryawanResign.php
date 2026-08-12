@@ -41,16 +41,37 @@ class UsulanKaryawanResign extends Public_Controller {
 
             $data                       = $this->includes;
 
-            $m_karyawan 			= new \Model\Storage\Karyawan_model();
-            $d_karyawan 			= $m_karyawan->select(
-                                        'karyawan.*',
-                                        'jabatan.nama as nama_jabatan'
-                                    )->join('jabatan', 'jabatan.kode', '=', 'karyawan.jabatan')
-                                    ->where('karyawan.status', 1)
-                                    ->orderBy('karyawan.level', 'asc')
-                                    ->get();
-            $data_karyawan  		= $d_karyawan->toArray();
-            $m_karyawan             = new \Model\Storage\Karyawan_model();
+            $content['nik_login']       = $this->cek_nik();
+
+
+
+            $m_karyawan = new \Model\Storage\Karyawan_model();
+
+            $query_karyawan = $m_karyawan
+                ->select(
+                    'karyawan.*',
+                    'jabatan.nama as nama_jabatan'
+                )
+                ->join(
+                    'jabatan',
+                    'jabatan.kode',
+                    '=',
+                    'karyawan.jabatan'
+                )
+                ->where('karyawan.status', 1);
+
+            if (!empty($content['nik_login'])) {
+                $query_karyawan = $query_karyawan
+                    ->where('karyawan.atasan_nik', $content['nik_login']);
+            }
+
+            $d_karyawan = $query_karyawan
+                ->orderBy('karyawan.level', 'asc')
+                ->get();
+
+            $data_karyawan = $d_karyawan->toArray();
+
+            
 
             $query = $m_karyawan->select(
                         'karyawan.*',
@@ -58,12 +79,12 @@ class UsulanKaryawanResign extends Public_Controller {
                     )
                     ->join('jabatan', 'jabatan.kode', '=', 'karyawan.jabatan');
 
-            $cek = (clone $query)->where('karyawan.status', 1)->count();
-            if ($cek > 0) {
-                $d_karyawan = $query->where('karyawan.status', 1)->orderBy('karyawan.level', 'asc')->get();
-            } else {
-                $d_karyawan = $query->where('karyawan.status', 0)->orderBy('karyawan.id', 'desc') ->limit(1)->get();
-            }
+            // $cek = (clone $query)->where('karyawan.status', 1)->count();
+            // if ($cek > 0) {
+            //     $d_karyawan = $query->where('karyawan.status', 1)->orderBy('karyawan.level', 'asc')->get();
+            // } else {
+            //     $d_karyawan = $query->where('karyawan.status', 0)->orderBy('karyawan.id', 'desc') ->limit(1)->get();
+            // }
 
             $data_karyawan          = $d_karyawan->toArray();
             $m_usulan               = new \Model\Storage\HrisUsulanResign_model();
@@ -76,14 +97,13 @@ class UsulanKaryawanResign extends Public_Controller {
                 }
             }
 
+            // cetak_r($data_karyawan, 1);
+
             $content['karyawan']	    = $data_karyawan;
             $content['akses']           = $this->hakAkses;
             $content['title_panel']     = 'HRIS - Usulan Karyawan Resign';
             $content['jabatan']         = $m_conf->hydrateRaw("select * from jabatan")->toArray();
             $content['nik_outstanding'] = $nik_outstanding;
-            $content['nik_login']       = $this->cek_nik();
-
-            // cetak_r($content, 1);
 
             // Load Indexx
             $data['title_menu']     = 'HRIS - Usulan Karyawan Resign';

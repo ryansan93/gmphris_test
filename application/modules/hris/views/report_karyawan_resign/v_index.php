@@ -51,8 +51,9 @@
             <label>Jenis Usulan</label>
             <select class="select2 jenis" onchange="report.filter_list(this, event)">
                 <option value="">Pilih Jenis</option>
+                <option value="PEMECATAN">Pemecatan</option>
                 <option value="RESIGN">Resign</option>
-                <option value="DO">Drop Out (DO)</option>
+                <option value="PENSIUN">Karyawan Pensiun</option>
             </select>
         </div>
 

@@ -1,7 +1,7 @@
 <style>
     .filter-container {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 16px;
         width: 100%;
     }
@@ -10,38 +10,39 @@
         display: flex;
         flex-direction: column;
         gap: 6px;
-        flex: 1 1 200px;
-        min-width: 200px;
+        min-width: 0;
     }
 
     .filter-item label {
         font-weight: 600;
+        margin-bottom: 0;
     }
 
     .filter-item select,
     .filter-item .select2 {
         width: 100% !important;
-        /* padding: 10px 12px; */
-        /* border: 1px solid #e3e8f0; */
         border-radius: 8px;
         background: #fff;
         font-size: 14px;
         box-sizing: border-box;
     }
 
-    @media (max-width: 768px) {
+    /* Tablet */
+    @media (max-width: 992px) {
         .filter-container {
-            flex-direction: column;
-            gap: 12px;
+            grid-template-columns: repeat(2, 1fr);
         }
+    }
 
-        .filter-item {
-            flex: 1 1 100%;
-            min-width: unset;
-            width: 100%;
+    /* Mobile */
+    @media (max-width: 576px) {
+        .filter-container {
+            grid-template-columns: 1fr;
+            gap: 12px;
         }
     }
 </style>
+
 
 <fieldset>
     <legend>Filter Report</legend>
@@ -52,8 +53,10 @@
             <label>Karyawan</label>
             <select class="select2 karyawan" onchange="report.filter_list(this, event)">
                 <option value="">Pilih Karyawan</option>
-                <?php foreach($karyawan as $k) { ?>
-                    <option value="<?php echo $k['nik'] ?>"> <?php echo ucwords(strtolower($k['nama'])) ?></option>
+                <?php foreach ($karyawan as $k) { ?>
+                    <option value="<?= $k['nik']; ?>">
+                        <?= ucwords(strtolower($k['nama'])); ?>
+                    </option>
                 <?php } ?>
             </select>
         </div>
@@ -63,7 +66,9 @@
             <select class="select2 jabatan" onchange="report.filter_list(this, event)">
                 <option value="">Pilih Jabatan</option>
                 <?php foreach ($jabatan as $j) { ?>
-                    <option value="<?= $j['kode']; ?>"><?= $j['nama']; ?></option>
+                    <option value="<?= $j['kode']; ?>">
+                        <?= $j['nama']; ?>
+                    </option>
                 <?php } ?>
             </select>
         </div>
@@ -83,19 +88,19 @@
             <label>Status</label>
             <select class="select2 status" onchange="report.filter_list(this, event)">
                 <option value="">Pilih Status</option>
-                        <option value="1" >DRAFT </option>
-                        <option value="2" >ACKNOWLEDGE </option>
-                        <option value="3" >APPROVED </option>
-                        <option value="4" >REJECT ATASAN </option>
-                        <option value="5" >REJECT HRD </option>
+                <option value="1">DRAFT</option>
+                <option value="2">ACKNOWLEDGE</option>
+                <option value="3">APPROVED</option>
+                <option value="4">REJECT ATASAN</option>
+                <option value="5">REJECT HRD</option>
             </select>
         </div>
 
         <div class="filter-item">
-
-            <label>Bulan:</label>
+            <label>Bulan</label>
             <select class="select2 bulan" onchange="report.filter_list(this, event)">
                 <option value="all">Semua Bulan</option>
+
                 <?php
                 $months = [
                     '01' => 'Januari',
@@ -111,6 +116,7 @@
                     '11' => 'November',
                     '12' => 'Desember',
                 ];
+
                 foreach ($months as $num => $name) {
                     $selected = ($num == date('m')) ? ' selected' : '';
                     echo "<option value=\"{$num}\"{$selected}>{$name}</option>";
@@ -119,11 +125,23 @@
             </select>
         </div>
 
+        <div class="filter-item">
+            <label>Tahun</label>
+            <select class="select2 tahun" onchange="report.filter_list(this, event)">
+                <?php
+                $current_year = date('Y');
+
+                for ($year = $current_year - 2; $year <= $current_year + 2; $year++) {
+                    $selected = ($year == $current_year) ? ' selected' : '';
+                    echo "<option value=\"{$year}\"{$selected}>{$year}</option>";
+                }
+                ?>
+            </select>
+        </div>
 
     </div>
 </fieldset>
 
 <br>
-<div class="list-area">
 
-</div>
+<div class="list-area"></div>

@@ -22,8 +22,9 @@
         <div class="form-group">
             <label>Jenis Pengunduran</label>
             <select class="select2 jenis">
-                <option  <?php echo $header[0]['jenis_resign'] == 'DO' ? 'selected' : '' ?> value="DO">Drop Out (DO)</option>
-                <option  <?php echo $header[0]['jenis_resign'] == 'RESIGN' ? 'selected' : '' ?> value="RESIGN">Resign</option>
+                <option <?php echo $header[0]['jenis_resign'] == 'PEMECATAN' ? 'selected' : '' ?> value="PEMECATAN">Pemecatan</option>
+                <option <?php echo $header[0]['jenis_resign'] == 'RESIGN' ? 'selected' : '' ?> value="RESIGN">Resign</option>
+                <option <?php echo $header[0]['jenis_resign'] == 'PENSIUN' ? 'selected' : '' ?> value="PENSIUN">Karyawan Pensiun</option>
             </select>
         </div>
     </div>
