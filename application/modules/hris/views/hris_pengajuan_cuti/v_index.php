@@ -8,58 +8,12 @@
 	.existing-attachment .small { display:block; text-align:left; max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 	.cuti-table-container {
 		background: #ffffff;
-		border-radius: 12px;
 		box-shadow: 0 4px 14px rgba(15,23,42,0.05);
 		overflow: hidden;
 		border: 1px solid #f1f3f5;
 	}
 
-	.cuti-table {
-		width: 100%;
-		margin-bottom: 0;
-		border-collapse: separate;
-		border-spacing: 0;
-	}
-
-	.cuti-table thead {
-		background: #e0e2e3;
-		border-bottom: 2px solid #e9ecef;
-	}
-
-	.cuti-table thead th {
-		padding: 16px 14px;
-		font-size: 11px;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-		color: #495057;
-		border: none;
-		white-space: nowrap;
-		text-align: center;
-	}
-
-	.cuti-table tbody tr {
-		transition: all 0.2s ease;
-		border-bottom: 1px solid #f1f3f5;
-	}
-
-	.cuti-table tbody tr:last-child {
-		border-bottom: none;
-	}
-
-	.cuti-table tbody tr:hover {
-		background-color: #f8fafc;
-		/* transform: translateX(2px); */
-	}
-
-	.cuti-table tbody td {
-		padding: 14px;
-		font-size: 13px;
-		color: #2c3e50;
-		border: none;
-		vertical-align: middle;
-	}
-
+	
 	.cuti-nik {
 		font-family: 'SF Mono', 'Fira Code', monospace;
 		background: #f1f3f5;
@@ -206,16 +160,6 @@
 			-webkit-overflow-scrolling: touch;
 		}
 
-		.cuti-table {
-			min-width: 850px;
-		}
-
-		.cuti-table thead th,
-		.cuti-table tbody td {
-			padding: 10px 8px;
-			font-size: 12px;
-		}
-
 		.cuti-alasan {
 			max-width: 120px;
 		}
@@ -264,7 +208,7 @@
 					<legend>Data Pengajuan</legend>
 
 					<div class="cuti-table-container">
-						<table class="cuti-table" id="table-pengajuan">
+						<table class="gmp-table" id="table-pengajuan">
 							<thead>
 								<tr>
 									<th>NIK</th>
@@ -325,7 +269,7 @@
 											<td class="text-center">
 												<span class="cuti-nik"><?php echo $v['nik']; ?></span>
 											</td>
-											<td>
+											<td style="white-space:nowrap;">
 												<span class="cuti-name"><?php echo ucwords(strtolower($v['nama_karyawan'])); ?></span>
 											</td>
 											<td class="text-center">

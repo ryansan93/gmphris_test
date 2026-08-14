@@ -494,10 +494,10 @@ class UsulanKaryawanResign extends Public_Controller {
 	}
 
 
-    public function ReportUsulanKaryawan()
+    public function ApprovalUsulanKaryawan()
     {
 
-        $akses= hakAkses($this->url . '/ReportUsulanKaryawan');
+        $akses= hakAkses($this->url . '/ApprovalUsulanKaryawan');
 
         $m = new \Model\Storage\HrisUsulanResign_model();
 
@@ -521,7 +521,7 @@ class UsulanKaryawanResign extends Public_Controller {
         $m_conf                 = new \Model\Storage\Conf();
         $data                   = $this->includes;
         $content['akses']       = $akses;
-        $content['title_panel'] = 'HRIS - Usulan Karyawan Resign';
+        $content['title_panel'] = 'HRIS - Approval Karyawan Resign';
         $nik_atasan             = $this->cek_nik();
         $content['list_usulan'] = $m->getDataUsulanResign($nik_atasan);
         $content['config']      = $this->userdata['detail_user']['nama_detuser'];
@@ -529,7 +529,7 @@ class UsulanKaryawanResign extends Public_Controller {
         // cetak_r($content['akses'], 1);
 
         // Load Indexx
-        $data['title_menu']     = 'HRIS - Usulan Karyawan Resign';
+        $data['title_menu']     = 'HRIS - Approval Karyawan Resign';
 
 
         $data['view'] = $this->load->view($this->pathView . 'v_report_resign', $content, TRUE);

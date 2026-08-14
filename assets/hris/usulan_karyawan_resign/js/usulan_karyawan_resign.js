@@ -602,7 +602,7 @@ let ukr = {
         let jenis               = $(".bootbox .jenis").val();
 
         // Validasi attachment khusus RESIGN
-        if (jenis === "RESIGN") {
+        if (jenis === "RESIGN" || jenis === "PENSIUN") {
             if (!ukr.attachment_files || ukr.attachment_files.length === 0) {
                 toastr.info("Attachment wajib diupload untuk jenis Resign");
                 return false;
@@ -1047,6 +1047,7 @@ let ukr = {
     },
 
     saveVerifikasiClearance: (elm, e) => {
+        
         e.preventDefault();
 
         bootbox.confirm({

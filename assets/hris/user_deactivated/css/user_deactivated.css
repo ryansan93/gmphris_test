@@ -15,11 +15,6 @@
     height: 34px;
 }
 
-
-/* ============================================
-   GMP TABLE — style tabel default aplikasi
-   Pemakaian: <table class="gmp-table">
-   ============================================ */
 .gmp-table {
     width: 100%;
     border-collapse: collapse;
@@ -61,7 +56,5 @@
     overflow-x: auto;
 }
 
-/* Garis pemisah antar kolom */
 .gmp-table thead th + th { border-left: 1px solid #e2e8f0; }
 .gmp-table tbody td + td { border-left: 1px solid #eef2f6; }
-

@@ -176,6 +176,8 @@ class PengajuanCuti extends Public_Controller
             $sql .= " where k.atasan_nik = '" . $nik_login . "' ";
         } 
 
+          $sql .= " order by hpc.id desc ";
+
         // if (!empty($id)){
         //     $sql .= " where hpc.id = '" . $id . "'";
         // }

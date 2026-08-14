@@ -1,5 +1,5 @@
 
-<table class="table table-bordered">
+<table class="gmp-table">
     <thead>
         <tr style="background-color: #f2f2f2;">
             <th>ID</th>

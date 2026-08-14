@@ -1,6 +1,5 @@
-<div class="panel panel-default">
-  <div class="panel-heading"><span style="font-size:17px;">Tambah Data</span></div>
-  <div class="panel-body">
+<fieldset>
+    <legend>Add Data</legend>
 
     <div class="detail_area" style="display:flex; flex-direction:column; gap:10px; ">
 
@@ -32,7 +31,7 @@
         <button class="btn btn-secondary " onclick="window.location.href='master/HrisForm' "> <i class="fa fa-angle-left" style="margin-right:10px;" aria-hidden="true"></i>  Back</button>
         <button class="btn btn-primary " onclick="hf.save(this, event)"> <i class="fa fa-floppy-o" style="margin-right:10px;" aria-hidden="true"></i>  Save Data</button>
     </div>
+</fieldset>
 
-  </div>
+    
 
-</div>

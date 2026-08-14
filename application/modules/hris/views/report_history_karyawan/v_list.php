@@ -6,7 +6,7 @@
     }
 ?>
 
-<table class="table-list table table-bordered">
+<table class="table-list gmp-table">
     <thead>
         <tr>
             <th class="text-center">No. Document</th>

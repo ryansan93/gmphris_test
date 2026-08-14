@@ -29,9 +29,9 @@
 <div id="action" class="tab-pane fade tab-detail" role="tabpanel" style="padding-top: 10px;">
 
     <?php if ($akses['a_submit'] == 1) { ?>
-    <div class="panel panel-default">
-        <div class="panel-heading"><span style="font-size:17px;">Tambah Data</span></div>
-        <div class="panel-body">
+    <fieldset>
+        <legend>Add Data</legend>
+
       
             <div class="detail_area" style="display:flex; flex-direction:column; gap:10px; ">
 
@@ -74,11 +74,8 @@
                 <button class="btn btn-primary " onclick="hf.save(this, event)"> <i class="fa fa-floppy-o" style="margin-right:10px;" aria-hidden="true"></i>  Save Data</button>
             </div>
 
-        </div>
-
-        </div>
-
-    </div>
+       
+    </fieldset>
     <?php } ?>
 </div>
 

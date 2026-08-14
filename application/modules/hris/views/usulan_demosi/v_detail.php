@@ -169,8 +169,8 @@
         <?php } ?>
     </div>
 
-    <div class="is_delete" config="<?php echo $akses['a_delete'] ?>"></div>
-    <div class="is_edit" config="<?php echo $akses['a_edit'] ?>"></div>
+    <div class="is_delete" config="<?php echo $akses['a_delete'] ?? '' ?>"></div>
+    <div class="is_edit" config="<?php echo $akses['a_edit'] ?? '' ?>"></div>
 
 
     

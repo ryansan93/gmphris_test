@@ -109,21 +109,23 @@ let fr = {
 
     show_usulan: (elm, e) => {
 
+        const d = $(elm).closest("tr").data();
+
         let params = {
-            nama_pengusul: $(elm).closest("tr").attr("nama_pengusul"),
-            tgl_pengusul: $(elm).closest("tr").attr("tgl_pengusul"),
-            posisi: $(elm).closest("tr").attr("posisi"),
-            alasan: $(elm).closest("tr").attr("alasan"),
-            jumlah: $(elm).closest("tr").attr("jumlah"),
-            unit: $(elm).closest("tr").attr("unit"),
-            status: $(elm).closest("tr").attr("status"),
-            id_data: $(elm).closest("tr").attr("id_data"),
-            document: $(elm).closest("tr").attr("document"),
-            status_key : $(elm).closest("tr").attr("status_key"),
-            encrypted : $(elm).closest("tr").attr("encrypted"),
-            keterangan_ceo : $(elm).closest("tr").attr("keterangan_ceo"),
-            keterangan_hrd : $(elm).closest("tr").attr("keterangan_hrd"),
-        }
+            nama_pengusul : d.namaPengusul,
+            tgl_pengusul  : d.tglPengusul,
+            posisi        : d.posisi,
+            alasan        : d.alasan,
+            jumlah        : d.jumlah,
+            unit          : d.unit,
+            status        : d.status,
+            id_data       : d.id,
+            document      : d.document,
+            status_key    : d.statusKey,
+            encrypted     : d.encrypted,
+            keterangan_ceo: d.keteranganCeo,
+            keterangan_hrd: d.keteranganHrd,
+        };
 
         // console.log(params);
         // return false;

@@ -48,14 +48,7 @@
             <b>LIST DATA USULAN KARYAWAN</b>
         </div>
     </legend>
-    <div style="display:flex; flex-wrap:wrap; gap:10px;">
-        <button class="btn-filter active" onclick="fr.filter(this, event, 1)">DRAFT</button>
-        <button class="btn-filter ack" onclick="fr.filter(this, event, 2)">ACKNOWLEDGE</button>
-        <button class="btn-filter approve" onclick="fr.filter(this, event, 3)">APPROVED</button>
-        <button class="btn-filter reject" onclick="fr.filter(this, event, 4)">REJECT</button>
-        <button class="btn-filter done" onclick="fr.filter(this, event, 6)">DONE</button>
-    </div>
-    <br>
+
     <div class="col-xs-12 no-padding list_data" style="overflow-x:scroll" >
         <div class="spinner-load"></div>
     </div>

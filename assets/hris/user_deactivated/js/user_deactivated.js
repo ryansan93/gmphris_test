@@ -1,9 +1,16 @@
 $(document).ready(function(){
     ud.load_data();
+    ud.setting_up();
 })
 
 
 let ud = {
+
+    setting_up : () => {
+
+        $(".select2").select2();
+
+    },
 
     load_data : () => {
         $.ajax({

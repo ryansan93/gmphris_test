@@ -1,78 +1,120 @@
 <style>
-.line-tracking {
-    top: 55px;
-    position: absolute;
-    z-index: 1;
-    width: 80%;
-    border-top: 2px dashed #cbc8c8;
-    transform: translateY(-50%);
-    display: block;
-}
-
-/* Desktop view */
-.tracking-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    position: relative;
-    gap: 5%;
-    min-width: 900px;
-    overflow-x: auto;
-    padding: 20px 10px;
-}
-
-.line-mobile {
-    border-left: 0px dashed #cbc8c8;
-}
-
-.icon-tracking {
-    z-index: 2;
-    border: 5px solid #0c1575;
-    border-radius: 50%;
-    width: 70px;
-    height: 70px;
-    background-color: #979fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 30px;
-    color: #0c1575;
-}
-
-.label-card {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-/* Mobile view */
-@media (max-width: 700px) {
-
-    .icon-tracking {
-        z-index: 0;
+    .line-tracking {
+        top: 55px;
+        position: absolute;
+        z-index: 1;
+        width: 80%;
+        border-top: 2px dashed #cbc8c8;
+        transform: translateY(-50%);
+        display: block;
     }
 
+    /* Desktop view */
     .tracking-container {
-        flex-direction: column;
-        gap: 30px;
-        min-width: auto;
-        overflow-x: visible;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        position: relative;
+        gap: 5%;
+        min-width: 900px;
+        overflow-x: auto;
         padding: 20px 10px;
     }
 
-    .line-tracking {
-        display: none;
-    }
-
-    .tracking-item {
-        width: 100% !important;
-        max-width: 250px;
-        margin: 0 auto;
-    }
-
     .line-mobile {
-        border-left: 2px dashed #cbc8c8;
+        border-left: 0px dashed #cbc8c8;
     }
-}
+
+    /* ===== Icon tracking — versi estetik ===== */
+    .icon-tracking{
+        z-index:2;
+        position:relative;
+        width:70px;
+        height:70px;
+        border-radius:50%;
+        border:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:26px;
+        color:#fff;
+        background:linear-gradient(140deg,#6d7dff 0%, #4353d9 55%, #2b37b0 100%);
+        box-shadow:
+            0 0 0 5px #ffffff,                /* ring putih — sekaligus pemotong garis putus-putus */
+            0 0 0 7px rgba(76,95,213,.22),    /* halo tipis di luar ring */
+            0 12px 24px rgba(43,55,176,.35),  /* shadow lembut */
+            inset 0 2px 5px rgba(255,255,255,.35),   /* cahaya dalam atas */
+            inset 0 -5px 10px rgba(0,0,0,.22);       /* depth bawah */
+        text-shadow:0 2px 4px rgba(0,0,0,.25);
+        transition:transform .25s ease, box-shadow .25s ease;
+        animation:icon-pop .55s cubic-bezier(.34,1.56,.64,1) backwards;
+    }
+
+    /* kilau (gloss) di bagian atas ikon */
+    .icon-tracking::before{
+        content:'';
+        position:absolute;
+        top:5px; left:11px; right:11px;
+        height:45%;
+        border-radius:50%;
+        background:linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,0));
+        pointer-events:none;
+    }
+
+    /* muncul berjeneng: langkah 1 → 2 → 3 */
+    .line-mobile:nth-child(2) .icon-tracking{ animation-delay:.05s; }
+    .line-mobile:nth-child(3) .icon-tracking{ animation-delay:.18s; }
+    .line-mobile:nth-child(4) .icon-tracking{ animation-delay:.31s; }
+
+    .icon-tracking:hover{
+        transform:translateY(-3px) scale(1.05);
+        box-shadow:
+            0 0 0 5px #ffffff,
+            0 0 0 7px rgba(76,95,213,.3),
+            0 16px 30px rgba(43,55,176,.42),
+            inset 0 2px 5px rgba(255,255,255,.35),
+            inset 0 -5px 10px rgba(0,0,0,.22);
+    }
+
+    @keyframes icon-pop{
+        from{ transform:scale(.5); opacity:0; }
+        to{ transform:scale(1); opacity:1; }
+    }
+
+    .label-card {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    /* Mobile view */
+    @media (max-width: 700px) {
+
+        .icon-tracking {
+            z-index: 0;
+        }
+
+        .tracking-container {
+            flex-direction: column;
+            gap: 30px;
+            min-width: auto;
+            overflow-x: visible;
+            padding: 20px 10px;
+        }
+
+        .line-tracking {
+            display: none;
+        }
+
+        .tracking-item {
+            width: 100% !important;
+            max-width: 250px;
+            margin: 0 auto;
+        }
+
+        .line-mobile {
+            border-left: 2px dashed #cbc8c8;
+        }
+    }
 </style>
 
 <div style="overflow-x:auto; padding:20px 0;">

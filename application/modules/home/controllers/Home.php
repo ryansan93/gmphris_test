@@ -627,7 +627,7 @@ class Home extends Public_Controller
 
 
 		// NOTIFIKASI ACK USULAN RESIGN
-		$url_ack_resign = 'hris/UsulanKaryawanResign/ReportUsulanKaryawan';
+		$url_ack_resign = 'hris/UsulanKaryawanResign/ApprovalUsulanKaryawan';
 		$akses_ack_resign = hakAkses('/'. $url_ack_resign);
 
 		// cetak_r($akses_ack_resign, 1);
@@ -672,7 +672,7 @@ class Home extends Public_Controller
 		// END NOTIFIKASI ACK USULAN RESIGN
 
 		// NOTIFIKASI APPROVE USULAN RESIGN
-		$url_approve_resign = 'hris/UsulanKaryawanResign/ReportUsulanKaryawan';
+		$url_approve_resign = 'hris/UsulanKaryawanResign/ApprovalUsulanKaryawan';
 		$akses_approve_resign = hakAkses('/'. $url_approve_resign);
 
 		if ( !empty($akses_approve_resign['a_approve']) && $akses_approve_resign['a_approve'] == 1 ) {
@@ -1416,13 +1416,15 @@ class Home extends Public_Controller
 			FROM hris_kpi_master_header
 			WHERE jabatan_id = '".$data['jabatan']."'
 			AND status = 'ACTIVE'
-			AND periode <= '".$data['bulan']."'
-			ORDER BY periode DESC
+			AND TRY_CONVERT(INT, periode) <= ".(int)$data['bulan']."
+			ORDER BY TRY_CONVERT(INT, periode) DESC
 		";
 
-
 		$d_periode = $m_conf->hydrateRaw($sql_periode);
-		$periode_master = $d_periode->count() > 0 ? $d_periode->toArray()[0]['periode'] : null;
+
+		$periode_master = $d_periode->count() > 0
+			? $d_periode->toArray()[0]['periode']
+			: null;
 
 		if (empty($periode_master)) {
 			return [];
@@ -1446,16 +1448,19 @@ class Home extends Public_Controller
 		";
 
 		$d_index = $m_conf->hydrateRaw($sql_index);
+
 		$data_index = $d_index->count() > 0 ? $d_index->toArray() : [];
 
 		if (empty($data_index)) {
 			return [];
 		}
 
+		// Ambil seluruh kode index dari master KPI
 		$kode_indexs = array_column($data_index, 'kode_index');
+
 		$kode_index = "'" . implode("','", $kode_indexs) . "'";
 
-		// Ambil penilaian hanya pada periode yang dipilih
+		// Ambil penilaian berdasarkan periode yang dipilih
 		$sql_penilaian = "
 			SELECT
 				k.nama,
@@ -1473,24 +1478,25 @@ class Home extends Public_Controller
 			WHERE hkpd.kode_index IN ($kode_index)
 			AND hkp.status = 'APPROVED'
 			AND hkp.jabatan = '".$data['jabatan']."'
-			AND MONTH(hkp.tanggal_mulai) = '".$data['bulan']."'
+			AND MONTH(hkp.tanggal_mulai) = ".(int)$data['bulan']."
 		";
 
-		// cetak_r($sql_penilaian, 1);
-
-
 		$d_penilaian = $m_conf->hydrateRaw($sql_penilaian);
+
 		$data_penilaian = $d_penilaian->count() > 0 ? $d_penilaian->toArray() : [];
 
+		// Group penilaian berdasarkan kode index
 		$grouped_penilaian = [];
 
 		foreach ($data_penilaian as $p) {
 			$grouped_penilaian[$p['kode_index']][] = $p;
 		}
 
+		// Gabungkan master KPI dengan data penilaian
 		$result = [];
 
 		foreach ($data_index as $i) {
+
 			$kode = $i['kode_index'];
 
 			$result[$kode] = [

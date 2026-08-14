@@ -802,15 +802,10 @@ let pc= {
             type: 'POST',
             data: { id: id },
             beforeSend: function () {
-                bootbox.dialog({
-                    title: 'Attachment',
-                    message: '<div class="text-center">Loading...</div>',
-                    size: 'large',
-                    centerVertical: true,
-                    closeButton: false
-                });
+                showLoading();
             },
             success: function (resp) {
+                hideLoading();
                 bootbox.dialog({
                     title: 'Attachment',
                     message: resp,
