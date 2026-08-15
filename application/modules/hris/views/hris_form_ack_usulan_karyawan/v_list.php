@@ -77,7 +77,7 @@
     .us-card {
         background: #fff;
         border: 1px solid var(--us-border);
-        border-radius: var(--us-radius);
+        /* border-radius: var(--us-radius); */
         overflow: hidden;
         box-shadow: 0 4px 14px rgba(0,0,0,.04);
     }

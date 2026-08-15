@@ -1,3 +1,50 @@
+<style>
+    .gmp-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+    }
+
+    .gmp-table thead th {
+        background: #f0f4f8;
+        color: #5b6b7c;
+        text-transform: uppercase;
+        font-size: .72rem;
+        letter-spacing: .5px;
+        font-weight: 700;
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+        white-space: nowrap;
+    }
+
+    .gmp-table tbody td {
+        padding: 10px;
+        border-bottom: 1px solid #eef2f6;
+        font-size: .9rem;
+        color: #334155;
+        vertical-align: middle;
+    }
+
+    .gmp-table tbody tr { transition: background .15s; }
+    .gmp-table tbody tr:hover td { background: #fafcfe; }
+    .gmp-table tbody tr:last-child td { border-bottom: none; }
+
+    .gmp-table .text-center, .gmp-table th.text-center { text-align: center; }
+    .gmp-table .text-right,  .gmp-table td.text-right  { text-align: right; }
+
+    .gmp-table-wrap {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+        overflow-x: auto;
+    }
+
+    /* Garis pemisah antar kolom */
+    .gmp-table thead th + th { border-left: 1px solid #e2e8f0; }
+    .gmp-table tbody td + td { border-left: 1px solid #eef2f6; }
+</style>
+
 <fieldset style="margin-bottom: 15px;">
     <legend>
         <div class="col-xs-12 no-padding">
@@ -64,7 +111,7 @@
     </legend>
     <div class="col-xs-12 no-padding notifContain">
 
-        <table class="table table-bordered list_ranking_kpi" style="width:100%;">
+        <table class="gmp-table list_ranking_kpi" style="width:100%;">
             <thead>
                 <tr>
                     <th class="text-center">No.</th>

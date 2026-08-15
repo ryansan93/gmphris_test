@@ -1,61 +1,50 @@
 <style>
-    .modern-table-container {
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 14px rgba(15,23,42,0.05);
-        overflow: hidden;
-        border: 1px solid #f1f3f5;
-    }
 
-    .modern-table {
+    .gmp-table {
         width: 100%;
-        margin-bottom: 0;
-        border-collapse: separate;
-        border-spacing: 0;
+        border-collapse: collapse;
+        background: #fff;
     }
 
-    .modern-table thead {
-        background: #e0e2e3;
-        border-bottom: 2px solid #e9ecef;
-    }
-
-    .modern-table thead th {
-        padding: 16px 14px;
-        font-size: 12px;
-        font-weight: 700;
+    .gmp-table thead th {
+        background: #f0f4f8;
+        color: #5b6b7c;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #495057;
-        border: none;
+        font-size: .72rem;
+        letter-spacing: .5px;
+        font-weight: 700;
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
         white-space: nowrap;
     }
 
-    .modern-table tbody tr {
-        transition: all 0.2s ease;
-        border-bottom: 1px solid #f1f3f5;
-    }
-
-    .modern-table tbody tr:last-child {
-        border-bottom: none;
-    }
-
-    .modern-table tbody tr:hover {
-        background-color: #f8f9fa;
-        /* transform: translateX(2px); */
-    }
-
-    .modern-table tbody tr.selected-row {
-        background-color: #fff9d6 !important;
-        border-left: 4px solid #ffc107;
-    }
-
-    .modern-table tbody td {
-        padding: 14px;
-        font-size: 14px;
-        color: #2c3e50;
-        border: none;
+    .gmp-table tbody td {
+        padding: 16px;
+        border-bottom: 1px solid #eef2f6;
+        font-size: .9rem;
+        color: #334155;
         vertical-align: middle;
     }
+
+    .gmp-table tbody tr { transition: background .15s; }
+    .gmp-table tbody tr:hover td { background: #fafcfe; }
+    .gmp-table tbody tr:last-child td { border-bottom: none; }
+
+    .gmp-table .text-center, .gmp-table th.text-center { text-align: center; }
+    .gmp-table .text-right,  .gmp-table td.text-right  { text-align: right; }
+
+    .gmp-table-wrap {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+        overflow-x: auto;
+    }
+
+    /* Garis pemisah antar kolom */
+    .gmp-table thead th + th { border-left: 1px solid #e2e8f0; }
+    .gmp-table tbody td + td { border-left: 1px solid #eef2f6; }
+
 
     .employee-name {
         font-weight: 600;
@@ -149,91 +138,90 @@
     }
 </style>
 
-<div class="modern-table-container">
-    <table class="modern-table">
-        <thead>
-            <tr>
-                <th class="text-center">No. Document</th>
-                <th class="text-center">NIK</th>
-                <th>Nama Karyawan</th>
-                <th>Jabatan</th>
-                <th class="text-center">Tanggal Pengajuan</th>
-                <th class="text-center">Tanggal Efektif</th>
-                <th class="text-center">Status</th>
-                <th class="text-center">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($list)) { ?>
-               
-                <?php foreach($list as $l){?>
-                    <tr class="<?php echo !empty($l['selected']) ? 'selected-row' : ''; ?>"> 
-                        <td class="text-center">
-                            <a href="javascript:void(0)" id_data="<?php echo $l['id'] ?>" style="color: #1f75fe;" onclick="ukr.showDetailUsulan(this, event)"><?php echo $l['document'] ?></a>
-                        </td>
-                        <td class="text-center">
-                            <span style="font-family: monospace; background: #f1f3f5; padding: 4px 8px; border-radius: 4px;">
-                                <?php echo $l['nik'] ?>
-                            </span>
-                        </td>
-                        <td>
-                            <div class="employee-name">
-                                <?php echo ucwords(strtolower($l['nama_karyawan'])) ?>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="employee-position">
-                                <?php echo $l['nama_jabatan'] ?>
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <?php echo tglIndonesia($l['tanggal_pengajuan'], '-', ' ') ?>
-                        </td>
-                        <td class="text-center">
-                            <?php echo tglIndonesia($l['tanggal_resign'], '-', ' ') ?>
-                        </td>
 
-                        <?php
-                            $status_map = [
-                                1 => ['class' => 'status-draft', 'label' => 'Draft', 'icon' => '🟡'],
-                                2 => ['class' => 'status-ack', 'label' => 'Acknowledge', 'icon' => '🔵'],
-                                3 => ['class' => 'status-approved', 'label' => 'Approved', 'icon' => '🟢'],
-                                4 => ['class' => 'status-reject', 'label' => 'Reject HRD', 'icon' => '🔴'],
-                                5 => ['class' => 'status-reject', 'label' => 'Reject CEO', 'icon' => '🔴'],
-                            ];
-                            $status_info = $status_map[$l['status']] ?? ['class' => '', 'label' => '-', 'icon' => ''];
-                        ?>
-                        <td class="text-center">
-                            <span class="status-badge <?php echo $status_info['class']; ?>">
-                                <span><?php echo $status_info['icon']; ?></span>
-                                <span><?php echo $status_info['label']; ?></span>
-                            </span>
-                        </td>
-                        <td>
-                            <?php if ($l['status'] == 1 ) { ?>
-                                <div class="action-buttons">
-                                    <button id_data="<?php echo $l['id'] ?>" onclick="ukr.edit_data(this, event)" class="btn btn-warning" title="Edit">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                    <button id_data="<?php echo $l['id'] ?>" onclick="ukr.delete(this, event)" class="btn btn-danger" title="Delete">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            <?php } ?>
-                        </td>
-                    </tr>
-                <?php } ?>
-
-            <?php } else { ?>
-                <tr>
-                    <td colspan="8">
-                        <div class="empty-state">
-                            <i class="fa fa-inbox"></i>
-                            <div>Tidak ada data</div>
+<table class="gmp-table">
+    <thead>
+        <tr>
+            <th class="text-center">No. Document</th>
+            <th class="text-center">NIK</th>
+            <th>Nama Karyawan</th>
+            <th>Jabatan</th>
+            <th class="text-center">Tanggal Pengajuan</th>
+            <th class="text-center">Tanggal Efektif</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (!empty($list)) { ?>
+            
+            <?php foreach($list as $l){?>
+                <tr class="<?php echo !empty($l['selected']) ? 'selected-row' : ''; ?>"> 
+                    <td class="text-center">
+                        <a href="javascript:void(0)" id_data="<?php echo $l['id'] ?>" style="color: #1f75fe;" onclick="ukr.showDetailUsulan(this, event)"><?php echo $l['document'] ?></a>
+                    </td>
+                    <td class="text-center">
+                        <span style="font-family: monospace; background: #f1f3f5; padding: 4px 8px; border-radius: 4px;">
+                            <?php echo $l['nik'] ?>
+                        </span>
+                    </td>
+                    <td>
+                        <div class="employee-name">
+                            <?php echo ucwords(strtolower($l['nama_karyawan'])) ?>
                         </div>
+                    </td>
+                    <td>
+                        <div class="employee-position">
+                            <?php echo $l['nama_jabatan'] ?>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <?php echo tglIndonesia($l['tanggal_pengajuan'], '-', ' ') ?>
+                    </td>
+                    <td class="text-center">
+                        <?php echo tglIndonesia($l['tanggal_resign'], '-', ' ') ?>
+                    </td>
+
+                    <?php
+                        $status_map = [
+                            1 => ['class' => 'status-draft', 'label' => 'Draft', 'icon' => '🟡'],
+                            2 => ['class' => 'status-ack', 'label' => 'Acknowledge', 'icon' => '🔵'],
+                            3 => ['class' => 'status-approved', 'label' => 'Approved', 'icon' => '🟢'],
+                            4 => ['class' => 'status-reject', 'label' => 'Reject HRD', 'icon' => '🔴'],
+                            5 => ['class' => 'status-reject', 'label' => 'Reject CEO', 'icon' => '🔴'],
+                        ];
+                        $status_info = $status_map[$l['status']] ?? ['class' => '', 'label' => '-', 'icon' => ''];
+                    ?>
+                    <td class="text-center">
+                        <span class="status-badge <?php echo $status_info['class']; ?>">
+                            <span><?php echo $status_info['icon']; ?></span>
+                            <span><?php echo $status_info['label']; ?></span>
+                        </span>
+                    </td>
+                    <td>
+                        <?php if ($l['status'] == 1 ) { ?>
+                            <div class="action-buttons">
+                                <button id_data="<?php echo $l['id'] ?>" onclick="ukr.edit_data(this, event)" class="btn btn-warning" title="Edit">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button id_data="<?php echo $l['id'] ?>" onclick="ukr.delete(this, event)" class="btn btn-danger" title="Delete">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        <?php } ?>
                     </td>
                 </tr>
             <?php } ?>
-        </tbody>
-    </table>
-</div>
+
+        <?php } else { ?>
+            <tr>
+                <td colspan="8">
+                    <div class="empty-state">
+                        <i class="fa fa-inbox"></i>
+                        <div>Tidak ada data</div>
+                    </div>
+                </td>
+            </tr>
+        <?php } ?>
+    </tbody>
+</table>

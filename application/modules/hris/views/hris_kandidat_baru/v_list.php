@@ -11,7 +11,7 @@
         align-items: center;
         background: #fff;
         border: 1px solid #e2e8f0;
-        border-radius: 12px;
+        /* border-radius: 12px; */
         padding: 10px 18px;
         margin-bottom: 14px;
         box-shadow: 0 2px 6px rgba(0,0,0,.03);
@@ -48,7 +48,7 @@
     .hlt-card {
         background: #fff;
         border: 1px solid #e2e8f0;
-        border-radius: 14px;
+        /* border-radius: 14px; */
         overflow: hidden;
         box-shadow: 0 4px 14px rgba(0,0,0,.04);
     }

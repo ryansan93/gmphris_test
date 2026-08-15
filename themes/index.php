@@ -21,215 +21,241 @@
   <?php endif; ?>
 
   <style>
-  /* ============================================
-     NAVBAR — satu baris flex di semua layar
-     (tanpa collapse, tanpa hamburger)
-     ============================================ */
-  #wrapper .navbar{
-    display:flex !important;
-    align-items:center;
-    flex-wrap:nowrap;
-    gap:10px;
-    min-height:0;
-  }
-  #wrapper .navbar > a#menu-toggle{
-    align-self:center;
-    flex:0 0 auto;
-    margin-left:6px;
-  }
-  #wrapper .navbar > ul{
-    display:flex;
-    align-items:center;
-    margin:0 !important;
-    float:none !important;
-    flex:0 0 auto;
-  }
-  #wrapper .navbar > ul.user-nav{
-    margin-left:auto;
-    margin-right:4px;
-  }
-  #wrapper .navbar .title{
-    flex:1 1 auto;
-    min-width:0;
-    margin:0;
-    padding:0 4px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    font-weight:600;
-    color:#2c3e50;
-  }
-
-  /* ===== SIDEBAR HEADING (DARK) ===== */
-  .sidebar-heading.sh-wrap {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 18px 16px;
-    margin: 0;
-    text-align: left;
-    background: transparent;
-    border-bottom: 1px solid rgba(255,255,255,.07);
-  }
-  .sh-logo-box {
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 12px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
-  }
-  .sh-logo {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-    /* border-radius: 6px; */
-  }
-  .sh-text {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    min-width: 0;
-  }
-  .sh-title {
-    font-size: 25px;
-    font-weight: 800;
-    letter-spacing: .8px;
-    color: #ffffff;
-    line-height: 1;
-  }
-  .sh-accent { color: #fb923c; }
-  .sh-subtitle {
-    font-size: .62rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.4px;
-    color: #7c8ba1;
-    line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .sidebar-dark .sh-title    { color: #ffffff; }
-  .sidebar-dark .sh-subtitle { color: #cbd5e1; }
-
-  @media (max-width: 480px){
-    #wrapper .navbar .title{ display:none; }
-  }
-
-  /* ============================================
-     DROPDOWN — paksa absolute (overlay)
-     ============================================ */
-  #wrapper .navbar li.dropdown{ position:relative; }
-  #wrapper .navbar .dropdown-menu{
-    position:absolute !important;
-    top:100%;
-    display:none;
-    z-index:1050;
-  }
-  #wrapper .navbar li.open > .dropdown-menu,
-  #wrapper .navbar li.show > .dropdown-menu,
-  #wrapper .navbar .dropdown-menu.show{ display:block; }
-  #wrapper .navbar .dropdown-menu-right{ right:0; left:auto; }
-  #wrapper .navbar .dropdown-menu-left{ left:0; right:auto; }
-
-  #wrapper .navbar .dropdown-menu.extended.notification{
-    min-width:280px;
-    max-width:340px;
-    padding:0;
-    border-radius:8px;
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-  }
-  #wrapper .navbar .notification .dropdown-item{
-    padding:8px 14px;
-    white-space:normal;
-    font-size:13px;
-  }
-  #wrapper .navbar .notification .dropdown-item.setting.bg-warning{
-    background:#fff8e1 !important;
-    color:#8a6d00;
-    font-size:12.5px;
-    border-bottom:1px solid #f0e4b8;
-  }
-
-  #wrapper .navbar .notif{
-    position:relative;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-  }
-  #wrapper .navbar .notif .badge{
-    position:absolute;
-    top:-4px;
-    right:-6px;
-    font-size:10px;
-    padding:2px 6px;
-    border-radius:999px;
-    min-width:18px;
-    text-align:center;
-  }
-
-  #wrapper .navbar .img-circle{
-    border-radius:50%;
-    object-fit:cover;
-    cursor:pointer;
-    border:2px solid #e1e5eb;
-    transition:border-color .2s ease;
-  }
-  #wrapper .navbar .img-circle:hover{ border-color:#1f75fe; }
-
-  /* ============================================
-     SIDEBAR — scrollbar native ringan
-     ============================================ */
-  #sidebar-wrapper .content{
-    overflow-y:auto;
-    max-height:calc(100vh - 120px);
-    scrollbar-width:thin;
-    scrollbar-color:#4a5568 transparent;
-  }
-  #sidebar-wrapper .content::-webkit-scrollbar{ width:6px; }
-  #sidebar-wrapper .content::-webkit-scrollbar-thumb{ background:#4a5568; border-radius:3px; }
-  #sidebar-wrapper .content::-webkit-scrollbar-track{ background:transparent; }
-
-  /* ============================================
-    ACTIVE MENU — parent expand + highlight
-    ============================================ */
-
-
-  /* Child menu aktif */
-  li.menu.active > a {
-    background: rgba(255,255,255,.05) !important;
-    /* color: #ffffff !important;
-    border-radius: 6px;
-    margin: 2px 8px;
-    font-weight: 600; */
-  }
-  li.menu.active > a:hover {
-    background: rgba(255,255,255,.05) !important;
-  }
-
-  .list-group-item.dropdown-toggle:hover {
-    background: rgba(255,255,255,.05) !important;
-  }
-
-  /* ============================================
-     MOBILE — dropdown jadi full-width fixed
-     ============================================ */
-  @media (max-width: 768px){
-    #wrapper .navbar .dropdown-menu.extended.notification{
-      position:fixed !important;
-      top:60px;
-      left:8px;
-      right:8px;
-      max-width:none;
-      width:auto;
+    /* ============================================
+      NAVBAR — satu baris flex di semua layar
+      (tanpa collapse, tanpa hamburger)
+      ============================================ */
+    #wrapper .navbar{
+      display:flex !important;
+      align-items:center;
+      flex-wrap:nowrap;
+      gap:10px;
+      min-height:0;
     }
-  }
+    #wrapper .navbar > a#menu-toggle{
+      align-self:center;
+      flex:0 0 auto;
+      margin-left:6px;
+    }
+    #wrapper .navbar > ul{
+      display:flex;
+      align-items:center;
+      margin:0 !important;
+      float:none !important;
+      flex:0 0 auto;
+    }
+    #wrapper .navbar > ul.user-nav{
+      margin-left:auto;
+      margin-right:4px;
+    }
+    #wrapper .navbar .title{
+      flex:1 1 auto;
+      min-width:0;
+      margin:0;
+      padding:0 4px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      font-weight:600;
+      color:#2c3e50;
+    }
+
+    /* ===== SIDEBAR HEADING (DARK) ===== */
+    .sidebar-heading.sh-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 16px;
+      margin: 0;
+      text-align: left;
+      background: transparent;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .sh-logo-box {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .sh-logo {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+    }
+    .sh-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+    .sh-title {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: .8px;
+      color: #ffffff;
+      line-height: 1;
+    }
+    .sh-accent { color: #fb923c; }
+    .sh-subtitle {
+      font-size: .62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      color: #7c8ba1;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-dark .sh-title    { color: #ffffff; }
+    .sidebar-dark .sh-subtitle { color: #cbd5e1; }
+
+    @media (max-width: 480px){
+      #wrapper .navbar .title{ display:none; }
+    }
+
+    /* ============================================
+      DROPDOWN — paksa absolute (overlay)
+      ============================================ */
+    #wrapper .navbar li.dropdown{ position:relative; }
+    #wrapper .navbar .dropdown-menu{
+      position:absolute !important;
+      top:100%;
+      display:none;
+      z-index:1050;
+    }
+    #wrapper .navbar li.open > .dropdown-menu,
+    #wrapper .navbar li.show > .dropdown-menu,
+    #wrapper .navbar .dropdown-menu.show{ display:block; }
+    #wrapper .navbar .dropdown-menu-right{ right:0; left:auto; }
+    #wrapper .navbar .dropdown-menu-left{ left:0; right:auto; }
+
+    #wrapper .navbar .dropdown-menu.extended.notification{
+      min-width:280px;
+      max-width:340px;
+      padding:0;
+      border-radius:8px;
+      box-shadow:0 10px 25px rgba(0,0,0,.12);
+    }
+    #wrapper .navbar .notification .dropdown-item{
+      padding:8px 14px;
+      white-space:normal;
+      font-size:13px;
+    }
+    #wrapper .navbar .notification .dropdown-item.setting.bg-warning{
+      background:#fff8e1 !important;
+      color:#8a6d00;
+      font-size:12.5px;
+      border-bottom:1px solid #f0e4b8;
+    }
+
+    #wrapper .navbar .notif{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    #wrapper .navbar .notif .badge{
+      position:absolute;
+      top:-4px;
+      right:-6px;
+      font-size:10px;
+      padding:2px 6px;
+      border-radius:999px;
+      min-width:18px;
+      text-align:center;
+    }
+
+    #wrapper .navbar .img-circle{
+      border-radius:50%;
+      object-fit:cover;
+      cursor:pointer;
+      border:2px solid #e1e5eb;
+      transition:border-color .2s ease;
+    }
+    #wrapper .navbar .img-circle:hover{ border-color:#1f75fe; }
+
+    /* ============================================
+      SIDEBAR — scrollbar native ringan
+      ============================================ */
+    #sidebar-wrapper .content{
+      overflow-y:auto;
+      max-height:calc(100vh - 120px);
+      scrollbar-width:thin;
+      scrollbar-color:#4a5568 transparent;
+    }
+    #sidebar-wrapper .content::-webkit-scrollbar{ width:6px; }
+    #sidebar-wrapper .content::-webkit-scrollbar-thumb{ background:#4a5568; border-radius:3px; }
+    #sidebar-wrapper .content::-webkit-scrollbar-track{ background:transparent; }
+
+    /* ============================================
+      ACTIVE MENU — parent expand + highlight
+      ============================================ */
+
+    /* Child menu aktif */
+    li.menu.active > a {
+      background: rgba(255,255,255,.05) !important;
+    }
+    li.menu.active > a:hover {
+      background: rgba(255,255,255,.05) !important;
+    }
+
+    /* Hover parent menu sidebar */
+    .list-group-item.parent-toggle:hover {
+      background: rgba(255,255,255,.05) !important;
+    }
+
+    /* ============================================
+      ICON PANAH (>) PADA PARENT MENU
+      ============================================ */
+    #sidebar-wrapper a.parent-toggle {
+      position: relative;
+      padding-right: 36px !important; /* ruang untuk icon panah */
+    }
+    #sidebar-wrapper a.parent-toggle .arrow-parent {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: transform .25s ease;
+      color: #d4d7db;
+      font-size: 14px;
+      line-height: 1;
+      pointer-events: none;
+    }
+    /* Saat menu terbuka, panah berputar ke bawah */
+    #sidebar-wrapper a.parent-toggle[aria-expanded="true"] .arrow-parent {
+      transform: translateY(-50%) rotate(90deg);
+    }
+
+    /* ============================================
+      FIX: Paksa tutup — cegah script eksternal
+      membuka kembali menu yang sudah ditutup user
+      ============================================ */
+    #sidebar-wrapper .sidebar-user-closed {
+      display: none !important;
+      height: 0 !important;
+      overflow: hidden !important;
+      visibility: hidden !important;
+    }
+
+    @media (max-width: 768px){
+      #wrapper .navbar .dropdown-menu.extended.notification{
+        position:fixed !important;
+        top:60px;
+        left:8px;
+        right:8px;
+        max-width:none;
+        width:auto;
+      }
+    }
   </style>
 </head>
 
@@ -265,7 +291,6 @@
           ?>
           <?php foreach ($arr_fitur as $key => $v_fitur): ?>
             <?php 
-                // Cek apakah ada child menu yang cocok dengan URL saat ini
                 $isParentActive = false;
                 foreach ($v_fitur['detail'] as $v_mdetail) {
                     if (trim($v_mdetail['path_detfitur'], '/') === $current_path) {
@@ -276,13 +301,12 @@
             ?>
             <li>
               <a href="<?php echo '#'.$v_fitur['id_header_fitur'] ?>" 
-                 data-toggle="collapse" 
                  aria-expanded="<?php echo $isParentActive ? 'true' : 'false' ?>" 
                  data-val="0" 
-                 class="dropdown-toggle list-group-item list-group-item-action bg-light-black <?php echo $isParentActive ? 'active-parent' : '' ?>">
-                <?php echo htmlspecialchars($v_fitur['header_fitur'], ENT_QUOTES); ?>
+                 class="parent-toggle list-group-item list-group-item-action bg-light-black <?php echo $isParentActive ? 'active-parent' : '' ?>">
+                <span><?php echo htmlspecialchars($v_fitur['header_fitur'], ENT_QUOTES); ?></span>
+                <i class="fa fa-angle-right arrow-parent"></i>
               </a>
-              <!-- "show" (BS4/5) + "in" (BS3) agar kompatibel keduanya -->
               <ul class="collapse list-unstyled <?php echo $isParentActive ? 'show in' : '' ?>" 
                   id="<?php echo $v_fitur['id_header_fitur'] ?>">
                 <?php foreach ($v_fitur['detail'] as $key => $v_mdetail): 
@@ -486,7 +510,81 @@
   <script>
     $(function(){
 
-      // Menu toggle sidebar
+      // =============================================
+      // 1. BLOKIR script eksternal yang mencoba
+      //    membuka kembali menu via Bootstrap Collapse
+      // =============================================
+      $('#sidebar-wrapper').on('show.bs.collapse', '.collapse', function(e) {
+        if ($(this).attr('data-user-closed') === 'true') {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          return false;
+        }
+      });
+
+      // =============================================
+      // 2. Handle klik parent menu sidebar
+      //    Menggunakan slideUp/slideDown langsung,
+      //    TIDAK memakai Bootstrap Collapse API,
+      //    agar tidak bisa di-override script lain.
+      // =============================================
+      $('#sidebar-wrapper').on('click', 'a.parent-toggle', function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        var targetId = $(this).attr('href');
+        var $target  = $(targetId);
+
+        if (!$target.length) return;
+
+        // Cek apakah sedang terbuka
+        var isOpen = $target.is(':visible') && !$target.hasClass('sidebar-user-closed');
+
+        if (isOpen) {
+          // TUTUP: tandai sebagai "ditutup oleh user"
+          $target.attr('data-user-closed', 'true');
+          $target.stop(true, true).slideUp(250, function() {
+            $target.addClass('sidebar-user-closed');
+          });
+          $(this).attr('aria-expanded', 'false');
+        } else {
+          // BUKA: hapus tanda "ditutup oleh user"
+          $target.removeAttr('data-user-closed');
+          $target.removeClass('sidebar-user-closed');
+          $target.stop(true, true).slideDown(250);
+          $(this).attr('aria-expanded', 'true');
+        }
+      });
+
+      // =============================================
+      // 3. Jaga-jaga: jika script eksternal mencoba
+      //    menghapus class sidebar-user-closed,
+      //    kembalikan lagi lewat MutationObserver
+      // =============================================
+      if (typeof MutationObserver !== 'undefined') {
+        var sidebarEl = document.getElementById('sidebar-wrapper');
+        if (sidebarEl) {
+          var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                var $el = $(mutation.target);
+                if ($el.attr('data-user-closed') === 'true' && !$el.hasClass('sidebar-user-closed')) {
+                  $el.addClass('sidebar-user-closed');
+                }
+              }
+            });
+          });
+          observer.observe(sidebarEl, {
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class']
+          });
+        }
+      }
+
+      // =============================================
+      // Menu toggle sidebar (hide/show sidebar)
+      // =============================================
       $("#menu-toggle").click(function(e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
@@ -504,6 +602,7 @@
         }
       });
 
+      // Abort pending AJAX saat pindah menu
       $("a.menu").click(function(e) {
         if (typeof _getDataSummaryPanenDanDoc !== 'undefined' && _getDataSummaryPanenDanDoc && typeof _getDataSummaryPanenDanDoc.abort === 'function') {
           try { _getDataSummaryPanenDanDoc.abort(); } catch(err){}
@@ -522,7 +621,8 @@
 
     });
 
-    $(".dropdown-toggle").click(function(e) {
+    // Dropdown toggle HANYA untuk navbar
+    $(".navbar .dropdown-toggle").click(function(e) {
       $(this).closest('li').toggleClass("open");
     });
 

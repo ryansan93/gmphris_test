@@ -1,7 +1,7 @@
 <?php if (!empty($laporan)) { ?>
     <?php foreach ($laporan as $periode => $items) { ?>
         <tr>
-            <td colspan="6" style="font-weight:bold;background:#f5f5f5;">
+            <td colspan="6" style="font-weight:bold;background:#D6D6D6;">
                 <?php echo $periode; ?>
             </td>
         </tr>

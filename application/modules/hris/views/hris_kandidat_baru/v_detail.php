@@ -56,8 +56,8 @@
 
     
     .bf-card {
-        max-width: 1100px;
-        margin: 0 auto;
+        /* max-width: 1100px; */
+        /* margin: 0 auto; */
         background: #fff;
         /* box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); */
         overflow: hidden;
