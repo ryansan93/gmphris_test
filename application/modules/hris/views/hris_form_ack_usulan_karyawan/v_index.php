@@ -43,10 +43,8 @@
 </style>
 
 <fieldset style="margin-bottom: 15px;">
-    <legend>
-        <div class="col-xs-12 no-padding">
-            <b>LIST DATA USULAN KARYAWAN</b>
-        </div>
+    <legend style="width:50%">
+            LIST DATA USULAN KARYAWAN
     </legend>
 
     <div class="col-xs-12 no-padding list_data" style="overflow-x:scroll" >

@@ -60,9 +60,12 @@
             <button class="btn btn-secondary" type="button" onclick="so.zoomReset()"><i class="fa fa-undo" aria-hidden="true"></i> Reset</button>
             <button class="btn btn-secondary" onclick="so.printTreePdf();"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Export PDF</button>
 
-            <input type="text" id="soSearch" class="form form-control" placeholder="Cari karyawan/nik/jabatan" autocomplete="off" oninput="so.searchData()" onchange="so.searchData()" onkeydown="if(event.key==='Enter'){ event.preventDefault(); so.nextMatch(); }">
-            <span id="searchInfo" style="margin-left:8px;font-size:12px;color:#888"></span>
-            <a href="javascript:void(0)" onclick="so.clearSearch()" title="Hapus" style="margin-left:6px;color:#888;text-decoration:none">✕</a>
+            <!-- ✅ wrapper search agar turun ke bawah -->
+            <div class="search-area">
+                <input type="text" id="soSearch" class="form form-control" placeholder="Cari karyawan/nik/jabatan" autocomplete="off" oninput="so.searchData()" onchange="so.searchData()" onkeydown="if(event.key==='Enter'){ event.preventDefault(); so.nextMatch(); }">
+                <span id="searchInfo" style="font-size:12px;color:#888"></span>
+                <a href="javascript:void(0)" onclick="so.clearSearch()" title="Hapus" style="color:#888;text-decoration:none">✕</a>
+            </div>
         </div>
         
         <div class="hint-area">
@@ -113,7 +116,6 @@
 
             const NODE_W = autoNodeWidth(data);
             document.documentElement.style.setProperty('--node-w', NODE_W + 'px');
-            //   console.log('[Tree] NODE_W auto =', NODE_W);
 
             function layout(n) {
                 if (n.children && n.children.length) {
@@ -180,30 +182,26 @@
                     </div>
                     <div class="role">${n.role}</div>
                     <div class="name">${n.name}</div>`;
-                el.__nodeData = n;              // tautkan elemen ↔ data
+                el.__nodeData = n;
                 n.__el = el;  
                 nodeEls.set(n, el);
                 treeEl.appendChild(el);
             });
 
-            
-
             // ✅ referensi atasan (jalan sekali per render)
             (function setParent(n, p) {
                 n.__parent = p || null;
                 (n.children || []).forEach(c => setParent(c, n));
-            })(data);   // ⚠️ di v_filter.php ganti jadi: (dataObj)
+            })(data);
 
             // ✅ nyalakan / matikan sorotan
             function paint(n, on) {
-                // rantai ke ATAS (atasan sampai root)
                 let p = n.__parent;
                 while (p) {
                     const pe = nodeEls.get(p);
                     if (pe) pe.classList.toggle("hl-up", on);
                     p = p.__parent;
                 }
-                // rantai ke BAWAH (anak-cucu) — hapus bagian ini kalau tidak mau
                 (function down(c) {
                     (c.children || []).forEach(k => {
                         const ke = nodeEls.get(k);
@@ -215,10 +213,10 @@
 
             treeEl.addEventListener("mouseover", e => {
                 const el = e.target.closest(".node");
-                if (el === treeEl.__hover) return;          // masih di node yang sama
-                if (treeEl.__hover) paint(treeEl.__hover.__nodeData, false);  // matiin yang lama
+                if (el === treeEl.__hover) return;
+                if (treeEl.__hover) paint(treeEl.__hover.__nodeData, false);
                 treeEl.__hover = el;
-                if (el) paint(el.__nodeData, true);         // nyalain yang baru
+                if (el) paint(el.__nodeData, true);
             });
 
             treeEl.addEventListener("mouseleave", () => {
@@ -229,7 +227,3 @@
 
     </div>
 </fieldset>
-
-
-
-
