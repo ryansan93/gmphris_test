@@ -1,4 +1,3 @@
-
 <div class="panel-heading no-padding">
     <ul class="nav nav-tabs nav-justified">
         <li class="nav-item">
@@ -9,7 +8,6 @@
         </li>
     </ul>
 </div>
-
 
 <div class="tab-content">
 
@@ -33,74 +31,80 @@
                     <label>Tahun</label>
                     <select class="select2 fil-tahun" onchange="mc.filter_list()">
                         <option value="">Pilih Tahun</option>
-                        <?php
-                            $tahun = date('Y');
-                            for ($i = 0; $i < 5; $i++) {
-                                $value = $tahun + $i;
-                        ?>
-                            <option value="<?= $value; ?>"><?= $value; ?></option>
+
+                        <?php $tahun = date('Y'); ?>
+                        <?php for ($i = -2; $i <= 2; $i++) { ?>
+                            <?php  $value = $tahun + $i; ?>
+                            <option value="<?= $value; ?>" <?= $value == $tahun ? 'selected' : ''; ?>> <?= $value; ?></option>
                         <?php } ?>
+                        
                     </select>
                 </div>
             </div>
 
-
         </fieldset>
         <br>
-        <table class="gmp-table">
-            <thead>
-                <tr>
-                    <th>NIK</th>
-                    <th>Nama</th>
-                    <th style="text-align:center;">Hak Cuti</th>
-                    <th style="text-align:center;">Terpakai</th>
-                    <th style="text-align:center;">Sisa</th>
-                    <th style="text-align:center;">Action</th>
-                </tr>
-            </thead>
+        <fieldset>
+            <legend>Data Cuti Karyawan</legend>
 
-            <tbody class="tb_list_data">
-                <?php foreach($data_cuti as $tahun => $cuti) { ?>
-
-                    <tr>
-                        <td colspan="6">
-                            <strong>Tahun : <?= $tahun ?></strong>
-                        </td>
-                    </tr>
-
-                    <?php foreach($cuti as $d) { ?>
+            <div style="height:350px; overflow-x:scroll">
+                <table class="gmp-table">
+                    <thead>
                         <tr>
-                            <td><?= $d['nik'] ?></td>
-                            <td><?= ucwords(strtolower($d['nama'])) ?></td>
-                            <td style="text-align:center;"><?= (int)$d['hak_cuti'] ?> Hari</td>
-                            <td style="text-align:center;"><?= (int)$d['cuti_terpakai'] ?> Hari</td>
-                            <td style="text-align:center;"><?= (int)$d['sisa_cuti'] ?> Hari</td>
-                            <td style="text-align:center;">
-                                <button type="button" 
-                                    class="btn btn-warning btn-sm"
-                                    onclick="mc.edit_cuti(
-                                        '<?= $d['id'] ?>',
-                                        '<?= $d['nik'] ?>',
-                                        '<?= $d['nama'] ?>',
-                                        '<?= $d['hak_cuti'] ?>',
-                                        '<?= $d['cuti_terpakai'] ?>',
-                                        '<?= $d['sisa_cuti'] ?>'
-                                    )">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-
-                                <button type="button" 
-                                    class="btn btn-danger btn-sm"
-                                    onclick="mc.delete_cuti(<?= $d['id'] ?>)">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </td>
+                            <th>NIK</th>
+                            <th>Nama</th>
+                            <th style="text-align:center;">Hak Cuti</th>
+                            <th style="text-align:center;">Terpakai</th>
+                            <th style="text-align:center;">Sisa</th>
+                            <th style="text-align:center;">Action</th>
                         </tr>
-                    <?php } ?>
-
-                <?php } ?>
-            </tbody>
-        </table>
+                    </thead>
+    
+                    <tbody class="tb_list_data">
+                        <?php foreach($data_cuti as $tahun => $cuti) { ?>
+    
+                            <tr>
+                                <td colspan="6">
+                                    <strong>Tahun : <?= $tahun ?></strong>
+                                </td>
+                            </tr>
+    
+                            <?php foreach($cuti as $d) { ?>
+                                <tr>
+                                    <td><?= $d['nik'] ?></td>
+                                    <td><?= ucwords(strtolower($d['nama'])) ?></td>
+                                    <td style="text-align:center;"><?= (int)$d['hak_cuti'] ?> Hari</td>
+                                    <td style="text-align:center;"><?= (int)$d['cuti_terpakai'] ?> Hari</td>
+                                    <td style="text-align:center;"><?= (int)$d['sisa_cuti'] ?> Hari</td>
+                                    <td style="text-align:center;">
+                                        <button type="button" 
+                                            class="btn btn-warning btn-sm"
+                                            onclick="mc.edit_cuti(
+                                                '<?= $d['id'] ?>',
+                                                '<?= $d['nik'] ?>',
+                                                '<?= $d['nama'] ?>',
+                                                '<?= $d['hak_cuti'] ?>',
+                                                '<?= $d['cuti_terpakai'] ?>',
+                                                '<?= $d['sisa_cuti'] ?>'
+                                            )">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+    
+                                        <button type="button" 
+                                            class="btn btn-danger btn-sm"
+                                            onclick="mc.delete_cuti(<?= $d['id'] ?>)">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+    
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        
     </div>
 
     <div id="action" class="tab-pane fade tab-detail" role="tabpanel" style="padding-top: 10px;">
