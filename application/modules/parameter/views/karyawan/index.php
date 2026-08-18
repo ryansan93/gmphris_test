@@ -11,7 +11,7 @@
 			<!-- < ?php } ?> -->
 		</div>
 	</div>
-	<div class="col-lg-12 data" style="margin-top:10px;">
+	<div class="col-lg-12 data" style="margin-top:10px; overflow:scroll">
 		<small>
 			<table class="table table-bordered tbl_pegawai">
 				<thead>

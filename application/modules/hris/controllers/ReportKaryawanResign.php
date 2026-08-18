@@ -157,15 +157,18 @@ class ReportKaryawanResign extends Public_Controller {
                         nama_wilayah = STUFF
                         (
                             (
-                                SELECT ', ' +
-                                    CASE
-                                        WHEN wk2.wilayah = 'all' THEN 'All'
-                                        ELSE w.nama
+                                -- Tambahkan DISTINCT atau GROUP BY agar nama wilayah yang kembar hanya muncul 1 kali
+                                SELECT DISTINCT ', ' + 
+                                    CASE 
+                                        WHEN uk2.unit = 'all' THEN 'All'
+                                        ELSE w_induk.nama 
                                     END
-                                FROM wilayah_karyawan wk2
+                                FROM unit_karyawan uk2
                                 LEFT JOIN wilayah w
-                                    ON TRY_CAST(wk2.wilayah AS INT) = w.id
-                                WHERE wk2.id_karyawan = k.id
+                                    ON TRY_CAST(uk2.unit AS INT) = w.id
+                                LEFT JOIN wilayah w_induk 
+                                    ON w.induk = w_induk.id 
+                                WHERE uk2.id_karyawan = k.id
                                 FOR XML PATH('')
                             ),
                             1,2,''
