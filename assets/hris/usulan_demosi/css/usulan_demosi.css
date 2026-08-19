@@ -52,6 +52,62 @@
 
 /* END SELECT2 MULTIPLE */
 
+.gmp-table {
+    width: 100%;
+    border-collapse: separate; /* ⚠️ WAJIB diubah dari 'collapse' agar sticky bekerja */
+    border-spacing: 0;         /* ⚠️ WAJIB ditambahkan untuk menjaga tampilan border tetap rapat */
+    background: #fff;
+}
+
+/* Opsional: Jika tabel dibungkus container scroll, atur juga border bawah header */
+.gmp-table thead th:first-child {
+    left: 0; /* Jika nanti ada kolom yang di-sticky ke kiri */
+}
+
+.gmp-table thead th {
+    position: sticky;
+    top: 0;                    /* ⚠️ WAJIB: Titik tempel sticky */
+    z-index: 10;               /* ⚠️ WAJIB: Agar header mengambang di atas tbody */
+    background: #f0f4f8;       /* Background sudah ada, ini yang membuat teks tidak tembus */
+    color: #5b6b7c;
+    text-transform: uppercase;
+    font-size: .72rem;
+    letter-spacing: .5px;
+    font-weight: 700;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.gmp-table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #eef2f6;
+    font-size: 12px;
+    color: #334155;
+    vertical-align: middle;
+    background: #fff;          /* ⚠️ TAMBAHAN: Agar baris tidak tembus saat melewati header */
+}
+
+.gmp-table tbody tr { transition: background .15s; }
+.gmp-table tbody tr:hover td { background: #fafcfe; }
+.gmp-table tbody tr:last-child td { border-bottom: none; }
+
+.gmp-table .text-center, .gmp-table th.text-center { text-align: center; }
+.gmp-table .text-right,  .gmp-table td.text-right  { text-align: right; }
+
+.gmp-table-wrap {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    overflow-x: auto;
+    max-height: 600px;         /* ⚠️ TAMBAHAN: Agar muncul scrollbar vertikal */
+    overflow-y: auto;          /* ⚠️ TAMBAHAN: Scroll vertikal dalam container */
+}
+
+.gmp-table thead th + th { border-left: 1px solid #e2e8f0; }
+.gmp-table tbody td + td { border-left: 1px solid #eef2f6; }
+
 .filter-row {
     display: flex;
     flex-wrap: wrap;
