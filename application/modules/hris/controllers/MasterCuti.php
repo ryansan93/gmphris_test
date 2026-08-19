@@ -27,9 +27,7 @@ class MasterCuti extends Public_Controller {
                 "assets/toastr/js/toastr.min.js",
                 "assets/xlsx/js/xlsx.full.min.js",
                 "assets/html2pdf/html2canvas.min.js",
-                "assets/html2pdf/jspdf.umd.min.js",
-                
-                
+                "assets/html2pdf/jspdf.umd.min.js", 
             ));
             $this->add_external_css(array(
                 "assets/jquery/easy-autocomplete/easy-autocomplete.min.css",
@@ -72,7 +70,6 @@ class MasterCuti extends Public_Controller {
 
     public function load_data()
     {
-
         $data['list_data'] = $this->get_data();
 
         // cetak_r($data, 1);
