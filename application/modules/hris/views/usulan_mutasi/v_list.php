@@ -1,5 +1,5 @@
 
-<div style="height:350px; overflow-y:scroll">
+<div style="max-height:350px; overflow-y:scroll">
     <table class="gmp-table">
         <thead>
             <tr>

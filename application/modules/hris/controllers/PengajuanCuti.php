@@ -20,6 +20,7 @@ class PengajuanCuti extends Public_Controller
 		parent::__construct();
 		$this->url = $this->current_base_uri;
 		$this->load->library('telegram_lib');
+        $this->load->library('fonnte_lib');
 	}
 
 	public function index()
@@ -410,6 +411,7 @@ class PengajuanCuti extends Public_Controller
 
             $m->jumlah_hari = $jumlah_hari;
 		    $m->save();
+            $last_id = $m->id;
 
             // handle attachments
             if (!empty($_FILES['attachment'])){
@@ -450,6 +452,12 @@ class PengajuanCuti extends Public_Controller
             " - Alasan : {$params['jenis_cuti']} - {$params['alasan']}\n\n" .
             " - Di input oleh : {$_SESSION['detail_user']['nama_detuser']} ({$_SESSION['id_user']})";
             $this->telegram_lib->sendMessages($message_telegram);
+
+            $notif_wa = [
+                'untuk'  => 'ACK',
+                'params' => $last_id,
+            ];
+            $this->send_notifikasi_wa($notif_wa);
 
             $this->result['status'] = 1;
             $this->result['message'] = 'Data berhasil di simpan.';
@@ -833,6 +841,14 @@ class PengajuanCuti extends Public_Controller
             if (in_array($status_code, [2, 4])) {
                 $update['ack_by'] = isset($this->userdata['detail_user']['nama_detuser']) ? $this->userdata['detail_user']['nama_detuser'] : null;
                 $update['ack_date'] = date('Y-m-d H:i:s');
+
+                // Kirim WA
+                $notif_wa = [
+                    'untuk'  => 'APPROVE',
+                    'params' => $id,
+                ];
+                    
+                $this->send_notifikasi_wa($notif_wa);
             }
             if (in_array($status_code, [3, 5])) {
                 $update['approve_by'] = isset($this->userdata['detail_user']['nama_detuser']) ? $this->userdata['detail_user']['nama_detuser'] : null;
@@ -1224,4 +1240,89 @@ class PengajuanCuti extends Public_Controller
         display_json($this->result);
     }
 
+
+    public function send_notifikasi_wa($notif)
+    {
+        $nomor  = '0895341421879';
+        $m_conf = new \Model\Storage\Conf();
+
+        if ($notif['untuk'] == 'ACK') {
+            
+               $id = $notif['params']; 
+
+            $data_cuti = $m_conf->hydrateRaw(
+                "SELECT k.nama, k.jabatan, hpc.nik, hpc.tanggal_mulai, hpc.tanggal_selesai, hpc.jenis_cuti, hpc.alasan 
+                FROM hris_pengajuan_cuti hpc
+                INNER JOIN karyawan k ON hpc.nik = k.nik AND k.status = 1
+                WHERE hpc.id = ?",
+                [$id]
+            )->toArray();
+
+            $nama_karyawan = !empty($data_cuti) ? $data_cuti[0]['nama'] : 'Unknown';
+            $jabatan       = !empty($data_cuti) ? $data_cuti[0]['jabatan'] : 'Staff';
+            $nik           = !empty($data_cuti) ? $data_cuti[0]['nik'] : '';
+            $tgl_mulai     = !empty($data_cuti) ? $data_cuti[0]['tanggal_mulai'] : '';
+            $tgl_selesai   = !empty($data_cuti) ? $data_cuti[0]['tanggal_selesai'] : '';
+            $alasan = !empty($data_cuti) ? strtoupper(str_replace('_', ' ', $data_cuti[0]['jenis_cuti'])) . ' - ' . $data_cuti[0]['alasan'] : '';
+
+            // PERBAIKAN 4: Perbaiki typo {$nik] menjadi {$nik} dan hapus indentasi spasi
+            $pesan = <<<EOF
+            ✅ *ACK PENGAJUAN CUTI*
+
+            Halo, Bapak/Ibu
+            Terdapat pengajuan cuti karyawan yang telah mendapatkan *Persetujuan (Acknowledge)*.
+
+            *Informasi Karyawan*
+            • Nama        : {$nik} - {$nama_karyawan} ({$jabatan})
+            • Tanggal     : {$tgl_mulai} s/d {$tgl_selesai}
+            • Keperluan   : {$alasan}
+
+            Silakan masuk ke *HRIS GMP* untuk melihat detail pengajuan cuti tersebut.
+
+            *HRIS - PT. Griya Mitra Poultry*
+            EOF;
+
+        } elseif ($notif['untuk'] == 'APPROVE') {
+
+        
+            $id = $notif['params']; 
+
+            $data_cuti = $m_conf->hydrateRaw(
+                "SELECT k.nama, k.jabatan, hpc.nik, hpc.tanggal_mulai, hpc.tanggal_selesai, hpc.jenis_cuti, hpc.alasan 
+                FROM hris_pengajuan_cuti hpc
+                INNER JOIN karyawan k ON hpc.nik = k.nik AND k.status = 1
+                WHERE hpc.id = ?",
+                [$id]
+            )->toArray();
+
+            $nama_karyawan = !empty($data_cuti) ? $data_cuti[0]['nama'] : 'Unknown';
+            $jabatan       = !empty($data_cuti) ? $data_cuti[0]['jabatan'] : 'Staff';
+            $nik           = !empty($data_cuti) ? $data_cuti[0]['nik'] : '';
+            $tgl_mulai     = !empty($data_cuti) ? $data_cuti[0]['tanggal_mulai'] : '';
+            $tgl_selesai   = !empty($data_cuti) ? $data_cuti[0]['tanggal_selesai'] : '';
+            $alasan = !empty($data_cuti) ? strtoupper(str_replace('_', ' ', $data_cuti[0]['jenis_cuti'])) . ' - ' . $data_cuti[0]['alasan'] : '';
+
+            // PERBAIKAN 4: Perbaiki typo {$nik] menjadi {$nik} dan hapus indentasi spasi
+            $pesan = <<<EOF
+            ✅ *APPROVAL PENGAJUAN CUTI *
+
+            Halo, Bapak/Ibu
+            Terdapat pengajuan cuti karyawan yang telah mendapatkan *Persetujuan (Approval)*.
+
+            *Informasi Karyawan*
+            • Nama        : {$nik} - {$nama_karyawan} ({$jabatan})
+            • Tanggal     : {$tgl_mulai} s/d {$tgl_selesai}
+            • Keperluan   : {$alasan}
+
+            Silakan masuk ke *HRIS GMP* untuk melihat detail pengajuan cuti tersebut.
+
+            *HRIS - PT. Griya Mitra Poultry*
+            EOF;
+        }
+
+        // Kirim pesan (hanya jika $pesan sudah di-set)
+        if (!empty($pesan)) {
+            $this->fonnte_lib->send($nomor, $pesan);
+        }
+    }
 }

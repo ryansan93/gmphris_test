@@ -1231,27 +1231,59 @@ class UsulanPromosi extends Public_Controller {
 
         if (!empty($level)) {
 
-            $sql = "
-                SELECT
-                    distinct(k.nik) as nik,
-                    k.id,
-                    k.nama,
-                    j.nama AS nama_jabatan,
-                    wk.wilayah
-                FROM karyawan k
-                INNER JOIN wilayah_karyawan wk
-                    ON k.id = wk.id_karyawan
-                INNER JOIN jabatan j
-                    ON k.jabatan = j.kode
-                INNER JOIN unit_karyawan uk
-                    ON k.id = uk.id_karyawan
-                WHERE k.status = 1
-                    AND k.level < $level
-                    AND wk.wilayah IN ($wil, 'all')
-                    $whereUnit
-                    AND k.nik != '$nik'
-                ORDER BY j.nama, k.nama ASC
-            ";
+            // $sql = "
+            //     SELECT
+            //         distinct(k.nik) as nik,
+            //         k.id,
+            //         k.nama,
+            //         j.nama AS nama_jabatan,
+            //         wk.wilayah
+            //     FROM karyawan k
+            //     INNER JOIN wilayah_karyawan wk
+            //         ON k.id = wk.id_karyawan
+            //     INNER JOIN jabatan j
+            //         ON k.jabatan = j.kode
+            //     INNER JOIN unit_karyawan uk
+            //         ON k.id = uk.id_karyawan
+            //     WHERE k.status = 1
+            //         AND k.level < $level
+            //         --AND wk.wilayah IN ($wil, 'all')
+            //         $whereUnit
+            //         AND k.nik != '$nik'
+            //     ORDER BY j.nama, k.nama ASC
+            // ";
+
+            $sql = "SELECT
+                        nik,
+                        id,
+                        nama,
+                        nama_jabatan,
+                        wilayah
+                    FROM (
+                        SELECT
+                            k.nik,
+                            k.id,
+                            k.nama,
+                            j.nama AS nama_jabatan,
+                            wk.wilayah,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY k.nik
+                                ORDER BY wk.wilayah
+                            ) AS rn
+                        FROM karyawan k
+                        INNER JOIN wilayah_karyawan wk
+                            ON k.id = wk.id_karyawan
+                        INNER JOIN jabatan j
+                            ON k.jabatan = j.kode
+                        INNER JOIN unit_karyawan uk
+                            ON k.id = uk.id_karyawan
+                        WHERE k.status = 1
+                            AND k.level < $level
+                            $whereUnit
+                            AND k.nik != 'K24210'
+                    ) x
+                    WHERE rn = 1
+                    ORDER BY nama_jabatan, nama ASC ";
 
             // cetak_r($sql, 1);
 

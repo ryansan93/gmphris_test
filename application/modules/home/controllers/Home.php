@@ -360,9 +360,9 @@ class Home extends Public_Controller
 
 		// ACK USULAN MUTASI
 			$url_ack_mutasi = 'hris/UsulanMutasi';
-			$akses = hakAkses('/'.$url_ack_mutasi);
-
-			if ( !empty($akses['a_ack']) && $akses['a_ack'] == 1 ) {
+			$akses_ack_mutasi = hakAkses('/'.$url_ack_mutasi);
+			// cetak_r($akses_ack_mutasi, 1);
+			if ( !empty($akses_ack_mutasi['a_ack']) && $akses_ack_mutasi['a_ack'] == 1 ) {
 
 				$status = getStatus('submit');
 
@@ -374,7 +374,7 @@ class Home extends Public_Controller
 				$m_um = new \Model\Storage\HrisUsulanMutasi_model();
 				$data = $m_um->notifUsulan($need);
 
-				// cetak_r($data, 1);
+				
 
 				if ( $data ) {
 					$key = 'usulan_mutasi_ack';

@@ -12,6 +12,7 @@ class MasterCuti extends Public_Controller {
         parent::__construct();
         $this->url = $this->current_base_uri;
         $this->hakAkses = hakAkses($this->url);
+        $this->load->library('fonnte_lib');
     }
 
     public function index($segment=0)
@@ -59,6 +60,11 @@ class MasterCuti extends Public_Controller {
 
             // cetak_r($content['karyawan'], 1);
             $data['title_menu']         = 'HRIS - Master Cuti';
+
+            
+          
+
+            // print_r($result);
 
             $data['view'] = $this->load->view($this->pathView . 'v_index', $content, TRUE);
             $this->load->view($this->template, $data);
@@ -446,6 +452,33 @@ class MasterCuti extends Public_Controller {
         // cetak_r($data, 1);
 
         echo json_encode($data);
+    }
+
+    public function send_notifikasi_wa(){
+        $nomor_tujuan = '0895341421879';
+        
+        $pesan = <<<EOF
+            🔔 *PENGAJUAN CUTI BARU*
+
+            Halo, Bapak/Ibu
+            Terdapat pengajuan cuti baru dari karyawan yang membutuhkan Acknowledge Anda.
+
+            👤 *Informasi Karyawan*
+            • Nama         : K08763 - Syahidzul Hafidz (Staff IT)
+            • Jenis Cuti  : Cuti
+            • Tanggal      : 12 Juli s/d 13 Juli
+            • Lama Cuti  : 3 Hari
+            • Keperluan  : Acara Keluarga
+
+            📌 *Status*
+            ⏳ Menunggu Persetujuan Anda
+
+            Silakan masuk ke *HRIS GMP* untuk memproses pengajuan cuti tersebut.
+
+            *HRIS - PT. Griya Mitra Poultry*
+        EOF;
+
+        $this->fonnte_lib->send($nomor_tujuan, $pesan);
     }
    
 

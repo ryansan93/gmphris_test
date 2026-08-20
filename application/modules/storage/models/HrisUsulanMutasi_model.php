@@ -21,7 +21,7 @@ class HrisUsulanMutasi_model extends Conf {
             $data = $d_dpd->toArray();
         }
 
-		// cetak_r($data, 1);
+		// cetak_r($sql, 1);
 
         return $data;
 	}

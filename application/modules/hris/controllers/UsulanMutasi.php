@@ -1155,7 +1155,7 @@ class UsulanMutasi extends Public_Controller {
                     ON k.id = uk.id_karyawan
                 WHERE k.status = 1
                     AND k.level < $level
-                    AND wk.wilayah IN ($wil, 'all')
+                    -- AND wk.wilayah IN ($wil, 'all')
                     $whereUnit
                     AND k.nik != '$nik'
                 ORDER BY j.nama, k.nama ASC

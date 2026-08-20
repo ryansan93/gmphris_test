@@ -56,7 +56,6 @@ class StrukturOrganisasi_model extends Conf {
                         nama_wilayah = STUFF
                         (
                             (
-                                -- Tambahkan DISTINCT atau GROUP BY agar nama wilayah yang kembar hanya muncul 1 kali
                                 SELECT DISTINCT ', ' + 
                                     CASE 
                                         WHEN uk2.unit = 'all' THEN 'All'
@@ -123,12 +122,13 @@ class StrukturOrganisasi_model extends Conf {
     public function get_unit()
     {
         $sql = "SELECT 
+                    w1.induk,
                     w1.kode,
                     MAX(w1.nama) AS nama_unit,
                     w1.alias
                 FROM wilayah w1
                 WHERE w1.kode IS NOT NULL
-                GROUP BY w1.kode, w1.alias 
+                GROUP BY w1.kode, w1.alias, w1.induk
                 ORDER BY w1.kode;";
 
         $db = $this->hydrateRaw($sql)->toArray();
@@ -138,7 +138,7 @@ class StrukturOrganisasi_model extends Conf {
 
     public function get_perwakilan()
     {
-        $sql = "select nama as nama_wilayah, alias from wilayah where jenis = 'PW' order by nama asc";
+        $sql = "select id, nama as nama_wilayah, alias from wilayah where jenis = 'PW' order by nama asc";
 
         $db = $this->hydrateRaw($sql)->toArray();
 

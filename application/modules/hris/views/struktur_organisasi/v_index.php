@@ -22,10 +22,10 @@
 
         <div class="filter-item">
             <label>Perwakilan</label>
-            <select class="select2 perwakilan" onchange="so.filterStructur(this, event)">
+            <select class="select2 perwakilan" onchange="so.filterStructur(this, event), so.change_unit()">
                 <option value="">Pilih Perwakilan</option>
                 <?php foreach($perwakilan as $p){ ?>
-                    <option value="<?php echo $p['nama_wilayah'] ?>"><?php echo $p['nama_wilayah'] ?></option>
+                    <option id_pw="<?php echo $p['id'] ?>" value="<?php echo $p['nama_wilayah'] ?>"><?php echo $p['nama_wilayah'] ?></option>
                 <?php } ?>                
             </select>
         </div>
@@ -35,7 +35,7 @@
             <select class="select2 unit" onchange="so.filterStructur(this, event)">
                 <option value="">Pilih Unit</option>
                 <?php foreach($unit as $u){ ?>
-                    <option value="<?php echo $u['alias'] ?>"><?php echo $u['nama_unit'] ?></option>
+                    <option induk_pw="<?php echo $u['induk'] ?>" value="<?php echo $u['alias'] ?>"><?php echo $u['nama_unit'] ?></option>
                 <?php } ?>                 
             </select>
         </div>

@@ -21,7 +21,7 @@ cetak_r($_GET, 1);
 
 ?> -->
 
-<div style="height:350px; overflow-x:scroll">
+<div style="max-height:350px; overflow-y:scroll">
     <table class="gmp-table">
         <thead>
             <tr>

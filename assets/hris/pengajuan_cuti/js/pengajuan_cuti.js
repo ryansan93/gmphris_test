@@ -14,6 +14,7 @@ $(document).ready(function(){
 });
 
 let pc= {
+
     attachmentDT: new DataTransfer(),
 
     settingUp: () => {
@@ -24,7 +25,7 @@ let pc= {
             }
         }
         $(".select2").select2();
-        // when nik changes, re-run date duplicate check
+        
         $(document).off('change', 'select[name="nik"], input[name="nik"]').on('change', 'select[name="nik"], input[name="nik"]', function(){
             try{ pc.checkTanggalPengajuan(); }catch(e){}
         });
@@ -350,7 +351,7 @@ let pc= {
             },
 
             callback: function(result) {
-
+                
                 if (!result) return;
 
 
@@ -372,7 +373,7 @@ let pc= {
 
                     formData.append("edit_note", edit_note);
                 }
-
+                showLoading();
 
                 $(".btn-save").prop('disabled', true);
 
@@ -386,7 +387,7 @@ let pc= {
 
                     success: function(res){
 
-                        showLoading();
+                      
 
                         let d;
 

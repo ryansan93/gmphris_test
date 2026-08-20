@@ -134,6 +134,8 @@ let so = {
             wilayah     : $(".perwakilan").val(),
         }
 
+        
+
         $.ajax({
             url : 'hris/StrukturOrganisasi/filterStruktur',
             data : params,
@@ -152,10 +154,45 @@ let so = {
 
     },
 
+    change_unit: () => {
+        var $perwakilan = $('.perwakilan');
+        var $unit = $('.unit');
+        
+        var selectedIdPw = $perwakilan.find('option:selected').attr('id_pw');
+        
+        if (!$unit.data('allOptions')) {
+            $unit.data('allOptions', $unit.find('option').clone());
+        }
+        
+        $unit.empty();
+        
+        $unit.data('allOptions').each(function() {
+            var $opt = $(this);
+            
+            if ($opt.val() === '' || $opt.attr('induk_pw') == selectedIdPw) {
+                $unit.append($opt.clone());
+            }
+        });
+        
+        $unit.val('').trigger('change.select2');
+    },
+
     resetFilter: () => {
+
         $(".levelMax").val('').trigger('change');
-        $(".perwakilan").val('').trigger('change');
-        $(".unit").val('').trigger('change');
+
+        $(".perwakilan").val('').trigger('change.select2');
+
+        let $unit = $(".unit");
+        let allOptions = $unit.data('allOptions');
+
+        if (allOptions) {
+            $unit.empty();
+            $unit.append(allOptions.clone());
+        }
+
+        $unit.val('').trigger('change.select2');
+
         so.filterStructur();
     },
 

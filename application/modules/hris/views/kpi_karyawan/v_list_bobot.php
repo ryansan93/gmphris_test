@@ -31,6 +31,7 @@
     </tr>
 
 <?php } elseif (!empty($bobot)) { ?>
+
     <?php 
         $bobot_total = 0; 
         $no = 1;
@@ -46,8 +47,9 @@
 
     <?php if( $periode_bulan != $bulan ) { ?>
         <tr>
-            <td colspan="6" style="background-color:#B0ECFF">
-                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Index KPI periode terpilih tidak ditemukan, anda sedang menggunakan Index KPI periode <b><?php echo $bulan_text[$periode_bulan] ?></b>
+            <td colspan="6" style="background-color:#B0ECFF;">
+                <i class="fa fa-exclamation-triangle" style="margin-right:10px;" aria-hidden="true"></i>
+                Index KPI periode terpilih tidak ditemukan, anda sedang menggunakan Index KPI periode <b><?php echo $bulan_text[$periode_bulan] ?></b>
             </td>
         </tr>
     <?php } ?>
