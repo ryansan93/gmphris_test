@@ -288,7 +288,7 @@ class Pegawai extends Public_Controller
 		$m_karyawan = new \Model\Storage\Karyawan_model();
 		$d_karyawan = $m_karyawan->where('nik', $nik)->get()->toArray();
 
-		cetak_r( $d_karyawan->toArray() );
+		// cetak_r( $d_karyawan->toArray() );
 
 		$content = null;
 		$html = $this->load->view('parameter/pegawai/modal_gaji', $content);

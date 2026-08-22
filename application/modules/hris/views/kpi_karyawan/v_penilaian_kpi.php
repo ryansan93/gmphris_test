@@ -143,22 +143,24 @@
             <fieldset>
                 <legend>Riwayat Penilaian</legend>
 
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th style="text-align:center;">NIK</th>
-                            <th style="text-align:center;">Nama</th>
-                            <th style="text-align:center;">Periode</th>
-                            <th style="text-align:center;">Jabatan</th>
-                            <th style="text-align:center;">Total Nilai</th>
-                            <th style="text-align:center;">Status</th>
-                            <th style="text-align:center;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="list_data_penilaian_kpi">
-                    
-                    </tbody>
-                </table>
+                <div style="overflow:scroll">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;">NIK</th>
+                                <th style="text-align:center;">Nama</th>
+                                <th style="text-align:center;">Periode</th>
+                                <th style="text-align:center;">Jabatan</th>
+                                <th style="text-align:center;">Total Nilai</th>
+                                <th style="text-align:center;">Status</th>
+                                <th style="text-align:center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="list_data_penilaian_kpi">
+                        
+                        </tbody>
+                    </table>
+                </div>
             </fieldset>
     
         </div>

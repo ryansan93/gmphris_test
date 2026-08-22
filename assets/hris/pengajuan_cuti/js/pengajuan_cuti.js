@@ -58,19 +58,19 @@ let pc= {
                 format: 'DD MMM YYYY',
                 useCurrent: false
             });
-            // when start changes, set min date for end
+            
             $('#tanggal_mulai').on('dp.change', function(e){
                 if ($('#tanggal_selesai').data('DateTimePicker')){
                     $('#tanggal_selesai').data('DateTimePicker').minDate(e.date);
                 }
-                // when start date changes, run duplicate check and recalc total days
+
                 try { pc.checkTanggalPengajuan(); } catch (ex) { /* ignore */ }
                 try { pc.checkJumlahLibur(); } catch (ex) { /* ignore */ }
             });
             $('#tanggal_selesai').on('dp.change', function(e){
                 try { pc.checkJumlahLibur(); } catch (ex) { /* ignore */ }
             });
-            // set initial minDate for tanggal_mulai depending on jenis_cuti
+            
             var initJenis = $('select[name="jenis_cuti"]').val();
             if ($('#tanggal_mulai').data('DateTimePicker')){
                 if (initJenis === 'cuti_sakit' || initJenis === 'cuti_force_majeure'){
@@ -100,7 +100,6 @@ let pc= {
                                 // set tanggal mulai
                                 $mulai.data('DateTimePicker').date(today);
                                 $mulai.val(today.format('DD MMM YYYY'));
-
 
                                 // set tanggal selesai ikut hari ini
                                 if ($selesai.data('DateTimePicker')) {
@@ -354,8 +353,6 @@ let pc= {
                 
                 if (!result) return;
 
-
-                // Jika edit tanggal mundur, wajib isi alasan
                 if(change_tanggal < today){
 
                     let edit_note = $(".alasan_perubahan").val().trim();

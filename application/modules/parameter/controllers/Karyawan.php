@@ -103,6 +103,7 @@ class Karyawan extends Public_Controller
 	{
 		$m_conf = new \Model\Storage\Conf();
 
+
 		// $sql = " SELECT 
 		// 		k.id,
 		// 		k.level,
@@ -217,34 +218,26 @@ class Karyawan extends Public_Controller
 		// 			kh2.*
 		// 		FROM karyawan_history kh2
 		// 		WHERE kh2.nik = k.nik
+		// 		AND CONVERT(date, kh2.tgl_mulai) <= CONVERT(date, GETDATE())
 		// 		ORDER BY
-		// 			CASE 
-		// 				WHEN kh2.tgl_mulai <= GETDATE() THEN 0
-		// 				WHEN kh2.tgl_selesai IS NOT NULL THEN 1
-		// 				ELSE 2
-		// 			END,
-
-		// 			CASE 
-		// 				WHEN kh2.tgl_mulai <= GETDATE()
-		// 				THEN kh2.tgl_mulai
-		// 			END DESC,
-
-		// 			CASE 
-		// 				WHEN kh2.tgl_selesai IS NOT NULL
-		// 				THEN kh2.tgl_selesai
-		// 			END DESC
+		// 			kh2.tgl_mulai DESC,
+		// 			kh2.id DESC
 		// 	) kh
 
 		// 	LEFT JOIN jabatan j ON kh.jabatan = j.kode
 		// 	LEFT JOIN jabatan j_temp ON k.jabatan = j_temp.kode
 		// 	LEFT JOIN karyawan atasan ON k.atasan_nik = atasan.nik and atasan.status = 1
-		// 	LEFT JOIN karyawan k_now on k.nik = k_now.nik AND k_now.status = 1
+		// 	LEFT JOIN karyawan k_now ON k.nik = k_now.nik AND k_now.status = 1
+		// 			AND (
+		// 					k_now.tgl_berlaku IS NULL
+		// 					OR k_now.tgl_berlaku <= GETDATE()
+		// 			)
 		// 	WHERE k.id IS NOT NULL
 		// 	ORDER BY k.level ASC, ISNULL(j.nama, j_temp.nama) ASC  
 		// ";
 
-
-		$sql = " SELECT 
+		$sql = "
+			SELECT 
 				k.id,
 				k.level,
 				k.nik,
@@ -257,8 +250,32 @@ class Karyawan extends Public_Controller
 				k_now.status AS status_aktif,
 				atasan.nama AS nama_atasan,
 
-				ISNULL(
+				-- ⭐ TAMBAHAN: Status Display (AKTIF/MUTASI/NON AKTIF)
+				CASE 
+					WHEN k_now.status = 1 THEN 1  -- AKTIF (ada record aktif yang sudah berlaku)
+					WHEN k_now.status IS NULL AND k_mutasi.nik IS NOT NULL THEN 2  -- MUTASI (ada SK baru belum berlaku)
+					ELSE 0  -- NON AKTIF
+				END AS status_display,
 
+				-- ⭐ TAMBAHAN: Jenis Mutasi
+				CASE 
+					WHEN k_mutasi.nik IS NOT NULL THEN
+						CASE 
+							WHEN k_mutasi.level > k.level THEN 'PROMOSI'
+							WHEN k_mutasi.level < k.level THEN 'DEMOSI'
+							ELSE 'MUTASI'
+						END
+					ELSE NULL
+				END AS jenis_mutasi,
+
+				-- ⭐ TAMBAHAN: Tanggal Mutasi Berlaku
+				CASE 
+					WHEN k_mutasi.nik IS NOT NULL 
+					THEN CONVERT(VARCHAR, k_mutasi.tgl_berlaku, 103)
+					ELSE NULL
+				END AS tgl_mutasi_berlaku,
+
+				ISNULL(
 					STUFF((
 						SELECT ', ' + 
 							CASE 
@@ -271,7 +288,6 @@ class Karyawan extends Public_Controller
 						WHERE khu2.id = kh.id
 						FOR XML PATH(''), TYPE
 					).value('.', 'NVARCHAR(MAX)'), 1, 2, ''),
-
 					STUFF((
 						SELECT ', ' + 
 							CASE 
@@ -284,11 +300,9 @@ class Karyawan extends Public_Controller
 						WHERE uk.id_karyawan = k.id
 						FOR XML PATH(''), TYPE
 					).value('.', 'NVARCHAR(MAX)'), 1, 2, '')
-
 				) AS nama_unit,
 				
 				ISNULL(
-
 					STUFF((
 						SELECT ', ' + 
 							CASE 
@@ -301,7 +315,6 @@ class Karyawan extends Public_Controller
 						WHERE khw2.id = kh.id
 						FOR XML PATH(''), TYPE
 					).value('.', 'NVARCHAR(MAX)'), 1, 2, ''),
-
 					STUFF((
 						SELECT ', ' + 
 							CASE 
@@ -314,7 +327,6 @@ class Karyawan extends Public_Controller
 						WHERE wk.id_karyawan = k.id
 						FOR XML PATH(''), TYPE
 					).value('.', 'NVARCHAR(MAX)'), 1, 2, '')
-
 				) AS nama_wilayah,
 
 				kh.tgl_mulai,
@@ -327,30 +339,30 @@ class Karyawan extends Public_Controller
 			) src
 
 			OUTER APPLY (
-			SELECT TOP 1 *
-			FROM karyawan k1
-			WHERE k1.nik = src.nik
-			ORDER BY
-				CASE
-					WHEN k1.status = 1
-						AND k1.tgl_berlaku IS NOT NULL
-						AND k1.tgl_berlaku <= GETDATE()
-					THEN 0
+				SELECT TOP 1 *
+				FROM karyawan k1
+				WHERE k1.nik = src.nik
+				ORDER BY
+					CASE
+						WHEN k1.status = 1
+							AND k1.tgl_berlaku IS NOT NULL
+							AND k1.tgl_berlaku <= GETDATE()
+						THEN 0
 
-					WHEN k1.status = 1
-						AND k1.tgl_berlaku IS NULL
-					THEN 1
+						WHEN k1.status = 1
+							AND k1.tgl_berlaku IS NULL
+						THEN 1
 
-					WHEN k1.status = 0
-						AND k1.tgl_berlaku IS NOT NULL
-						AND k1.tgl_berlaku <= GETDATE()
-					THEN 2
+						WHEN k1.status = 0
+							AND k1.tgl_berlaku IS NOT NULL
+							AND k1.tgl_berlaku <= GETDATE()
+						THEN 2
 
-					ELSE 3
-				END,
+						ELSE 3
+					END,
 
-				k1.tgl_berlaku DESC,
-				k1.id DESC
+					k1.tgl_berlaku DESC,
+					k1.id DESC
 			) k
 
 			OUTER APPLY (
@@ -364,16 +376,29 @@ class Karyawan extends Public_Controller
 					kh2.id DESC
 			) kh
 
+			-- ⭐ TAMBAHAN: Deteksi mutasi (SK baru yang belum berlaku)
+			OUTER APPLY (
+				SELECT TOP 1 
+					k_next.nik,
+					k_next.level,
+					k_next.tgl_berlaku
+				FROM karyawan k_next
+				WHERE k_next.nik = k.nik
+				AND k_next.status = 1
+				AND k_next.tgl_berlaku > CAST(GETDATE() AS date)
+				ORDER BY k_next.tgl_berlaku ASC, k_next.id ASC
+			) k_mutasi
+
 			LEFT JOIN jabatan j ON kh.jabatan = j.kode
 			LEFT JOIN jabatan j_temp ON k.jabatan = j_temp.kode
-			LEFT JOIN karyawan atasan ON k.atasan_nik = atasan.nik and atasan.status = 1
+			LEFT JOIN karyawan atasan ON k.atasan_nik = atasan.nik AND atasan.status = 1
 			LEFT JOIN karyawan k_now ON k.nik = k_now.nik AND k_now.status = 1
 					AND (
 							k_now.tgl_berlaku IS NULL
 							OR k_now.tgl_berlaku <= GETDATE()
 					)
 			WHERE k.id IS NOT NULL
-			ORDER BY k.level ASC, ISNULL(j.nama, j_temp.nama) ASC  
+			ORDER BY k.level ASC, ISNULL(j.nama, j_temp.nama) ASC
 		";
 
 		
@@ -391,23 +416,58 @@ class Karyawan extends Public_Controller
 
 	}
 
+	// public function edit_form()
+	// {
+	// 	$id_karyawan 			    = $this->input->get('id');
+	// 	$m_karyawan 				= new \Model\Storage\Karyawan_model();
+	// 	$d_karyawan 				= $m_karyawan->where('id', $id_karyawan)->with(['unit', 'dWilayah'])->first()->toArray();
+
+	// 	// cetak_r($d_karyawan, 1);
+    //     $content['data'] 			= $d_karyawan;
+    //     $content['list_unit'] 		= $this->get_list_unit();
+    //     $content['list_wilayah'] 	= $this->get_list_wilayah();
+    //     $this->load->view('parameter/karyawan/edit_form', $content);
+	// }
+
 	public function edit_form()
 	{
-		$id_karyawan 			    = $this->input->get('id');
+		$id_karyawan 			    = $this->input->post('id');
 		$m_karyawan 				= new \Model\Storage\Karyawan_model();
 		$d_karyawan 				= $m_karyawan->where('id', $id_karyawan)->with(['unit', 'dWilayah'])->first()->toArray();
 
-		// cetak_r($d_karyawan, 1);
         $content['data'] 			= $d_karyawan;
-        $content['list_unit'] 		= $this->get_list_unit();
-        $content['list_wilayah'] 	= $this->get_list_wilayah();
-        $this->load->view('parameter/karyawan/edit_form', $content);
+		$content['list_karyawan']	= $this->get_list_karyawan();
+        $content['list_unit'] 		= $this->get_list_unit()->toArray();
+        $content['list_wilayah'] 	= $this->get_list_wilayah()->toArray();
+
+		// cetak_r($content, 1);
+
+        echo $this->load->view('parameter/karyawan/edit_form', $content, true);
 	}
+
+	// public function get_list_unit()
+	// {
+	// 	$m_unit = new \Model\Storage\Wilayah_model();
+	// 	$d_unit = $m_unit->where('jenis', 'UN')->orderBy('nama')->get();
+
+	// 	return $d_unit;
+	// }
+
+	// public function get_list_wilayah()
+	// {
+	// 	$m_wilayah = new \Model\Storage\Wilayah_model();
+	// 	$d_wilayah = $m_wilayah->where('jenis', 'PW')->orderBy('nama')->get();
+
+	// 	return $d_wilayah;
+	// }
 
 	public function get_list_unit()
 	{
 		$m_unit = new \Model\Storage\Wilayah_model();
-		$d_unit = $m_unit->where('jenis', 'UN')->orderBy('nama')->get();
+		$d_unit = $m_unit->where('jenis', 'UN')
+						->orderBy('nama')
+						->get()
+						->keyBy('id'); // <-- tambahkan ini
 
 		return $d_unit;
 	}
@@ -415,9 +475,25 @@ class Karyawan extends Public_Controller
 	public function get_list_wilayah()
 	{
 		$m_wilayah = new \Model\Storage\Wilayah_model();
-		$d_wilayah = $m_wilayah->where('jenis', 'PW')->orderBy('nama')->get();
+		$d_wilayah = $m_wilayah->where('jenis', 'PW')
+							->orderBy('nama')
+							->get()
+							->keyBy('id'); // <-- tambahkan ini
 
 		return $d_wilayah;
+	}
+
+	public function get_list_karyawan()
+	{
+		$m_conf = new \Model\Storage\Conf();
+
+		$karyawan = $m_conf->hydrateRaw("
+			SELECT *
+			FROM karyawan
+			WHERE status = 1
+		")->keyBy('nik')->toArray();
+
+		return $karyawan;
 	}
 
 	public function get_atasan()
@@ -442,6 +518,68 @@ class Karyawan extends Public_Controller
         display_json($this->result);
 	}
 
+	// public function edit()
+	// {
+	// 	$params = $this->input->post('params');
+
+	// 	try {
+	// 		$m_karyawan = new \Model\Storage\Karyawan_model();
+
+	// 		$m_karyawan->where('id', $params['id'])->update(
+	// 			array(
+	// 					'status' => 0
+	// 				)
+	// 		);
+
+	// 		$id_karyawan = $m_karyawan->getNextIdentity();
+
+	// 		$m_karyawan->id = $id_karyawan;
+	// 		$m_karyawan->level = $params['level'];
+	// 		$m_karyawan->nik = $params['nik'];
+	// 		$m_karyawan->atasan = $params['atasan'];
+	// 		$m_karyawan->nama = $params['nama'];
+	// 		$m_karyawan->kordinator = $params['koordinator'];
+	// 		$m_karyawan->marketing = $params['marketing'];
+	// 		$m_karyawan->jabatan = $params['jabatan'];
+	// 		$m_karyawan->status = 1;
+	// 		$m_karyawan->save();
+
+    //         foreach ($params['unit'] as $k_val => $val) {
+	//             $m_unit_karyawan = new \Model\Storage\UnitKaryawan_model();
+
+	//             $id_unit_karyawan = $m_unit_karyawan->getNextIdentity();
+
+	// 			$m_unit_karyawan->id = $id_unit_karyawan;
+	// 			$m_unit_karyawan->id_karyawan = $id_karyawan;
+	// 			$m_unit_karyawan->unit = $val;
+	// 			$m_unit_karyawan->save();
+    //         }
+
+    //         foreach ($params['wilayah'] as $k_val => $val) {
+	//             $m_wilayah_karyawan = new \Model\Storage\WilayahKaryawan_model();
+
+	//             $id_wilayah_karyawan = $m_wilayah_karyawan->getNextIdentity();
+
+	// 			$m_wilayah_karyawan->id = $id_wilayah_karyawan;
+	// 			$m_wilayah_karyawan->id_karyawan = $id_karyawan;
+	// 			$m_wilayah_karyawan->wilayah = $val;
+	// 			$m_wilayah_karyawan->save();
+    //         }
+
+	// 		$d_karyawan = $m_karyawan->where('id', $id_karyawan)->with(['unit'])->first();
+
+	// 		$deskripsi_log_karyawan = 'di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];
+    //         Modules::run( 'base/event/update', $d_karyawan, $deskripsi_log_karyawan );
+
+	// 		$this->result['status'] = 1;
+    //         $this->result['message'] = 'Data karyawan berhasil di update';
+    //     } catch (\Illuminate\Database\QueryException $e) {
+    //         $this->result['message'] = "Gagal : " . $e->getMessage();
+    //     }
+
+    //     display_json($this->result);
+	// }
+
 	public function edit()
 	{
 		$params = $this->input->post('params');
@@ -449,61 +587,85 @@ class Karyawan extends Public_Controller
 		try {
 			$m_karyawan = new \Model\Storage\Karyawan_model();
 
-			$m_karyawan->where('id', $params['id'])->update(
-				array(
-						'status' => 0
-					)
-			);
+			// Validasi data ada
+			$d_karyawan = $m_karyawan->where('id', $params['id'])->first();
+			if (!$d_karyawan) {
+				throw new \Exception("Data karyawan tidak ditemukan.");
+			}
 
-			$id_karyawan = $m_karyawan->getNextIdentity();
+			// Update nama saja
+			$m_karyawan->where('id', $params['id'])->update([
+				'nama' => $params['nama'],
+			]);
 
-			$m_karyawan->id = $id_karyawan;
-			$m_karyawan->level = $params['level'];
-			$m_karyawan->nik = $params['nik'];
-			$m_karyawan->atasan = $params['atasan'];
-			$m_karyawan->nama = $params['nama'];
-			$m_karyawan->kordinator = $params['koordinator'];
-			$m_karyawan->marketing = $params['marketing'];
-			$m_karyawan->jabatan = $params['jabatan'];
-			$m_karyawan->status = 1;
-			$m_karyawan->save();
+			// Logging
+			$d_karyawan = $m_karyawan->where('id', $params['id'])->first();
+			$deskripsi_log = 'Nama karyawan di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];
+			Modules::run('base/event/update', $d_karyawan, $deskripsi_log);
 
-            foreach ($params['unit'] as $k_val => $val) {
-	            $m_unit_karyawan = new \Model\Storage\UnitKaryawan_model();
+			$this->result['status']  = 1;
+			$this->result['message'] = 'Nama karyawan berhasil di-update.';
 
-	            $id_unit_karyawan = $m_unit_karyawan->getNextIdentity();
+		} catch (\Exception $e) {
+			$this->result['status']  = 0;
+			$this->result['message'] = "Gagal: " . $e->getMessage();
+		}
 
-				$m_unit_karyawan->id = $id_unit_karyawan;
-				$m_unit_karyawan->id_karyawan = $id_karyawan;
-				$m_unit_karyawan->unit = $val;
-				$m_unit_karyawan->save();
-            }
-
-            foreach ($params['wilayah'] as $k_val => $val) {
-	            $m_wilayah_karyawan = new \Model\Storage\WilayahKaryawan_model();
-
-	            $id_wilayah_karyawan = $m_wilayah_karyawan->getNextIdentity();
-
-				$m_wilayah_karyawan->id = $id_wilayah_karyawan;
-				$m_wilayah_karyawan->id_karyawan = $id_karyawan;
-				$m_wilayah_karyawan->wilayah = $val;
-				$m_wilayah_karyawan->save();
-            }
-
-			$d_karyawan = $m_karyawan->where('id', $id_karyawan)->with(['unit'])->first();
-
-			$deskripsi_log_karyawan = 'di-update oleh ' . $this->userdata['detail_user']['nama_detuser'];
-            Modules::run( 'base/event/update', $d_karyawan, $deskripsi_log_karyawan );
-
-			$this->result['status'] = 1;
-            $this->result['message'] = 'Data karyawan berhasil di update';
-        } catch (\Illuminate\Database\QueryException $e) {
-            $this->result['message'] = "Gagal : " . $e->getMessage();
-        }
-
-        display_json($this->result);
+		display_json($this->result);
 	}
 
+
+	public function modalGaji()
+	{
+		$nik = $this->input->get('nik');
+		
+		// cetak_r( $data_history );
+		
+		$content = null;
+		$content['data_history'] = $this->get_history_karyawan($nik);
+		$html = $this->load->view('parameter/karyawan/modal_gaji', $content);
+
+		echo $html;
+	}
+
+	public function get_history_karyawan($nik)
+	{
+		$m_conf = new \Model\Storage\Conf();
+
+		$sql = "SELECT 
+					kh.nik,
+					j.nama as jabatan,
+					kh.tgl_mulai,
+					kh.tgl_selesai,
+					kh.id,
+					
+					STUFF((
+						SELECT DISTINCT ', ' + ISNULL(w_unit.nama, CASE WHEN khu.kode_unit = 'all' THEN 'Semua Unit' ELSE khu.kode_unit END)
+						FROM karyawan_history_unit khu
+						LEFT JOIN wilayah w_unit ON khu.kode_unit = CAST(w_unit.id AS VARCHAR(50))
+						WHERE khu.id = kh.id
+						FOR XML PATH('')
+					), 1, 2, '') AS nama_unit,
+
+					STUFF((
+						SELECT DISTINCT ', ' + ISNULL(w_wil.nama, CASE WHEN khw.kode_wilayah = 'all' THEN 'Semua Wilayah' ELSE khw.kode_wilayah END)
+						FROM karyawan_history_wilayah khw
+						LEFT JOIN wilayah w_wil ON khw.kode_wilayah = CAST(w_wil.id AS VARCHAR(50))
+						WHERE khw.id = kh.id
+						FOR XML PATH('')
+					), 1, 2, '') AS nama_wilayah
+
+				FROM karyawan_history kh
+				INNER JOIN jabatan j on kh.jabatan = j.kode
+				WHERE kh.nik = '". $nik ."'
+				ORDER BY kh.nik, kh.tgl_mulai ";
+
+		$d_conf = $m_conf->hydrateRaw($sql);
+
+        $data = $d_conf->count() > 0 ? $d_conf->toArray() : [];
+
+        return $data;
+	}
 
 	
 }

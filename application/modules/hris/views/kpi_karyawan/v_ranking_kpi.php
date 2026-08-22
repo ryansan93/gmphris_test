@@ -45,7 +45,7 @@
     .gmp-table tbody td + td { border-left: 1px solid #eef2f6; }
 </style>
 
-<fieldset style="margin-bottom: 15px;">
+<fieldset style="margin-bottom: 15px;" id="ranking_kpi">
     <legend>
         <div class="col-xs-12 no-padding">
             <b>Filter</b>
@@ -98,7 +98,6 @@
                 </select>
             </div>
         </div>
-
 
     </div>
 </fieldset>

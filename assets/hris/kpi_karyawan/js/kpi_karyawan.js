@@ -2543,6 +2543,10 @@ $(document).ready(function() {
         $(".bulan").trigger("change");
     }
 
+    if ($("#ranking_kpi").length) {
+        $(".bulan").trigger("change");
+    }
+
     if ($("#penilaian_id").length) {
         $(".bulan").trigger("change");
         kpi.load_data_penilaian();

@@ -49,36 +49,76 @@ var karyawan = {
         },'html');
 	}, // end - add_form
 
-	edit_form : function (elm) {
-		var id = $(elm).data('id');
-		$.get('parameter/Karyawan/edit_form',{
-			'id' : id
-        },function(data){
-            var _options = {
-                className : 'veryWidth',
-				message : data,
-				size : 'large',
-            };
-            bootbox.dialog(_options).bind('shown.bs.modal', function(){
-                $('input').keyup(function(){
-                    $(this).val($(this).val().toUpperCase());
-                });
+	// edit_form : function (elm) {
+	// 	var id = $(elm).data('id');
+	// 	$.get('parameter/Karyawan/edit_form',{
+	// 		'id' : id
+    //     },function(data){
+    //         var _options = {
+    //             className : 'veryWidth',
+	// 			message : data,
+	// 			size : 'large',
+    //         };
+    //         bootbox.dialog(_options).bind('shown.bs.modal', function(){
+    //             $('input').keyup(function(){
+    //                 $(this).val($(this).val().toUpperCase());
+    //             });
 
-                $('[data-tipe=integer],[data-tipe=angka],[data-tipe=decimal]').each(function(){
-                    $(this).priceFormat(Config[$(this).data('tipe')]);
-                });
+    //             $('[data-tipe=integer],[data-tipe=angka],[data-tipe=decimal]').each(function(){
+    //                 $(this).priceFormat(Config[$(this).data('tipe')]);
+    //             });
 
-                $('.wilayah').select2();
-                $('.wilayah').next('span.select2').css('width', '100%');
+    //             $('.wilayah').select2();
+    //             $('.wilayah').next('span.select2').css('width', '100%');
 
-                $('.unit').select2();
-                $('.unit').next('span.select2').css('width', '100%');
+    //             $('.unit').select2();
+    //             $('.unit').next('span.select2').css('width', '100%');
 
-                var select_jabatan = $(this).find('select.jabatan');
-                karyawan.set_disable_by_jabatan(select_jabatan, 'edit');
-            });
-        },'html');
-	}, // end - edit_form
+    //             var select_jabatan = $(this).find('select.jabatan');
+    //             karyawan.set_disable_by_jabatan(select_jabatan, 'edit');
+    //         });
+    //     },'html');
+	// }, // end - edit_form
+
+	edit_form: function(el) {
+		
+        var id = $(el).data('id');
+        if (!id) {
+            bootbox.alert('ID data tidak ditemukan!');
+            return;
+        }
+
+        $.ajax({
+            url: 'parameter/Karyawan/edit_form', 
+            type: 'POST',
+            data: { id: id },
+            dataType: 'html',
+            success: function(response) {
+				
+				var dialog = bootbox.dialog({
+					title: '<i class="fa fa-pencil-square-o"></i> Edit Data Karyawan',
+					message: response,
+					size: 'large',
+					closeButton: true,
+				});
+
+				dialog.on('shown.bs.modal', function () {
+					$(this).find('.select2').select2({
+						dropdownParent: $(this)
+					});
+				});
+				
+            },
+            error: function(xhr, status, error) {
+                dialog.find('.bootbox-body').html(
+                    '<div class="alert alert-danger">' +
+                    '<i class="fa fa-exclamation-triangle"></i> Gagal memuat form!<br>' +
+                    '<small>' + error + '</small>' +
+                    '</div>'
+                );
+            }
+        });
+    },
 
 	set_disable_by_jabatan : function (elm, tipe = null) {
 		var div = $('div.body');
@@ -357,7 +397,7 @@ var karyawan = {
 	}, // end - execute_save
 
 	edit : function (elm) {
-		var div = $('div.body');
+		var div = $('.body');
 		var err = 0;
 
 		$(div).find('select, input').parent().removeClass('has-error');
@@ -381,8 +421,8 @@ var karyawan = {
 					var wilayah = $(div).find('select.wilayah').select2().val();
 					var koordinator = $(div).find('select.koordinator').val();
 					var marketing = $(div).find('select.marketing').val();
-					var unit = $(div).find('select.unit').select2().val();
-					var jabatan = $(div).find('select.jabatan').val();
+					// var unit = $(div).find('select.unit').select2().val();
+					// var jabatan = $(div).find('select.jabatan').val();
 
 					var params = {
 						'id' : id,
@@ -393,11 +433,12 @@ var karyawan = {
 						'wilayah' : wilayah,
 						'koordinator' : koordinator,
 						'marketing' : marketing,
-						'unit' : unit,
-						'jabatan' : jabatan
+						// 'unit' : unit,
+						// 'jabatan' : jabatan
 					};
 
 					// console.log( params );
+					// return false;
 					karyawan.execute_edit(params);
 				};
 			});
