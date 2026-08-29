@@ -33,8 +33,9 @@
 								<td style="white-space:nowrap;">
 									<?php 
 										$tgl_selesai = $dh['tgl_selesai'];
-										// Cek jika kosong, 0000-00-00, atau tanggal selesai > hari ini (belum lewat)
-										if (empty($tgl_selesai) || $tgl_selesai == '0000-00-00' || $tgl_selesai > date('Y-m-d')) {
+										
+										// Hanya cek jika kosong atau 0000-00-00
+										if (empty($tgl_selesai) || $tgl_selesai == '0000-00-00') {
 											echo '-';
 										} else {
 											echo tglIndonesia($tgl_selesai, '-', ' ');

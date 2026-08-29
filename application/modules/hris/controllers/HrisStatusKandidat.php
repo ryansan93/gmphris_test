@@ -36,7 +36,7 @@ class HrisStatusKandidat extends Public_Controller {
             $content['title_panel']     = 'HRIS - Status Kandidat';
             $content['kategori']        = $this->getKategori();
 
-            // cetak_r($content, 1);
+            // cetak_r($content['kategori'], 1);
           
 
             // Load Indexx

@@ -48,8 +48,8 @@
 <table class="gmp-table">
     <thead>
         <tr>
-            <th class="text-center">Nama Status</th>
-            <th class="text-center">Nama Kategori</th>
+            <th class="text-left">Nama Status</th>
+            <th class="text-left">Nama Kategori</th>
             <th class="text-center">Action</th>
         </tr>
     </thead>
@@ -58,7 +58,7 @@
 
             <?php foreach($list as $l){?>
                 <tr>
-                    <td class="text-center"><?php echo $l['nama_status'] ?></td>
+                    <td class="text-left"><?php echo $l['nama_status'] ?></td>
                     <td class="text-left"><?php echo $l['nama_kategori'] ?></td>
                     <td class="text-center">
 

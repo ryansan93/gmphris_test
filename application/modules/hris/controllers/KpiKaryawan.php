@@ -1078,106 +1078,265 @@ class KpiKaryawan extends Public_Controller
 		echo $this->load->view('hris/kpi_karyawan/v_filter_laporan_kpi', $content, true);
 	}
 
+	// public function getLaporanKpi($need = null)
+	// {
+	// 	$m_conf = new \Model\Storage\Conf();
+
+	// 	$jenis    = $need['jenis'] ?? null;
+	// 	$dataNeed = $need['data'] ?? null; // bulan (1-12)
+
+	// 	// cetak_r($dataNeed, 1);
+
+	// 	$tahun 	= date('Y');
+
+	// 	$sql 	= "  SELECT hkp.nik, hkp.tanggal_selesai, hkp.tanggal_mulai, 
+	// 						hkp.total_nilai, k.nama, j.nama as nama_jabatan, 
+	// 						FORMAT(hkp.tanggal_mulai, 'MMMM yyyy', 'id-ID') AS periode_kpi,
+	// 						hdk.tgl_masuk, nama_wilayah, kode_wilayah
+	// 					FROM hris_kpi_penilaian hkp
+	// 					INNER JOIN karyawan k ON hkp.nik = k.nik AND k.status = 1
+	// 					INNER JOIN  jabatan j on hkp.jabatan = j.kode  
+	// 					LEFT JOIN hris_data_kandidat hdk on k.nik = hdk.nik 
+	// 					LEFT JOIN 
+	// 					(
+	// 						SELECT 
+	// 							uk1.id_karyawan,
+	// 							STUFF(
+	// 								(
+	// 									SELECT ', ' + w.nama
+	// 									FROM unit_karyawan uk2
+	// 									INNER JOIN wilayah w
+	// 										ON uk2.unit = w.id
+	// 									WHERE uk2.id_karyawan = uk1.id_karyawan
+	// 									FOR XML PATH('')
+	// 								),
+	// 								1,
+	// 								2,
+	// 								''
+	// 							) AS nama_wilayah,
+	// 							STUFF(
+	// 								(
+	// 									SELECT TOP 1 ', ' + w.kode
+	// 									FROM unit_karyawan uk2
+	// 									INNER JOIN wilayah w
+	// 										ON uk2.unit = w.id
+	// 									WHERE uk2.id_karyawan = uk1.id_karyawan
+	// 									FOR XML PATH('')
+	// 								),
+	// 								1,
+	// 								2,
+	// 								''
+	// 							) AS kode_wilayah
+	// 						FROM unit_karyawan uk1
+	// 						GROUP BY uk1.id_karyawan
+	// 					) uk
+	// 					ON k.id = uk.id_karyawan ";
+
+	// 	$where = [];
+
+	// 	$where[] = "hkp.status = 'APPROVED'";
+		
+
+	// 	if ($jenis == 'FILTER' && !empty($dataNeed)) {
+
+	// 		$where[] = "
+	// 			MONTH(hkp.tanggal_mulai) = ".$dataNeed['bulan']."
+	// 			AND YEAR(hkp.tanggal_mulai) = ".$tahun."
+	// 		";
+
+	// 		if (!empty($dataNeed['unit']) && $dataNeed['unit'] != 'All') {
+	// 			$where[] = " kode_wilayah = '".$dataNeed['unit']."'";
+	// 		}
+
+	// 		if (!empty($dataNeed['jabatan'])) {
+	// 			$where[] = " k.jabatan = '".$dataNeed['jabatan']."'";
+	// 		}
+	// 	}
+
+	// 	if ($jenis == 'CHECK' && !empty($dataNeed)) {
+	// 		$where[] = "
+	// 			hkp.nik = '".$dataNeed['nik']."'
+	// 		";
+	// 	}
+
+	// 	if (!empty($where)) {
+	// 		$sql .= " WHERE ".implode(' AND ', $where);
+	// 	}
+
+	// 	// cetak_r($sql, 1);
+
+
+	// 	$d_conf = $m_conf->hydrateRaw($sql);
+
+	// 	$data = [];
+	// 	if ($d_conf->count() > 0) {
+	// 		$data = $d_conf->toArray();
+	// 	}
+
+	// 	$report = [];
+
+	// 	foreach($data as $d){
+	// 		$report[$d['periode_kpi']][] = $d;
+	// 	}
+
+	// 	return $report;
+	// }
+
+
 	public function getLaporanKpi($need = null)
 	{
 		$m_conf = new \Model\Storage\Conf();
 
 		$jenis    = $need['jenis'] ?? null;
-		$dataNeed = $need['data'] ?? null; // bulan (1-12)
+		$dataNeed = $need['data'] ?? null;
 
-		// cetak_r($dataNeed, 1);
+		$tahun = date('Y');
 
-		$tahun 	= date('Y');
+		$sql = "
+			SELECT 
+				hkp.nik,
+				hkp.tanggal_selesai,
+				hkp.tanggal_mulai,
+				hkp.total_nilai,
 
-		$sql 	= "  SELECT hkp.nik, hkp.tanggal_selesai, hkp.tanggal_mulai, 
-							hkp.total_nilai, k.nama, j.nama as nama_jabatan, 
-							FORMAT(hkp.tanggal_mulai, 'MMMM yyyy', 'id-ID') AS periode_kpi,
-							hdk.tgl_masuk, nama_wilayah, kode_wilayah
-						FROM hris_kpi_penilaian hkp
-						INNER JOIN karyawan k ON hkp.nik = k.nik AND k.status = 1
-						INNER JOIN  jabatan j on hkp.jabatan = j.kode  
-						LEFT JOIN hris_data_kandidat hdk on k.nik = hdk.nik 
-						LEFT JOIN 
-						(
-							SELECT 
-								uk1.id_karyawan,
-								STUFF(
-									(
-										SELECT ', ' + w.nama
-										FROM unit_karyawan uk2
-										INNER JOIN wilayah w
-											ON uk2.unit = w.id
-										WHERE uk2.id_karyawan = uk1.id_karyawan
-										FOR XML PATH('')
-									),
-									1,
-									2,
-									''
-								) AS nama_wilayah,
-								STUFF(
-									(
-										SELECT TOP 1 ', ' + w.kode
-										FROM unit_karyawan uk2
-										INNER JOIN wilayah w
-											ON uk2.unit = w.id
-										WHERE uk2.id_karyawan = uk1.id_karyawan
-										FOR XML PATH('')
-									),
-									1,
-									2,
-									''
-								) AS kode_wilayah
-							FROM unit_karyawan uk1
-							GROUP BY uk1.id_karyawan
-						) uk
-						ON k.id = uk.id_karyawan ";
+				k.nama,
+
+				j.nama AS nama_jabatan,
+
+				FORMAT(
+					hkp.tanggal_mulai,
+					'MMMM yyyy',
+					'id-ID'
+				) AS periode_kpi,
+
+				hdk.tgl_masuk,
+
+				hkp.wilayah AS nama_wilayah,
+				hkp.unit AS kode_wilayah
+
+			FROM hris_kpi_penilaian hkp
+
+			INNER JOIN karyawan k 
+				ON hkp.nik = k.nik 
+				AND k.status = 1
+
+			INNER JOIN jabatan j 
+				ON hkp.jabatan = j.kode
+
+			LEFT JOIN hris_data_kandidat hdk 
+				ON k.nik = hdk.nik
+		";
 
 		$where = [];
 
 		$where[] = "hkp.status = 'APPROVED'";
-		
+
+
+		/*
+		|--------------------------------------------------------------------------
+		| FILTER
+		|--------------------------------------------------------------------------
+		*/
 
 		if ($jenis == 'FILTER' && !empty($dataNeed)) {
 
 			$where[] = "
-				MONTH(hkp.tanggal_mulai) = ".$dataNeed['bulan']."
-				AND YEAR(hkp.tanggal_mulai) = ".$tahun."
+				MONTH(hkp.tanggal_mulai) = " . (int) $dataNeed['bulan'] . "
+				AND YEAR(hkp.tanggal_mulai) = " . (int) $tahun . "
 			";
 
-			if (!empty($dataNeed['unit']) && $dataNeed['unit'] != 'All') {
-				$where[] = " kode_wilayah = '".$dataNeed['unit']."'";
+
+			/*
+			|--------------------------------------------------------------------------
+			| FILTER WILAYAH
+			|--------------------------------------------------------------------------
+			*/
+
+			if (!empty($dataNeed['unit']) && strtolower($dataNeed['unit']) != 'all') {
+
+				$unit = addslashes($dataNeed['unit']);
+
+				$where[] = "
+					hkp.unit = '" . $unit . "'
+				";
 			}
+
+
+			/*
+			|--------------------------------------------------------------------------
+			| FILTER JABATAN
+			|--------------------------------------------------------------------------
+			*/
 
 			if (!empty($dataNeed['jabatan'])) {
-				$where[] = " k.jabatan = '".$dataNeed['jabatan']."'";
+
+				$jabatan = addslashes($dataNeed['jabatan']);
+
+				$where[] = "
+					hkp.jabatan = '" . $jabatan . "'
+				";
 			}
 		}
 
+
+		/*
+		|--------------------------------------------------------------------------
+		| CHECK
+		|--------------------------------------------------------------------------
+		*/
+
 		if ($jenis == 'CHECK' && !empty($dataNeed)) {
+
+			$nik = addslashes($dataNeed['nik']);
+
 			$where[] = "
-				hkp.nik = '".$dataNeed['nik']."'
+				hkp.nik = '" . $nik . "'
 			";
 		}
 
+
+		/*
+		|--------------------------------------------------------------------------
+		| WHERE
+		|--------------------------------------------------------------------------
+		*/
+
 		if (!empty($where)) {
-			$sql .= " WHERE ".implode(' AND ', $where);
+			$sql .= "
+				WHERE " . implode(' AND ', $where);
 		}
+
 
 		// cetak_r($sql, 1);
 
 
+		/*
+		|--------------------------------------------------------------------------
+		| EXECUTE QUERY
+		|--------------------------------------------------------------------------
+		*/
+
 		$d_conf = $m_conf->hydrateRaw($sql);
 
 		$data = [];
+
 		if ($d_conf->count() > 0) {
 			$data = $d_conf->toArray();
 		}
 
+
+		/*
+		|--------------------------------------------------------------------------
+		| GROUP BY PERIODE
+		|--------------------------------------------------------------------------
+		*/
+
 		$report = [];
 
-		foreach($data as $d){
+		foreach ($data as $d) {
 			$report[$d['periode_kpi']][] = $d;
 		}
+
 
 		return $report;
 	}
@@ -1344,130 +1503,229 @@ class KpiKaryawan extends Public_Controller
 	}
 
 
+	// public function getRankingByPeriode($data)
+	// {
+	// 	$bulan = $data['periode']; 
+	// 	$tahun = date('Y');
+
+	// 	$m_conf = new \Model\Storage\Conf();
+
+	// 	$sql = "SELECT *
+	// 			FROM (
+	// 				SELECT
+	// 					k.nama,
+	// 					k.nik,
+	// 					hkp.total_nilai AS score,
+	// 					hkp.approval_by,
+	// 					MONTH(hkp.tanggal_mulai) AS periode,
+	// 					j.nama AS nama_jabatan,
+	// 					ROW_NUMBER() OVER (
+	// 						PARTITION BY j.nama
+	// 						ORDER BY hkp.total_nilai DESC
+	// 					) AS urut,
+	// 					hdk.tgl_masuk as tanggal_masuk,
+	// 					nama_wilayah,
+	// 					kode_wilayah
+	// 				FROM hris_kpi_penilaian hkp
+	// 				INNER JOIN karyawan k
+	// 					ON hkp.nik = k.nik
+	// 					AND k.status = 1
+	// 				INNER JOIN jabatan j
+	// 					ON hkp.jabatan = j.nama
+	// 				LEFT JOIN hris_data_kandidat hdk on k.nik = hdk.nik
+					
+	// 				LEFT JOIN 
+	// 				(
+	// 					SELECT 
+	// 						uk1.id_karyawan,
+	// 						STUFF(
+	// 							(
+	// 								SELECT ', ' + w.nama
+	// 								FROM unit_karyawan uk2
+	// 								INNER JOIN wilayah w
+	// 									ON uk2.unit = w.id
+	// 								WHERE uk2.id_karyawan = uk1.id_karyawan
+	// 								FOR XML PATH('')
+	// 							),
+	// 							1,
+	// 							2,
+	// 							''
+	// 						) AS nama_wilayah,
+	// 						STUFF(
+	// 							(
+	// 								SELECT TOP 1 ', ' + w.kode
+	// 								FROM unit_karyawan uk2
+	// 								INNER JOIN wilayah w
+	// 									ON uk2.unit = w.id
+	// 								WHERE uk2.id_karyawan = uk1.id_karyawan
+	// 								FOR XML PATH('')
+	// 							),
+	// 							1,
+	// 							2,
+	// 							''
+	// 						) AS kode_wilayah
+	// 					FROM unit_karyawan uk1
+	// 					GROUP BY uk1.id_karyawan
+	// 				) uk
+	// 				ON k.id = uk.id_karyawan 
+	// 				WHERE MONTH(hkp.tanggal_mulai) = '".$data['periode']."' ";
+
+	// 				if ($data['unit']){
+	// 					$sql .= " AND kode_wilayah = '".$data['unit']."' ";
+	// 				}
+					
+	// 				if ($data['jabatan']){
+	// 					$sql .= " AND k.jabatan = '".$data['jabatan']."' ";
+	// 				}
+					
+	// 				$sql .= " AND hkp.status = 'APPROVED'
+	// 			) x
+	// 			ORDER BY nama_jabatan, score DESC ";
+
+	// 	// cetak_r($sql, 1);
+
+	// 	$d_conf = $m_conf->hydrateRaw($sql);
+
+	// 	$data 	= [];
+	// 	if ($d_conf->count() > 0) {
+	// 		$data = $d_conf->toArray();
+	// 	}
+
+	// 	$temp = [];
+	// 	foreach ($data as $val) {
+	// 		$temp[$val['nama_jabatan']][] = $val;
+	// 	}
+
+	// 	// cetak_r($temp, 1);
+
+	// 	return $temp;
+	// }
+
 	public function getRankingByPeriode($data)
 	{
-		$bulan = $data['periode']; 
+		$bulan = $data['periode'];
 		$tahun = date('Y');
 
 		$m_conf = new \Model\Storage\Conf();
-		
-		// $sql = "
-		// 	SELECT *
-		// 	FROM (
-		// 		SELECT
-		// 			k.nama,
-		// 			k.nik,
-		// 			hkp.total_nilai AS score,
-		// 			hkp.approval_by,
-		// 			MONTH(hkp.tanggal_mulai) AS periode,
-		// 			j.nama AS nama_jabatan,
-		// 			ROW_NUMBER() OVER (
-		// 				PARTITION BY j.nama
-		// 				ORDER BY hkp.total_nilai DESC
-		// 			) AS urut,
-		// 			hdk.tgl_masuk as tanggal_masuk
-		// 		FROM hris_kpi_penilaian hkp
-		// 		INNER JOIN karyawan k
-		// 			ON hkp.nik = k.nik
-		// 			AND k.status = 1
-		// 		INNER JOIN jabatan j
-		// 			ON hkp.jabatan = j.nama
-		// 		LEFT JOIN hris_data_kandidat hdk on k.nik = hdk.nik
-		// 		WHERE MONTH(hkp.tanggal_mulai) = '".$data['periode']."'
-		// 		AND hkp.status = 'APPROVED'
-		// 	) x
-		// 	-- WHERE urut <= 3
-		// 	ORDER BY nama_jabatan, score DESC
-		// ";
+
+		$sql = "
+			SELECT *
+			FROM (
+				SELECT
+					k.nama,
+					k.nik,
+
+					hkp.total_nilai AS score,
+					hkp.approval_by,
+
+					MONTH(hkp.tanggal_mulai) AS periode,
+
+					j.nama AS nama_jabatan,
+
+					ROW_NUMBER() OVER (
+						PARTITION BY j.nama
+						ORDER BY hkp.total_nilai DESC
+					) AS urut,
+
+					hdk.tgl_masuk AS tanggal_masuk,
+
+					/* SNAPSHOT WILAYAH & UNIT DARI KPI */
+					hkp.wilayah AS nama_wilayah,
+					hkp.unit AS kode_wilayah
+
+				FROM hris_kpi_penilaian hkp
+
+				INNER JOIN karyawan k
+					ON hkp.nik = k.nik
+					AND k.status = 1
+
+				INNER JOIN jabatan j
+					ON hkp.jabatan = j.kode
+
+				LEFT JOIN hris_data_kandidat hdk
+					ON k.nik = hdk.nik
+
+				WHERE 
+					MONTH(hkp.tanggal_mulai) = '" . (int) $bulan . "'
+					AND YEAR(hkp.tanggal_mulai) = '" . (int) $tahun . "'
+		";
+
+		/*
+		|--------------------------------------------------------------------------
+		| FILTER WILAYAH
+		|--------------------------------------------------------------------------
+		*/
+
+		if (!empty($data['unit']) && strtolower($data['unit']) != 'all') {
+
+			$unit = addslashes($data['unit']);
+
+			$sql .= "
+				AND hkp.unit = '" . $unit . "'
+			";
+		}
 
 
-		$sql = "SELECT *
-				FROM (
-					SELECT
-						k.nama,
-						k.nik,
-						hkp.total_nilai AS score,
-						hkp.approval_by,
-						MONTH(hkp.tanggal_mulai) AS periode,
-						j.nama AS nama_jabatan,
-						ROW_NUMBER() OVER (
-							PARTITION BY j.nama
-							ORDER BY hkp.total_nilai DESC
-						) AS urut,
-						hdk.tgl_masuk as tanggal_masuk,
-						nama_wilayah,
-						kode_wilayah
-					FROM hris_kpi_penilaian hkp
-					INNER JOIN karyawan k
-						ON hkp.nik = k.nik
-						AND k.status = 1
-					INNER JOIN jabatan j
-						ON hkp.jabatan = j.nama
-					LEFT JOIN hris_data_kandidat hdk on k.nik = hdk.nik
-					
-					LEFT JOIN 
-					(
-						SELECT 
-							uk1.id_karyawan,
-							STUFF(
-								(
-									SELECT ', ' + w.nama
-									FROM unit_karyawan uk2
-									INNER JOIN wilayah w
-										ON uk2.unit = w.id
-									WHERE uk2.id_karyawan = uk1.id_karyawan
-									FOR XML PATH('')
-								),
-								1,
-								2,
-								''
-							) AS nama_wilayah,
-							STUFF(
-								(
-									SELECT TOP 1 ', ' + w.kode
-									FROM unit_karyawan uk2
-									INNER JOIN wilayah w
-										ON uk2.unit = w.id
-									WHERE uk2.id_karyawan = uk1.id_karyawan
-									FOR XML PATH('')
-								),
-								1,
-								2,
-								''
-							) AS kode_wilayah
-						FROM unit_karyawan uk1
-						GROUP BY uk1.id_karyawan
-					) uk
-					ON k.id = uk.id_karyawan 
-					WHERE MONTH(hkp.tanggal_mulai) = '".$data['periode']."' ";
+		/*
+		|--------------------------------------------------------------------------
+		| FILTER JABATAN
+		|--------------------------------------------------------------------------
+		*/
 
-					if ($data['unit']){
-						$sql .= " AND kode_wilayah = '".$data['unit']."' ";
-					}
-					
-					if ($data['jabatan']){
-						$sql .= " AND k.jabatan = '".$data['jabatan']."' ";
-					}
-					
-					$sql .= " AND hkp.status = 'APPROVED'
-				) x
-				ORDER BY nama_jabatan, score DESC ";
+		if (!empty($data['jabatan'])) {
+
+			$jabatan = addslashes($data['jabatan']);
+
+			$sql .= "
+				AND k.jabatan = '" . $jabatan . "'
+			";
+		}
+
+
+		/*
+		|--------------------------------------------------------------------------
+		| STATUS KPI
+		|--------------------------------------------------------------------------
+		*/
+
+		$sql .= "
+				AND hkp.status = 'APPROVED'
+			) x
+
+			ORDER BY nama_jabatan, score DESC
+		";
+
 
 		// cetak_r($sql, 1);
 
+
+		/*
+		|--------------------------------------------------------------------------
+		| EXECUTE QUERY
+		|--------------------------------------------------------------------------
+		*/
+
 		$d_conf = $m_conf->hydrateRaw($sql);
 
-		$data 	= [];
+		$result = [];
+
 		if ($d_conf->count() > 0) {
-			$data = $d_conf->toArray();
+			$result = $d_conf->toArray();
 		}
 
+
+		/*
+		|--------------------------------------------------------------------------
+		| GROUP BY JABATAN
+		|--------------------------------------------------------------------------
+		*/
+
 		$temp = [];
-		foreach ($data as $val) {
+
+		foreach ($result as $val) {
 			$temp[$val['nama_jabatan']][] = $val;
 		}
 
-		// cetak_r($temp, 1);
 
 		return $temp;
 	}

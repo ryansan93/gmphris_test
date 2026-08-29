@@ -288,37 +288,53 @@ class UsulanMutasi extends Public_Controller {
 
         foreach ($data_list as &$row) {
 
-            $row['nama_perwakilan_tujuan']  = $wilayahMap[$row['perwakilan_tujuan']] ?? null;  
-            $row['nama_perwakilan_asal']    = $wilayahMap[$row['perwakilan_asal']] ?? null;    
-            $unitIdTujuan                   = explode(',', $row['unit_tujuan']);
-            $unitIdAsal                     = explode(',', $row['unit_asal']);
+            if (isset($row['perwakilan_tujuan']) && strtolower(trim($row['perwakilan_tujuan'])) === 'all') {
+                $row['nama_perwakilan_tujuan'] = 'All';
+            } else {
+                $row['nama_perwakilan_tujuan'] = $wilayahMap[$row['perwakilan_tujuan']] ?? null;
+            }
 
+            if (isset($row['perwakilan_asal']) && strtolower(trim($row['perwakilan_asal'])) === 'all') {
+                $row['nama_perwakilan_asal'] = 'All';
+            } else {
+                $row['nama_perwakilan_asal'] = $wilayahMap[$row['perwakilan_asal']] ?? null;
+            }
+
+            $unitIdTujuan = explode(',', $row['unit_tujuan']);
             $namaUnitTujuan = [];
+            
             foreach ($unitIdTujuan as $id) {
                 $id = trim($id); 
-                if (isset($unitMap[$id])) {
+                
+                if (strtolower($id) === 'all') {
+                    $namaUnitTujuan[] = 'All';
+                } elseif (isset($unitMap[$id])) {
                     $namaUnitTujuan[] = $unitMap[$id];
                 }
             }
 
+            // ✅ HANDLE UNIT ASAL - termasuk nilai "All"
+            $unitIdAsal = explode(',', $row['unit_asal']);
             $namaUnitAsal = [];
+            
             foreach ($unitIdAsal as $id) {
                 $id = trim($id); 
-                if (isset($unitMap[$id])) {
+                
+                if (strtolower($id) === 'all') {
+                    $namaUnitAsal[] = 'All';
+                } elseif (isset($unitMap[$id])) {
                     $namaUnitAsal[] = $unitMap[$id];
                 }
             }
 
             $row['nama_unit_tujuan'] = implode(', ', $namaUnitTujuan);
-            $row['nama_unit_asal'] = implode(', ', $namaUnitAsal);
+            $row['nama_unit_asal']   = implode(', ', $namaUnitAsal);
         }
 
-        // unset($row);
+        unset($row); // ✅ Penting: unset reference variable
         
-        $content['list']            =  $data_list;
-        // cetak_r($content['list'], 1);
-        // $content['wilayah_asal']    = $this->get_unit_wilayah($data_list[0]['id_karyawan']);
-
+        $content['list'] = $data_list;
+        
         echo $this->load->view($this->pathView . 'v_list', $content, TRUE);
     }
 

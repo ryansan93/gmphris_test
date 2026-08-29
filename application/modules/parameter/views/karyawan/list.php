@@ -37,7 +37,7 @@
 				?>
 			</td>
 			
-			<!-- ⭐ STATUS DENGAN DETEKSI MUTASI -->
+
 			<td>
 				<?php 
 				// Mapping status
