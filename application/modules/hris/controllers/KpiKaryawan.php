@@ -474,7 +474,6 @@ class KpiKaryawan extends Public_Controller
 		return $data[0];
 	}
 
-
 	public function save()
     {
         
@@ -491,8 +490,8 @@ class KpiKaryawan extends Public_Controller
             $m_header->total_nilai    	= $params['header']['total_score'];
 			$m_header->jabatan    		= $params['header']['jabatan'];
 			$m_header->penilai    		= $params['header']['penilai'];
-			$m_header->wilayah = $data_wilayah['daftar_wilayah'] ?? null;
-			$m_header->unit    = $data_wilayah['daftar_unit'] ?? null;
+			$m_header->wilayah 			= $data_wilayah['daftar_wilayah'] ?? null;
+			$m_header->unit    			= $data_wilayah['daftar_unit'] ?? null;
             $m_header->status    	  	= 'DRAFT';
 
             $m_header->save();
@@ -523,7 +522,6 @@ class KpiKaryawan extends Public_Controller
 				. 'Total Nilai : '.$params['header']['total_score'];
 
 			$this->telegram_lib->sendMessages($message_telegram);
-
 
             $this->result['status'] = 1;
             $this->result['message'] = 'Data berhasil di simpan.';
@@ -1106,6 +1104,7 @@ class KpiKaryawan extends Public_Controller
             'data'  => $_POST,
         ];
 
+		$content['unit']		= $this->get_list_unit();
 		$content['laporan']		= $this->getLaporanKpi($need);
 		
 		// cetak_r($content, 1);
@@ -1531,6 +1530,7 @@ class KpiKaryawan extends Public_Controller
 	{
 		$params = $_POST;
 		
+		$content['unit']		 = $this->get_list_unit();
 		$content['data_ranking'] = $this->getRankingByPeriode($params);
 		// cetak_r($content, 1);
 
