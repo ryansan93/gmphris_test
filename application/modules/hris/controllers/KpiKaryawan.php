@@ -442,13 +442,46 @@ class KpiKaryawan extends Public_Controller
 		echo $html;
 	}
 
+	public function get_unit_wilayah($nik)
+	{
+		$m_conf = new \Model\Storage\Conf();
+
+		$sql = "SELECT 
+				k.nik,
+				STUFF((
+					SELECT DISTINCT ', ' + uk.unit
+					FROM unit_karyawan uk
+					WHERE uk.id_karyawan = k.id
+					FOR XML PATH(''), TYPE
+				).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS daftar_unit,
+				STUFF((
+					SELECT DISTINCT ', ' + wk.wilayah
+					FROM wilayah_karyawan wk
+					WHERE wk.id_karyawan = k.id
+					FOR XML PATH(''), TYPE
+				).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS daftar_wilayah
+
+				FROM karyawan k where k.status = 1 and k.nik = '".$nik."'";
+
+		$d_conf = $m_conf->hydrateRaw($sql);
+
+		$data = [];
+
+		if ($d_conf->count() > 0) {
+			$data = $d_conf->toArray();
+		}
+
+		return $data[0];
+	}
+
 
 	public function save()
     {
         
         $params = $_POST;
 
-		// cetak_r($params, 1);
+		$data_wilayah = $this->get_unit_wilayah($params['header']['nik']);
+		// cetak_r($data_wilayah, 1);
         
         try {
             $m_header     			  	= new \Model\Storage\HrisKpiPenilaian_model();
@@ -458,6 +491,8 @@ class KpiKaryawan extends Public_Controller
             $m_header->total_nilai    	= $params['header']['total_score'];
 			$m_header->jabatan    		= $params['header']['jabatan'];
 			$m_header->penilai    		= $params['header']['penilai'];
+			$m_header->wilayah = $data_wilayah['daftar_wilayah'] ?? null;
+			$m_header->unit    = $data_wilayah['daftar_unit'] ?? null;
             $m_header->status    	  	= 'DRAFT';
 
             $m_header->save();
